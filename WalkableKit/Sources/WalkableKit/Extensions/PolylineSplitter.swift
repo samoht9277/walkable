@@ -41,6 +41,26 @@ public enum PolylineSplitter {
         return (walked, remaining)
     }
 
+    /// Snap a point to the closest position on a polyline (guaranteed to be on the polyline path).
+    public static func snapToPolyline(
+        point: CLLocationCoordinate2D,
+        polyline: [CLLocationCoordinate2D]
+    ) -> CLLocationCoordinate2D {
+        guard polyline.count >= 2 else { return point }
+
+        var bestProjection = point
+        var bestDistance = Double.greatestFiniteMagnitude
+
+        for i in 0..<(polyline.count - 1) {
+            let (projection, distance) = projectPointOntoSegment(point: point, segStart: polyline[i], segEnd: polyline[i + 1])
+            if distance < bestDistance {
+                bestDistance = distance
+                bestProjection = projection
+            }
+        }
+        return bestProjection
+    }
+
     /// Project a point onto a line segment, return the projected point and distance.
     private static func projectPointOntoSegment(
         point: CLLocationCoordinate2D,
