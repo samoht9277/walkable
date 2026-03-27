@@ -62,6 +62,9 @@ final class StatsViewModel {
     }
 
     func deleteSession(_ session: WalkSession, from context: ModelContext) {
+        if let healthId = session.healthKitWorkoutID {
+            Task { try? await HealthService.shared.deleteWorkout(id: healthId) }
+        }
         context.delete(session)
         try? context.save()
     }

@@ -71,6 +71,11 @@ final class LibraryViewModel {
     }
 
     func deleteRoute(_ route: Route, modelContext: ModelContext) {
+        for session in route.sessions {
+            if let healthId = session.healthKitWorkoutID {
+                Task { try? await HealthService.shared.deleteWorkout(id: healthId) }
+            }
+        }
         SyncService.shared.syncRoute(route, operation: .delete)
         modelContext.delete(route)
         try? modelContext.save()

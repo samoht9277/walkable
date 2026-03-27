@@ -147,6 +147,26 @@ public final class HealthService: NSObject, ObservableObject {
         routeBuilder?.insertRouteData([location]) { _, _ in }
     }
 
+    // MARK: - Delete Workout
+
+    /// Delete a workout from HealthKit by its UUID.
+    public func deleteWorkout(id: UUID) async throws {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+
+        let predicate = HKQuery.predicateForObject(with: id)
+        let workouts = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
+            let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: 1, sortDescriptors: nil) { _, results, error in
+                if let error { continuation.resume(throwing: error); return }
+                continuation.resume(returning: results ?? [])
+            }
+            store.execute(query)
+        }
+
+        for workout in workouts {
+            try await store.delete(workout)
+        }
+    }
+
     // MARK: - Stats Queries
 
     /// Get total walking distance for a date range.
