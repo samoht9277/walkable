@@ -5,27 +5,47 @@ import WalkableKit
 struct DrawModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
     var mapProxy: MapProxy?
-    @State private var isDrawing = true
+    @State private var isPencilActive = true
     @State private var drawnPoints: [CGPoint] = []
     @State private var canvasId = UUID()
 
     var body: some View {
         ZStack {
-            if isDrawing && !viewModel.hasRoute {
-                DrawingCanvas(isDrawing: $isDrawing) { points in
+            // Drawing canvas — only intercepts touches when pencil is active
+            if isPencilActive && !viewModel.hasRoute && viewModel.waypoints.isEmpty {
+                DrawingCanvas(isDrawing: $isPencilActive) { points in
                     drawnPoints = points
                 }
                 .id(canvasId)
                 .ignoresSafeArea()
-                .allowsHitTesting(isDrawing)
             }
 
+            // Pencil/Navigate toggle — top left
+            VStack {
+                HStack {
+                    Button {
+                        isPencilActive.toggle()
+                        Haptics.light()
+                    } label: {
+                        Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(isPencilActive ? .blue : .white)
+                            .frame(width: 40, height: 40)
+                    }
+                    .glassEffect(.regular, in: .circle)
+                    Spacer()
+                }
+                .padding(.leading, 20)
+                Spacer()
+            }
+
+            // Bottom controls
             VStack {
                 Spacer()
 
                 VStack(spacing: 12) {
                     if viewModel.waypoints.isEmpty && drawnPoints.isEmpty {
-                        Text("Draw a loop on the map with your finger")
+                        Text("Draw a loop on the map")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .padding(.horizontal, 16)
@@ -33,7 +53,7 @@ struct DrawModeOverlay: View {
                             .glassEffect(.regular, in: .capsule)
                     }
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         if viewModel.isCalculating {
                             GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
                                 viewModel.cancelCalculation()
@@ -44,7 +64,7 @@ struct DrawModeOverlay: View {
                                     drawnPoints.removeAll()
                                     viewModel.clearAll()
                                     canvasId = UUID()
-                                    isDrawing = true
+                                    isPencilActive = true
                                 }, tint: .red)
                             }
 
@@ -84,7 +104,6 @@ struct DrawModeOverlay: View {
             return
         }
 
-        // Convert window-coordinate points to real map coordinates via MapProxy
         let realCoords = drawnPoints.compactMap { point in
             mapProxy.convert(point, from: .global)
         }
@@ -94,11 +113,10 @@ struct DrawModeOverlay: View {
             return
         }
 
-        // Simplify and sample using real coordinates
         let simplified = PathSimplifier.simplify(realCoords, tolerance: 0.00005)
         let sampled = PathSimplifier.sampleWaypoints(along: simplified, intervalMeters: 50)
 
         viewModel.setWaypoints(sampled)
-        isDrawing = false
+        isPencilActive = false
     }
 }
