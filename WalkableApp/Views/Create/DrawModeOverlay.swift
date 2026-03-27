@@ -7,14 +7,15 @@ struct DrawModeOverlay: View {
     var mapProxy: MapProxy?
     @State private var isDrawing = true
     @State private var drawnPoints: [CGPoint] = []
+    @State private var canvasId = UUID()
 
     var body: some View {
         ZStack {
-            // Drawing canvas overlay (only when actively drawing)
             if isDrawing && !viewModel.hasRoute {
                 DrawingCanvas(isDrawing: $isDrawing) { points in
                     drawnPoints = points
                 }
+                .id(canvasId)
                 .ignoresSafeArea()
                 .allowsHitTesting(isDrawing)
             }
@@ -42,6 +43,7 @@ struct DrawModeOverlay: View {
                                 GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
                                     drawnPoints.removeAll()
                                     viewModel.clearAll()
+                                    canvasId = UUID()
                                     isDrawing = true
                                 }, tint: .red)
                             }
@@ -49,6 +51,7 @@ struct DrawModeOverlay: View {
                             if !drawnPoints.isEmpty && viewModel.waypoints.isEmpty {
                                 GlassButtonLabel(title: "Snap to Roads", systemImage: "road.lanes", action: {
                                     convertDrawingToWaypoints()
+                                    viewModel.calculateRoute()
                                 }, tint: .green)
                             }
                         }
