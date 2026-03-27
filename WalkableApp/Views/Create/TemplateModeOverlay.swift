@@ -39,12 +39,7 @@ struct TemplateModeOverlay: View {
                         }
                         .frame(width: 80, height: 56)
                         .foregroundStyle(selectedShape == shape ? .white : .primary)
-                        .background(
-                            selectedShape == shape
-                                ? AnyShapeStyle(.blue)
-                                : AnyShapeStyle(.ultraThinMaterial)
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .glassEffect(selectedShape == shape ? .regular.tint(.blue) : .regular, in: .rect(cornerRadius: 12))
                     }
                 }
             }
@@ -60,8 +55,7 @@ struct TemplateModeOverlay: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+            .glassEffect(.regular, in: .rect(cornerRadius: 16))
 
             HStack(spacing: 12) {
                 if viewModel.isCalculating {

@@ -5,6 +5,7 @@ import WalkableKit
 struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
+    @Namespace private var mapScope
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -20,22 +21,23 @@ struct CreateRouteView: View {
             }
 
             // Top controls - rendered last so they stay clickable above the canvas
-            VStack {
+            VStack(spacing: 6) {
                 modeSelector
                     .padding(.top, 8)
-                if !viewModel.waypoints.isEmpty {
-                    HStack {
+                HStack {
+                    if !viewModel.waypoints.isEmpty {
                         Label("\(viewModel.waypoints.count)", systemImage: "mappin")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .glassEffect(.regular, in: .capsule)
-                        Spacer()
                     }
-                    .padding(.leading, 20)
-                    .padding(.top, 4)
+                    Spacer()
+                    MapCompass(scope: mapScope)
+                        .mapControlVisibility(.automatic)
                 }
+                .padding(.horizontal, 20)
                 Spacer()
             }
 
@@ -89,10 +91,8 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
-            .mapControls {
-                MapCompass()
-                    .mapControlVisibility(.automatic)
-            }
+            .mapScope(mapScope)
+            .mapControls { }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
