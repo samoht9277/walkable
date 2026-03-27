@@ -24,8 +24,11 @@ public final class LocationService: NSObject, ObservableObject {
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.distanceFilter = 5
-        manager.allowsBackgroundLocationUpdates = true
-        manager.showsBackgroundLocationIndicator = true
+        if let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String],
+           modes.contains("location") {
+            manager.allowsBackgroundLocationUpdates = true
+            manager.showsBackgroundLocationIndicator = true
+        }
     }
 
     public func requestAuthorization() {
