@@ -9,7 +9,10 @@ struct ActiveWalkView: View {
 
     var body: some View {
         ZStack {
-            if viewModel.isWalking, let route = viewModel.route {
+            if viewModel.isWalkingOnWatch, let route = viewModel.route {
+                // Passive Watch handoff view
+                watchHandoffView(route: route)
+            } else if viewModel.isWalking, let route = viewModel.route {
                 // Map with route
                 RouteMapOverlay(
                     route: route,
@@ -76,6 +79,48 @@ struct ActiveWalkView: View {
                 onDismiss: { viewModel.dismissSummary() }
             )
             .interactiveDismissDisabled()
+        }
+    }
+
+    @ViewBuilder
+    private func watchHandoffView(route: Route) -> some View {
+        ZStack {
+            // Show the route on a map (passive, no live tracking)
+            RouteMapOverlay(route: route)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: 12) {
+                    Image(systemName: "applewatch")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.green)
+
+                    Text("Walk in progress on Apple Watch")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+
+                    Text(route.name)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    Text(String(format: "%.1f km · %d waypoints", route.distance / 1000, route.waypoints.count))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    Text("Results will sync back when the walk is complete")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 4)
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                .padding(.horizontal)
+                .padding(.bottom, 32)
+            }
         }
     }
 }
