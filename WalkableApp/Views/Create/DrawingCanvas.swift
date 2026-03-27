@@ -21,32 +21,38 @@ struct DrawingCanvas: UIViewRepresentable {
 @MainActor
 class DrawingCanvasUIView: UIView {
     var onDrawingComplete: (([CGPoint]) -> Void)?
-    private var points: [CGPoint] = []
+    private var points: [CGPoint] = []       // window/global coordinates for map conversion
+    private var localPoints: [CGPoint] = []  // local coordinates for drawing the path
     private var currentPath = UIBezierPath()
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         points.removeAll()
+        localPoints.removeAll()
         currentPath = UIBezierPath()
-        let point = touch.location(in: self)
-        points.append(point)
-        currentPath.move(to: point)
+        let local = touch.location(in: self)
+        let global = touch.location(in: nil)
+        localPoints.append(local)
+        points.append(global)
+        currentPath.move(to: local)
         setNeedsDisplay()
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
-        let point = touch.location(in: self)
-        points.append(point)
-        currentPath.addLine(to: point)
+        let local = touch.location(in: self)
+        let global = touch.location(in: nil)
+        localPoints.append(local)
+        points.append(global)
+        currentPath.addLine(to: local)
         setNeedsDisplay()
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // Close the loop by connecting back to start
-        if let first = points.first {
-            points.append(first)
-            currentPath.addLine(to: first)
+        if let firstLocal = localPoints.first, let firstGlobal = points.first {
+            localPoints.append(firstLocal)
+            points.append(firstGlobal)
+            currentPath.addLine(to: firstLocal)
             currentPath.close()
         }
         setNeedsDisplay()
@@ -63,6 +69,7 @@ class DrawingCanvasUIView: UIView {
 
     func clear() {
         points.removeAll()
+        localPoints.removeAll()
         currentPath = UIBezierPath()
         setNeedsDisplay()
     }

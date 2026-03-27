@@ -34,6 +34,10 @@ targets:
       - package: WalkableKit
     settings:
       GENERATE_INFOPLIST_FILE: true
+      CODE_SIGN_STYLE: Automatic
+      INFOPLIST_KEY_UILaunchScreen_Generation: true
+      INFOPLIST_KEY_CFBundleDisplayName: Walkable
+      INFOPLIST_KEY_UIBackgroundModes: location
       INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location to track walks and show your position on the map."
       INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription: "Walkable needs background location access to track your walks."
       INFOPLIST_KEY_NSHealthShareUsageDescription: "Walkable reads your health data to show fitness stats."
@@ -42,8 +46,6 @@ targets:
       path: WalkableApp/WalkableApp.entitlements
       properties:
         com.apple.developer.healthkit: true
-        com.apple.developer.healthkit.access:
-          - health-records
 
   WalkableWatch:
     type: application
@@ -54,6 +56,9 @@ targets:
       - package: WalkableKit
     settings:
       GENERATE_INFOPLIST_FILE: true
+      CODE_SIGN_STYLE: Automatic
+      INFOPLIST_KEY_CFBundleDisplayName: Walkable
+      INFOPLIST_KEY_WKApplication: true
       INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location for walk navigation."
       INFOPLIST_KEY_NSHealthShareUsageDescription: "Walkable reads health data during walks."
       INFOPLIST_KEY_NSHealthUpdateUsageDescription: "Walkable saves walking workouts to Apple Health."
@@ -62,8 +67,6 @@ targets:
       path: WalkableWatch/WalkableWatch.entitlements
       properties:
         com.apple.developer.healthkit: true
-        com.apple.developer.healthkit.access:
-          - health-records
 
   WalkableTests:
     type: bundle.unit-test
