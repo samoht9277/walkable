@@ -5,7 +5,6 @@ import WalkableKit
 struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
-    @Namespace private var mapScope
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -21,15 +20,9 @@ struct CreateRouteView: View {
             }
 
             // Top controls - rendered last so they stay clickable above the canvas
-            VStack(spacing: 8) {
+            VStack {
                 modeSelector
                     .padding(.top, 8)
-                HStack {
-                    Spacer()
-                    MapCompass(scope: mapScope)
-                        .mapControlVisibility(.automatic)
-                }
-                .padding(.trailing, 16)
                 Spacer()
             }
 
@@ -54,7 +47,7 @@ struct CreateRouteView: View {
 
     private var mapView: some View {
         MapReader { proxy in
-            Map(position: $viewModel.cameraPosition) {
+            Map(position: $viewModel.cameraPosition, interactionModes: [.pan, .zoom, .rotate, .pitch]) {
                 // Waypoint pins
                 ForEach(Array(viewModel.waypoints.enumerated()), id: \.offset) { index, coord in
                     Annotation("", coordinate: coord) {
@@ -83,8 +76,11 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
-            .mapScope(mapScope)
-            .mapControls { }
+            .mapControls {
+                MapCompass()
+                    .mapControlVisibility(.automatic)
+            }
+            .safeAreaPadding(.top, 60)
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
