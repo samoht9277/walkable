@@ -23,6 +23,19 @@ struct CreateRouteView: View {
             VStack {
                 modeSelector
                     .padding(.top, 8)
+                if !viewModel.waypoints.isEmpty {
+                    HStack {
+                        Label("\(viewModel.waypoints.count)", systemImage: "mappin")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .glassEffect(.clear, in: .capsule)
+                        Spacer()
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 4)
+                }
                 Spacer()
             }
 
