@@ -6,6 +6,7 @@ struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
     @State private var isPencilActive = true
+    @State private var mapHeading: Double = 0
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -24,7 +25,7 @@ struct CreateRouteView: View {
             VStack(spacing: 6) {
                 modeSelector
                     .padding(.top, 8)
-                HStack {
+                HStack(alignment: .top) {
                     if !viewModel.waypoints.isEmpty {
                         Label("\(viewModel.waypoints.count)", systemImage: "mappin")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -34,8 +35,11 @@ struct CreateRouteView: View {
                             .glassEffect(.regular, in: .capsule)
                     }
                     Spacer()
-                    if viewModel.mode == .draw {
-                        drawNavigateToggle
+                    VStack(spacing: 8) {
+                        compassButton
+                        if viewModel.mode == .draw {
+                            drawNavigateToggle
+                        }
                     }
                 }
                 .padding(.horizontal, 20)
@@ -92,10 +96,7 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
-            .mapControls {
-                MapCompass()
-                    .mapControlVisibility(.automatic)
-            }
+            .mapControls { }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
@@ -104,6 +105,7 @@ struct CreateRouteView: View {
             }
             .onMapCameraChange { context in
                 viewModel.visibleRegion = context.region
+                mapHeading = context.camera.heading
             }
             .onAppear { storedMapProxy = proxy }
         }
@@ -140,6 +142,29 @@ struct CreateRouteView: View {
         }
     }
 
+    @ViewBuilder
+    private var compassButton: some View {
+        if mapHeading != 0 {
+            Button {
+                withAnimation {
+                    viewModel.cameraPosition = .camera(MapCamera(
+                        centerCoordinate: viewModel.visibleRegion?.center ?? CLLocationCoordinate2D(),
+                        distance: 3000,
+                        heading: 0
+                    ))
+                }
+            } label: {
+                Image(systemName: "location.north.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(.red, .white)
+                    .rotationEffect(.degrees(-mapHeading))
+                    .frame(width: 40, height: 40)
+            }
+            .glassEffect(.regular, in: .circle)
+            .transition(.scale.combined(with: .opacity))
+        }
+    }
+
     private var drawNavigateToggle: some View {
         Button {
             isPencilActive.toggle()
@@ -147,7 +172,7 @@ struct CreateRouteView: View {
         } label: {
             Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(isPencilActive ? .blue : .white)
+                .foregroundStyle(.white)
                 .frame(width: 40, height: 40)
         }
         .glassEffect(.regular, in: .circle)

@@ -19,10 +19,7 @@ struct DrawModeOverlay: View {
                 .ignoresSafeArea()
             }
 
-            VStack {
-                Spacer()
-
-                VStack(spacing: 12) {
+            VStack(spacing: 12) {
                     if viewModel.waypoints.isEmpty && drawnPoints.isEmpty {
                         Text("Draw a loop on the map")
                             .font(.subheadline)
@@ -71,7 +68,6 @@ struct DrawModeOverlay: View {
                     .padding(.horizontal, 16)
                 }
                 .padding(.bottom, 24)
-            }
         }
     }
 
