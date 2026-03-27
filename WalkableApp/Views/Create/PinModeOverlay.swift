@@ -49,16 +49,13 @@ struct PinModeOverlay: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .glassEffect(.regular, in: .rect(cornerRadius: 20))
-                .padding(.horizontal, 16)
             } else {
                 Text("Tap the map to place waypoints")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(.ultraThinMaterial, in: Capsule())
+                    .glassEffect(.regular, in: .capsule)
             }
         }
         .padding(.bottom, 24)

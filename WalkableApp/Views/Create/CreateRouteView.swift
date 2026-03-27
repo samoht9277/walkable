@@ -104,9 +104,8 @@ struct CreateRouteView: View {
         .pickerStyle(.segmented)
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 8)
-        .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+        .glassEffect(.regular, in: .rect(cornerRadius: 16))
+        .padding(.horizontal, 16)
         .onChange(of: viewModel.mode) {
             Haptics.light()
             viewModel.clearAll()

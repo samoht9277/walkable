@@ -30,7 +30,7 @@ struct DrawModeOverlay: View {
                             .foregroundStyle(.secondary)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(.ultraThinMaterial, in: Capsule())
+                            .glassEffect(.regular, in: .capsule)
                     }
 
                     HStack(spacing: 12) {
@@ -69,9 +69,6 @@ struct DrawModeOverlay: View {
                             }, tint: .blue)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 20))
                     .padding(.horizontal, 16)
                 }
                 .padding(.bottom, 24)
