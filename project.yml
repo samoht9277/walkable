@@ -11,6 +11,19 @@ packages:
   WalkableKit:
     path: WalkableKit
 
+schemes:
+  WalkableApp:
+    build:
+      targets:
+        WalkableApp: all
+    test:
+      targets:
+        - WalkableTests
+  WalkableWatch:
+    build:
+      targets:
+        WalkableWatch: all
+
 targets:
   WalkableApp:
     type: application
