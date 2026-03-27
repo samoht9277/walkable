@@ -10,6 +10,8 @@ public struct CalculatedRoute: Sendable {
     public let coordinates: [CLLocationCoordinate2D]
     public let distance: CLLocationDistance
     public let expectedTravelTime: TimeInterval
+    /// Waypoint positions snapped to the nearest walkable road.
+    public let snappedWaypoints: [CLLocationCoordinate2D]
 
     public var polyline: MKPolyline {
         var coords = coordinates
@@ -96,10 +98,20 @@ public final class RoutingService {
         let totalDistance = segmentRoutes.reduce(0) { $0 + $1.distance }
         let totalTime = segmentRoutes.reduce(0) { $0 + $1.expectedTravelTime }
 
+        // Extract road-snapped waypoint positions from the start of each segment's polyline
+        var snapped = [CLLocationCoordinate2D]()
+        for route in segmentRoutes {
+            let points = route.polyline.points()
+            if route.polyline.pointCount > 0 {
+                snapped.append(points[0].coordinate)
+            }
+        }
+
         return CalculatedRoute(
             coordinates: allCoords,
             distance: totalDistance,
-            expectedTravelTime: totalTime
+            expectedTravelTime: totalTime,
+            snappedWaypoints: snapped
         )
     }
 

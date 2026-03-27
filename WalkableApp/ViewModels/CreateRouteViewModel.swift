@@ -72,7 +72,11 @@ final class CreateRouteViewModel {
 
         calculationTask = Task {
             do {
-                calculatedRoute = try await routingService.calculateLoop(through: waypoints)
+                let result = try await routingService.calculateLoop(through: waypoints)
+                calculatedRoute = result
+                if result.snappedWaypoints.count == waypoints.count {
+                    waypoints = result.snappedWaypoints
+                }
             } catch is CancellationError {
                 // User cancelled
             } catch {
