@@ -15,6 +15,7 @@ struct DrawModeOverlay: View {
                 DrawingCanvas(isDrawing: $isDrawing) { points in
                     drawnPoints = points
                 }
+                .ignoresSafeArea()
                 .allowsHitTesting(isDrawing)
             }
 

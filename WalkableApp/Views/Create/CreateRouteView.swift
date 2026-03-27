@@ -12,17 +12,18 @@ struct CreateRouteView: View {
             // Full-screen map
             mapView
 
-            // Top controls
+            // Bottom controls (mode-specific) - rendered before mode selector
+            // so the drawing canvas doesn't cover the mode selector
+            VStack {
+                Spacer()
+                bottomControls
+            }
+
+            // Top controls - rendered last so they stay clickable above the canvas
             VStack {
                 modeSelector
                     .padding(.top, 8)
                 Spacer()
-            }
-
-            // Bottom controls (mode-specific)
-            VStack {
-                Spacer()
-                bottomControls
             }
 
             // Loading overlay
@@ -70,6 +71,9 @@ struct CreateRouteView: View {
                     MapPolyline(route.polyline)
                         .stroke(.blue, lineWidth: 4)
                 }
+
+                // Keep user location dot visible when camera moves
+                UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
             .onTapGesture { screenCoord in

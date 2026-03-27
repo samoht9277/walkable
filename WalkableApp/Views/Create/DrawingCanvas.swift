@@ -59,9 +59,6 @@ class DrawingCanvasUIView: UIView {
         currentPath.lineCapStyle = .round
         currentPath.lineJoinStyle = .round
         currentPath.stroke()
-
-        UIColor.systemBlue.withAlphaComponent(0.1).setFill()
-        currentPath.fill()
     }
 
     func clear() {
