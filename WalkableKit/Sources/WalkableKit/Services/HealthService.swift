@@ -86,10 +86,10 @@ public final class HealthService: NSObject, ObservableObject {
         try await builder?.endCollection(at: Date())
 
         guard let builder else { return nil }
-        let workout = try await builder.finishWorkout()
+        let workout: HKWorkout? = try await builder.finishWorkout()
 
         // Finish the route and attach it to the workout
-        if let routeBuilder {
+        if let routeBuilder, let workout {
             try await routeBuilder.finishRoute(with: workout, metadata: nil)
         }
 
