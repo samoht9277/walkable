@@ -1,130 +1,56 @@
 import SwiftUI
-import MapKit
 
-struct DrawingCanvas: UIViewRepresentable {
+struct DrawingCanvas: View {
     @Binding var isDrawing: Bool
     var onDrawingComplete: ([CGPoint]) -> Void
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(onDrawingComplete: onDrawingComplete)
-    }
+    @State private var localPoints: [CGPoint] = []
+    @State private var globalPoints: [CGPoint] = []
+    @GestureState private var isDragging = false
 
-    func makeUIView(context: Context) -> DrawingCanvasUIView {
-        let view = DrawingCanvasUIView()
-        view.backgroundColor = .clear
-
-        let pan = DrawingGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
-        pan.maximumNumberOfTouches = 1
-        pan.delegate = context.coordinator
-        view.addGestureRecognizer(pan)
-        context.coordinator.canvasView = view
-
-        return view
-    }
-
-    func updateUIView(_ uiView: DrawingCanvasUIView, context: Context) {
-        uiView.gestureRecognizers?.forEach { $0.isEnabled = isDrawing }
-        context.coordinator.onDrawingComplete = onDrawingComplete
-    }
-
-    @MainActor
-    class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        var onDrawingComplete: ([CGPoint]) -> Void
-        weak var canvasView: DrawingCanvasUIView?
-
-        init(onDrawingComplete: @escaping ([CGPoint]) -> Void) {
-            self.onDrawingComplete = onDrawingComplete
-        }
-
-        @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
-            guard let view = canvasView else { return }
-            let local = gesture.location(in: view)
-            let global = gesture.location(in: nil)
-
-            switch gesture.state {
-            case .began:
-                view.beginPath(local: local, global: global)
-            case .changed:
-                view.addPoint(local: local, global: global)
-            case .ended, .cancelled:
-                view.finishPath()
-                onDrawingComplete(view.globalPoints)
-            default:
-                break
+    var body: some View {
+        GeometryReader { geo in
+            Canvas { context, size in
+                guard localPoints.count >= 2 else { return }
+                var path = Path()
+                path.move(to: localPoints[0])
+                for point in localPoints.dropFirst() {
+                    path.addLine(to: point)
+                }
+                context.stroke(path, with: .color(.blue.opacity(0.6)), lineWidth: 4)
             }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 1, coordinateSpace: .local)
+                    .updating($isDragging) { _, state, _ in state = true }
+                    .onChanged { value in
+                        let local = value.location
+                        // Convert to global by adding the geometry's frame origin
+                        let frame = geo.frame(in: .global)
+                        let global = CGPoint(x: local.x + frame.origin.x, y: local.y + frame.origin.y)
+
+                        if localPoints.isEmpty {
+                            localPoints = [local]
+                            globalPoints = [global]
+                        } else {
+                            localPoints.append(local)
+                            globalPoints.append(global)
+                        }
+                    }
+                    .onEnded { _ in
+                        // Close the loop
+                        if let firstLocal = localPoints.first, let firstGlobal = globalPoints.first {
+                            localPoints.append(firstLocal)
+                            globalPoints.append(firstGlobal)
+                        }
+                        onDrawingComplete(globalPoints)
+                    }
+            )
         }
-
-        // Allow the map's gestures to work simultaneously for 2+ finger gestures
-        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
-            true
-        }
-    }
-}
-
-/// Custom gesture recognizer that fails immediately on multitouch
-class DrawingGestureRecognizer: UIPanGestureRecognizer {
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
-        if (event.allTouches?.count ?? 0) > 1 {
-            state = .failed
-            return
-        }
-        super.touchesBegan(touches, with: event)
-    }
-
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
-        if (event.allTouches?.count ?? 0) > 1 {
-            state = .failed
-            return
-        }
-        super.touchesMoved(touches, with: event)
-    }
-}
-
-@MainActor
-class DrawingCanvasUIView: UIView {
-    private(set) var globalPoints: [CGPoint] = []
-    private var localPoints: [CGPoint] = []
-    private var currentPath = UIBezierPath()
-
-    func beginPath(local: CGPoint, global: CGPoint) {
-        globalPoints.removeAll()
-        localPoints.removeAll()
-        currentPath = UIBezierPath()
-        localPoints.append(local)
-        globalPoints.append(global)
-        currentPath.move(to: local)
-        setNeedsDisplay()
-    }
-
-    func addPoint(local: CGPoint, global: CGPoint) {
-        localPoints.append(local)
-        globalPoints.append(global)
-        currentPath.addLine(to: local)
-        setNeedsDisplay()
-    }
-
-    func finishPath() {
-        if let firstLocal = localPoints.first, let firstGlobal = globalPoints.first {
-            localPoints.append(firstLocal)
-            globalPoints.append(firstGlobal)
-            currentPath.addLine(to: firstLocal)
-            currentPath.close()
-        }
-        setNeedsDisplay()
-    }
-
-    override func draw(_ rect: CGRect) {
-        UIColor.systemBlue.withAlphaComponent(0.6).setStroke()
-        currentPath.lineWidth = 4
-        currentPath.lineCapStyle = .round
-        currentPath.lineJoinStyle = .round
-        currentPath.stroke()
     }
 
     func clear() {
-        globalPoints.removeAll()
         localPoints.removeAll()
-        currentPath = UIBezierPath()
-        setNeedsDisplay()
+        globalPoints.removeAll()
     }
 }
