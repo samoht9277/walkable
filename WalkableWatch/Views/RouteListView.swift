@@ -10,20 +10,27 @@ struct RouteListView: View {
     var body: some View {
         NavigationStack {
             if routes.isEmpty {
-                VStack(spacing: 16) {
-                    ContentUnavailableView(
-                        "No Routes",
-                        systemImage: "map",
-                        description: Text("Create a route here or sync from iPhone")
-                    )
-                    if let onCreateRoute {
-                        Button {
-                            onCreateRoute()
-                        } label: {
-                            Label("Create Route", systemImage: "mappin.and.ellipse")
+                ScrollView {
+                    VStack(spacing: 12) {
+                        Image(systemName: "map")
+                            .font(.largeTitle)
+                            .foregroundStyle(.secondary)
+                        Text("No Routes")
+                            .font(.headline)
+                        Text("Create a route or sync from iPhone")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        if let onCreateRoute {
+                            Button {
+                                onCreateRoute()
+                            } label: {
+                                Label("Create Route", systemImage: "mappin.and.ellipse")
+                            }
+                            .tint(.blue)
                         }
-                        .tint(.blue)
                     }
+                    .padding(.top, 8)
                 }
             } else {
                 List {
