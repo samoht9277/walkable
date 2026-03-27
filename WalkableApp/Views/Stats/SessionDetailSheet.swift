@@ -85,15 +85,15 @@ struct SessionDetailSheet: View {
         Map {
             // Planned route polyline (blue)
             if let polylineData = session.route?.polylineData,
-               let polyline = try? MKPolyline.from(encodedData: polylineData) {
-                MapPolyline(polyline)
+               let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: polylineData) {
+                MapPolyline(coordinates: coords.map { $0.clCoordinate })
                     .stroke(.blue, lineWidth: 4)
             }
 
             // Actual GPS track (green)
             if let gpsData = session.gpsTrackData,
-               let trackPolyline = try? MKPolyline.from(encodedData: gpsData) {
-                MapPolyline(trackPolyline)
+               let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: gpsData) {
+                MapPolyline(coordinates: coords.map { $0.clCoordinate })
                     .stroke(.green, lineWidth: 4)
             }
         }
