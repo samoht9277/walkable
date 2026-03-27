@@ -11,8 +11,16 @@ struct RouteMapOverlay: View {
     var body: some View {
         Map {
             if let coords = route.decodedPolylineCoordinates {
-                MapPolyline(coordinates: coords)
-                    .stroke(.blue, lineWidth: 4)
+                if let currentLoc = currentLocation {
+                    let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
+                    MapPolyline(coordinates: split.walked)
+                        .stroke(.gray, lineWidth: 4)
+                    MapPolyline(coordinates: split.remaining)
+                        .stroke(.blue, lineWidth: 4)
+                } else {
+                    MapPolyline(coordinates: coords)
+                        .stroke(.blue, lineWidth: 4)
+                }
             }
 
             // Waypoint annotations
