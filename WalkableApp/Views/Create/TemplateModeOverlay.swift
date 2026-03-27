@@ -88,10 +88,7 @@ struct TemplateModeOverlay: View {
 
     private func centerCoordinate() -> CLLocationCoordinate2D? {
         if let gps = locationService.currentLocation?.coordinate { return gps }
-        // Fall back to the map's visible region center
-        if let region = viewModel.cameraPosition.region {
-            return region.center
-        }
+        if let region = viewModel.visibleRegion { return region.center }
         return nil
     }
 

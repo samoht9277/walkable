@@ -33,6 +33,7 @@ final class CreateRouteViewModel {
 
     // Map camera
     var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
+    var visibleRegion: MKCoordinateRegion?
 
     private let routingService = RoutingService.shared
 
