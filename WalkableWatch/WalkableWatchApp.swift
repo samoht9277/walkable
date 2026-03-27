@@ -1,4 +1,6 @@
 import SwiftUI
+import SwiftData
+import WalkableKit
 
 @main
 struct WalkableWatchApp: App {
@@ -6,5 +8,6 @@ struct WalkableWatchApp: App {
         WindowGroup {
             Text("Walkable")
         }
+        .modelContainer(for: [Route.self, Waypoint.self, WalkSession.self, LegSplit.self])
     }
 }
