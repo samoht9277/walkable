@@ -27,7 +27,7 @@ struct ContentView: View {
                     Label("Walk", systemImage: "figure.walk")
                 }
                 .tag(2)
-            Text("Stats")
+            StatsView()
                 .tabItem {
                     Label("Stats", systemImage: "chart.bar")
                 }
