@@ -74,9 +74,13 @@ struct TemplateModeOverlay: View {
                     generateTemplate()
                 }, tint: .green)
 
-                if viewModel.canCalculate && !viewModel.hasRoute {
+                if viewModel.isCalculating {
+                    GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
+                        viewModel.cancelCalculation()
+                    }, tint: .red)
+                } else if viewModel.canCalculate && !viewModel.hasRoute {
                     GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
-                        Task { await viewModel.calculateRoute() }
+                        viewModel.calculateRoute()
                     }, tint: .green)
                 }
 

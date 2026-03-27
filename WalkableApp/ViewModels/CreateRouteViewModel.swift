@@ -63,17 +63,28 @@ final class CreateRouteViewModel {
         routingService.clearCache()
     }
 
-    func calculateRoute() async {
+    private var calculationTask: Task<Void, Never>?
+
+    func calculateRoute() {
         guard canCalculate else { return }
         isCalculating = true
         errorMessage = nil
 
-        do {
-            calculatedRoute = try await routingService.calculateLoop(through: waypoints)
-        } catch {
-            errorMessage = error.localizedDescription
+        calculationTask = Task {
+            do {
+                calculatedRoute = try await routingService.calculateLoop(through: waypoints)
+            } catch is CancellationError {
+                // User cancelled
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+            isCalculating = false
         }
+    }
 
+    func cancelCalculation() {
+        calculationTask?.cancel()
+        calculationTask = nil
         isCalculating = false
     }
 

@@ -23,28 +23,34 @@ struct PinModeOverlay: View {
             }
 
             HStack(spacing: 12) {
-                if !viewModel.waypoints.isEmpty {
-                    GlassButtonLabel(title: "Undo", systemImage: "arrow.uturn.backward") {
-                        viewModel.undoLastWaypoint()
-                    }
-                }
-
-                if viewModel.waypoints.count >= 2 {
-                    GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
-                        viewModel.clearAll()
+                if viewModel.isCalculating {
+                    GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
+                        viewModel.cancelCalculation()
                     }, tint: .red)
-                }
+                } else {
+                    if !viewModel.waypoints.isEmpty {
+                        GlassButtonLabel(title: "Undo", systemImage: "arrow.uturn.backward") {
+                            viewModel.undoLastWaypoint()
+                        }
+                    }
 
-                if viewModel.canCalculate && !viewModel.hasRoute {
-                    GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
-                        Task { await viewModel.calculateRoute() }
-                    }, tint: .green)
-                }
+                    if viewModel.waypoints.count >= 2 {
+                        GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                            viewModel.clearAll()
+                        }, tint: .red)
+                    }
 
-                if viewModel.hasRoute {
-                    GlassButtonLabel(title: "Save", systemImage: "square.and.arrow.down", action: {
-                        viewModel.showSaveSheet = true
-                    }, tint: .blue)
+                    if viewModel.canCalculate && !viewModel.hasRoute {
+                        GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
+                            viewModel.calculateRoute()
+                        }, tint: .green)
+                    }
+
+                    if viewModel.hasRoute {
+                        GlassButtonLabel(title: "Save", systemImage: "square.and.arrow.down", action: {
+                            viewModel.showSaveSheet = true
+                        }, tint: .blue)
+                    }
                 }
             }
         }

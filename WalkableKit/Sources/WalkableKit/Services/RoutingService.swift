@@ -81,6 +81,7 @@ public final class RoutingService {
 
         var segmentRoutes = [MKRoute]()
         for (index, pair) in pairs.enumerated() {
+            try Task.checkCancellation()
             let route = try await calculateSegment(from: pair.from, to: pair.to)
             segmentRoutes.append(route)
 
