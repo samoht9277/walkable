@@ -67,10 +67,12 @@ final class LibraryViewModel {
 
     func toggleFavorite(_ route: Route) {
         route.isFavorite.toggle()
+        Haptics.light()
         SyncService.shared.syncRoute(route, operation: .update)
     }
 
     func deleteRoute(_ route: Route, modelContext: ModelContext) {
+        Haptics.heavy()
         for session in route.sessions {
             if let healthId = session.healthKitWorkoutID {
                 Task { try? await HealthService.shared.deleteWorkout(id: healthId) }

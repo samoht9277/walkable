@@ -109,6 +109,7 @@ struct CreateRouteView: View {
         .padding(.horizontal, 8)
         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
         .onChange(of: viewModel.mode) {
+            Haptics.light()
             viewModel.clearAll()
         }
     }

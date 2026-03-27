@@ -62,6 +62,7 @@ final class StatsViewModel {
     }
 
     func deleteSession(_ session: WalkSession, from context: ModelContext) {
+        Haptics.heavy()
         if let healthId = session.healthKitWorkoutID {
             Task { try? await HealthService.shared.deleteWorkout(id: healthId) }
         }
