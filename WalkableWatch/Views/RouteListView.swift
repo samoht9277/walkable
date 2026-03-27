@@ -9,16 +9,11 @@ struct RouteListView: View {
     var body: some View {
         NavigationStack {
             if routes.isEmpty {
-                VStack(spacing: 8) {
-                    Image(systemName: "map")
-                        .font(.largeTitle)
-                        .foregroundStyle(.secondary)
-                    Text("No Routes")
-                        .font(.headline)
-                    Text("Create routes on your iPhone")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                ContentUnavailableView(
+                    "No Routes",
+                    systemImage: "map",
+                    description: Text("Create routes on your iPhone")
+                )
             } else {
                 List(routes) { route in
                     Button {
