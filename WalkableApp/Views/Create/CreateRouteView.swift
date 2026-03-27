@@ -30,7 +30,7 @@ struct CreateRouteView: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .glassEffect(.clear, in: .capsule)
+                            .glassEffect(.regular, in: .capsule)
                         Spacer()
                     }
                     .padding(.leading, 20)

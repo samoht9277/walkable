@@ -5,70 +5,112 @@ struct DrawingCanvas: UIViewRepresentable {
     @Binding var isDrawing: Bool
     var onDrawingComplete: ([CGPoint]) -> Void
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onDrawingComplete: onDrawingComplete)
+    }
+
     func makeUIView(context: Context) -> DrawingCanvasUIView {
         let view = DrawingCanvasUIView()
-        view.onDrawingComplete = onDrawingComplete
         view.backgroundColor = .clear
-        view.isUserInteractionEnabled = true
-        view.isMultipleTouchEnabled = true
+
+        let pan = DrawingGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
+        pan.maximumNumberOfTouches = 1
+        pan.delegate = context.coordinator
+        view.addGestureRecognizer(pan)
+        context.coordinator.canvasView = view
+
         return view
     }
 
     func updateUIView(_ uiView: DrawingCanvasUIView, context: Context) {
-        uiView.isUserInteractionEnabled = isDrawing
+        uiView.gestureRecognizers?.forEach { $0.isEnabled = isDrawing }
+        context.coordinator.onDrawingComplete = onDrawingComplete
+    }
+
+    @MainActor
+    class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        var onDrawingComplete: ([CGPoint]) -> Void
+        weak var canvasView: DrawingCanvasUIView?
+
+        init(onDrawingComplete: @escaping ([CGPoint]) -> Void) {
+            self.onDrawingComplete = onDrawingComplete
+        }
+
+        @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+            guard let view = canvasView else { return }
+            let local = gesture.location(in: view)
+            let global = gesture.location(in: nil)
+
+            switch gesture.state {
+            case .began:
+                view.beginPath(local: local, global: global)
+            case .changed:
+                view.addPoint(local: local, global: global)
+            case .ended, .cancelled:
+                view.finishPath()
+                onDrawingComplete(view.globalPoints)
+            default:
+                break
+            }
+        }
+
+        // Allow the map's gestures to work simultaneously for 2+ finger gestures
+        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
+            true
+        }
+    }
+}
+
+/// Custom gesture recognizer that fails immediately on multitouch
+class DrawingGestureRecognizer: UIPanGestureRecognizer {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        if (event.allTouches?.count ?? 0) > 1 {
+            state = .failed
+            return
+        }
+        super.touchesBegan(touches, with: event)
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+        if (event.allTouches?.count ?? 0) > 1 {
+            state = .failed
+            return
+        }
+        super.touchesMoved(touches, with: event)
     }
 }
 
 @MainActor
 class DrawingCanvasUIView: UIView {
-    var onDrawingComplete: (([CGPoint]) -> Void)?
-    private var points: [CGPoint] = []       // window/global coordinates for map conversion
-    private var localPoints: [CGPoint] = []  // local coordinates for drawing the path
+    private(set) var globalPoints: [CGPoint] = []
+    private var localPoints: [CGPoint] = []
     private var currentPath = UIBezierPath()
 
-    private var isMultitouch = false
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // Two+ fingers = map gesture, not drawing
-        let allTouches = event?.allTouches ?? touches
-        if allTouches.count > 1 { isMultitouch = true; return }
-        isMultitouch = false
-
-        guard let touch = touches.first else { return }
-        points.removeAll()
+    func beginPath(local: CGPoint, global: CGPoint) {
+        globalPoints.removeAll()
         localPoints.removeAll()
         currentPath = UIBezierPath()
-        let local = touch.location(in: self)
-        let global = touch.location(in: nil)
         localPoints.append(local)
-        points.append(global)
+        globalPoints.append(global)
         currentPath.move(to: local)
         setNeedsDisplay()
     }
 
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let allTouches = event?.allTouches ?? touches
-        if allTouches.count > 1 { isMultitouch = true; return }
-        if isMultitouch { return }
-        guard let touch = touches.first else { return }
-        let local = touch.location(in: self)
-        let global = touch.location(in: nil)
+    func addPoint(local: CGPoint, global: CGPoint) {
         localPoints.append(local)
-        points.append(global)
+        globalPoints.append(global)
         currentPath.addLine(to: local)
         setNeedsDisplay()
     }
 
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if isMultitouch { isMultitouch = false; return }
-        if let firstLocal = localPoints.first, let firstGlobal = points.first {
+    func finishPath() {
+        if let firstLocal = localPoints.first, let firstGlobal = globalPoints.first {
             localPoints.append(firstLocal)
-            points.append(firstGlobal)
+            globalPoints.append(firstGlobal)
             currentPath.addLine(to: firstLocal)
             currentPath.close()
         }
         setNeedsDisplay()
-        onDrawingComplete?(points)
     }
 
     override func draw(_ rect: CGRect) {
@@ -80,7 +122,7 @@ class DrawingCanvasUIView: UIView {
     }
 
     func clear() {
-        points.removeAll()
+        globalPoints.removeAll()
         localPoints.removeAll()
         currentPath = UIBezierPath()
         setNeedsDisplay()
