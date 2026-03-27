@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Text("Create")
+            CreateRouteView()
                 .tabItem {
                     Label("Create", systemImage: "map")
                 }
