@@ -3,9 +3,12 @@ import SwiftUI
 struct PinModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
 
+    private var hasButtons: Bool {
+        viewModel.isCalculating || !viewModel.waypoints.isEmpty || viewModel.hasRoute
+    }
+
     var body: some View {
         VStack(spacing: 12) {
-            // Waypoint count hint
             if viewModel.waypoints.isEmpty {
                 Text("Tap the map to place waypoints")
                     .font(.subheadline)
@@ -22,42 +25,39 @@ struct PinModeOverlay: View {
                     .background(.ultraThinMaterial, in: Capsule())
             }
 
-            HStack(spacing: 12) {
-                if viewModel.isCalculating {
-                    GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
-                        viewModel.cancelCalculation()
-                    }, tint: .red)
-                } else {
-                    if !viewModel.waypoints.isEmpty {
-                        GlassButtonLabel(title: "Undo", systemImage: "arrow.uturn.backward") {
-                            viewModel.undoLastWaypoint()
-                        }
-                    }
-
-                    if viewModel.waypoints.count >= 2 {
-                        GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
-                            viewModel.clearAll()
+            if hasButtons {
+                HStack(spacing: 12) {
+                    if viewModel.isCalculating {
+                        GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
+                            viewModel.cancelCalculation()
                         }, tint: .red)
-                    }
+                    } else {
+                        if !viewModel.waypoints.isEmpty {
+                            GlassButtonLabel(title: "Undo", systemImage: "arrow.uturn.backward") {
+                                viewModel.undoLastWaypoint()
+                            }
+                        }
 
-                    if viewModel.canCalculate && !viewModel.hasRoute {
-                        GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
-                            viewModel.calculateRoute()
-                        }, tint: .green)
-                    }
+                        if viewModel.waypoints.count >= 2 {
+                            GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                                viewModel.clearAll()
+                            }, tint: .red)
+                        }
 
-                    if viewModel.hasRoute {
-                        GlassButtonLabel(title: "Save", systemImage: "square.and.arrow.down", action: {
-                            viewModel.showSaveSheet = true
-                        }, tint: .blue)
+                        if viewModel.canCalculate && !viewModel.hasRoute {
+                            GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
+                                viewModel.calculateRoute()
+                            }, tint: .green)
+                        }
+
+                        if viewModel.hasRoute {
+                            GlassButtonLabel(title: "Save", systemImage: "square.and.arrow.down", action: {
+                                viewModel.showSaveSheet = true
+                            }, tint: .blue)
+                        }
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
-            .padding(.horizontal, 8)
         }
         .padding(.bottom, 24)
     }
