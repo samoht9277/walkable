@@ -45,7 +45,7 @@ struct WalkTabView: View {
                 .tag(1)
 
                 // View 3: Now Playing
-                NowPlayingView()
+                WalkableNowPlayingView()
                     .tag(2)
             }
             .tabViewStyle(.verticalPage)
