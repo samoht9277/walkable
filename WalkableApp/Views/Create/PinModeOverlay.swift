@@ -11,14 +11,7 @@ struct PinModeOverlay: View {
         VStack(spacing: 0) {
             // Waypoint counter — always visible, part of the panel when buttons show
             if hasButtons {
-                VStack(spacing: 10) {
-                    Text("\(viewModel.waypoints.count)")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(width: 32, height: 32)
-                        .glassEffect(.regular, in: .circle)
-
-                    HStack(spacing: 8) {
+                HStack(spacing: 8) {
                         if viewModel.isCalculating {
                             GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
                                 viewModel.cancelCalculation()
@@ -48,7 +41,6 @@ struct PinModeOverlay: View {
                                 }, tint: .blue)
                             }
                         }
-                    }
                 }
                 .padding(.horizontal, 16)
             } else {
