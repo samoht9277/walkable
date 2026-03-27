@@ -6,16 +6,36 @@ import WalkableKit
 struct WalkableWatchApp: App {
     @State private var selectedRoute: Route?
     @State private var isWalking = false
+    @State private var routeListViewModel = WatchRouteListViewModel()
+    @Environment(\.modelContext) private var modelContext
 
     var body: some Scene {
         WindowGroup {
+            ContentWrapper(
+                selectedRoute: $selectedRoute,
+                isWalking: $isWalking,
+                routeListViewModel: routeListViewModel
+            )
+        }
+        .modelContainer(for: [Route.self, Waypoint.self, WalkSession.self, LegSplit.self])
+    }
+}
+
+/// Wrapper view that has access to the modelContext from the model container
+private struct ContentWrapper: View {
+    @Binding var selectedRoute: Route?
+    @Binding var isWalking: Bool
+    @Bindable var routeListViewModel: WatchRouteListViewModel
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        Group {
             if isWalking, let route = selectedRoute {
                 WalkTabView(route: route) {
                     isWalking = false
                     selectedRoute = nil
                 }
             } else if let route = selectedRoute {
-                // Pre-walk confirmation
                 VStack(spacing: 12) {
                     Text(route.name)
                         .font(.headline)
@@ -38,6 +58,9 @@ struct WalkableWatchApp: App {
                 }
             }
         }
-        .modelContainer(for: [Route.self, Waypoint.self, WalkSession.self, LegSplit.self])
+        .onAppear {
+            routeListViewModel.setModelContext(modelContext)
+            routeListViewModel.loadRoutes(modelContext: modelContext)
+        }
     }
 }

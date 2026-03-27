@@ -4,9 +4,9 @@ import WalkableKit
 
 struct DrawModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
+    var mapProxy: MapProxy?
     @State private var isDrawing = true
     @State private var drawnPoints: [CGPoint] = []
-    @State private var mapProxy: MapProxy?
 
     var body: some View {
         ZStack {
@@ -65,24 +65,28 @@ struct DrawModeOverlay: View {
     }
 
     private func convertDrawingToWaypoints() {
-        // Convert screen points to coordinates would need MapProxy,
-        // but for now we use a simplified approach:
-        // The drawn points are in screen coordinates. We need the MapReader proxy
-        // to convert them. This is wired up through CreateRouteView.
-        // For now, use PathSimplifier on the points as a 2D approximation.
-
         guard drawnPoints.count >= 3 else { return }
 
-        // Simplify the screen-space points first
-        let coordPoints = drawnPoints.map {
-            CLLocationCoordinate2D(latitude: Double($0.y), longitude: Double($0.x))
+        guard let mapProxy else {
+            viewModel.errorMessage = "Map proxy unavailable, cannot convert drawing."
+            return
         }
-        let simplified = PathSimplifier.simplify(coordPoints, tolerance: 20)
+
+        // Convert screen points to real map coordinates via MapProxy
+        let realCoords = drawnPoints.compactMap { point in
+            mapProxy.convert(point, from: .local)
+        }
+
+        guard realCoords.count >= 3 else {
+            viewModel.errorMessage = "Could not convert enough points to map coordinates."
+            return
+        }
+
+        // Simplify and sample using real coordinates
+        let simplified = PathSimplifier.simplify(realCoords, tolerance: 0.00005)
         let sampled = PathSimplifier.sampleWaypoints(along: simplified, intervalMeters: 50)
 
-        // This needs proper screen-to-map coordinate conversion
-        // which will be connected via the MapReader proxy in CreateRouteView
-        viewModel.setWaypoints(sampled.map { $0 })
+        viewModel.setWaypoints(sampled)
         isDrawing = false
     }
 }
