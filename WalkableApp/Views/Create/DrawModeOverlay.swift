@@ -73,9 +73,9 @@ struct DrawModeOverlay: View {
             return
         }
 
-        // Convert screen points to real map coordinates via MapProxy
+        // Convert window-coordinate points to real map coordinates via MapProxy
         let realCoords = drawnPoints.compactMap { point in
-            mapProxy.convert(point, from: .local)
+            mapProxy.convert(point, from: .global)
         }
 
         guard realCoords.count >= 3 else {

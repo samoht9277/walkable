@@ -6,11 +6,15 @@ public struct SegmentPair: Sendable {
     public let to: CLLocationCoordinate2D
 }
 
-public struct CalculatedRoute {
-    public let polyline: MKPolyline
+public struct CalculatedRoute: Sendable {
+    public let coordinates: [CLLocationCoordinate2D]
     public let distance: CLLocationDistance
     public let expectedTravelTime: TimeInterval
-    public let segmentPolylines: [MKPolyline]
+
+    public var polyline: MKPolyline {
+        var coords = coordinates
+        return MKPolyline(coordinates: &coords, count: coords.count)
+    }
 }
 
 @MainActor
@@ -86,15 +90,14 @@ public final class RoutingService {
             }
         }
 
-        let stitched = stitchPolylines(segmentRoutes.map { $0.polyline })
+        let allCoords = extractCoordinates(from: segmentRoutes.map { $0.polyline })
         let totalDistance = segmentRoutes.reduce(0) { $0 + $1.distance }
         let totalTime = segmentRoutes.reduce(0) { $0 + $1.expectedTravelTime }
 
         return CalculatedRoute(
-            polyline: stitched,
+            coordinates: allCoords,
             distance: totalDistance,
-            expectedTravelTime: totalTime,
-            segmentPolylines: segmentRoutes.map { $0.polyline }
+            expectedTravelTime: totalTime
         )
     }
 
@@ -109,8 +112,8 @@ public final class RoutingService {
         cache.removeAll()
     }
 
-    /// Stitch multiple polylines into one continuous polyline.
-    private func stitchPolylines(_ polylines: [MKPolyline]) -> MKPolyline {
+    /// Extract coordinates from multiple polylines into a single array.
+    private func extractCoordinates(from polylines: [MKPolyline]) -> [CLLocationCoordinate2D] {
         var allCoords = [CLLocationCoordinate2D]()
         for polyline in polylines {
             let points = polyline.points()
@@ -118,7 +121,7 @@ public final class RoutingService {
                 allCoords.append(points[i].coordinate)
             }
         }
-        return MKPolyline(coordinates: allCoords, count: allCoords.count)
+        return allCoords
     }
 }
 
