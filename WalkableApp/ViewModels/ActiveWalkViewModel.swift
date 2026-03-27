@@ -12,6 +12,9 @@ final class ActiveWalkViewModel {
     var isPaused = false
     var showSummary = false
 
+    // Watch handoff state
+    var isWalkingOnWatch = false
+
     // Live stats
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
@@ -36,6 +39,42 @@ final class ActiveWalkViewModel {
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
 
+    init() {
+        listenForWatchWalkStatus()
+    }
+
+    private func listenForWatchWalkStatus() {
+        SyncService.shared.watchWalkStatusReceived
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] routeId, status in
+                guard let self else { return }
+                switch status {
+                case .started:
+                    // Watch confirmed it started the walk
+                    break
+                case .ended:
+                    // Watch walk completed, return to normal state
+                    self.isWalkingOnWatch = false
+                    self.isWalking = false
+                    self.route = nil
+                }
+            }
+            .store(in: &cancellables)
+
+        // Also listen for session sync (results from Watch)
+        SyncService.shared.sessionSyncReceived
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                if self.isWalkingOnWatch {
+                    self.isWalkingOnWatch = false
+                    self.isWalking = false
+                    self.route = nil
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     var nextWaypointCoordinate: CLLocationCoordinate2D? {
         guard let route, currentWaypointIndex < route.sortedWaypoints.count else { return nil }
         return route.sortedWaypoints[currentWaypointIndex].coordinate
@@ -48,8 +87,18 @@ final class ActiveWalkViewModel {
 
     func startWalk(with route: Route) async {
         self.route = route
+
+        // If Watch is reachable, hand off the walk to the Watch instead of tracking locally
+        if SyncService.shared.isReachable {
+            SyncService.shared.startWalkOnWatch(route: route)
+            isWalkingOnWatch = true
+            isWalking = true
+            return
+        }
+
         isWalking = true
         isPaused = false
+        isWalkingOnWatch = false
         currentWaypointIndex = 0
         elapsedTime = 0
         distanceWalked = 0
