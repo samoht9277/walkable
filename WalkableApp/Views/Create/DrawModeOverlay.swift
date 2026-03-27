@@ -5,13 +5,12 @@ import WalkableKit
 struct DrawModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
     var mapProxy: MapProxy?
-    @State private var isPencilActive = true
+    @Binding var isPencilActive: Bool
     @State private var drawnPoints: [CGPoint] = []
     @State private var canvasId = UUID()
 
     var body: some View {
         ZStack {
-            // Drawing canvas — only intercepts touches when pencil is active
             if isPencilActive && !viewModel.hasRoute && viewModel.waypoints.isEmpty {
                 DrawingCanvas(isDrawing: $isPencilActive) { points in
                     drawnPoints = points
@@ -20,26 +19,6 @@ struct DrawModeOverlay: View {
                 .ignoresSafeArea()
             }
 
-            // Pencil/Navigate toggle — top left
-            VStack {
-                HStack {
-                    Button {
-                        isPencilActive.toggle()
-                        Haptics.light()
-                    } label: {
-                        Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(isPencilActive ? .blue : .white)
-                            .frame(width: 40, height: 40)
-                    }
-                    .glassEffect(.regular, in: .circle)
-                    Spacer()
-                }
-                .padding(.leading, 20)
-                Spacer()
-            }
-
-            // Bottom controls
             VStack {
                 Spacer()
 

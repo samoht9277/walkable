@@ -5,7 +5,7 @@ import WalkableKit
 struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
-    @Namespace private var mapScope
+    @State private var isPencilActive = true
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -34,8 +34,9 @@ struct CreateRouteView: View {
                             .glassEffect(.regular, in: .capsule)
                     }
                     Spacer()
-                    MapCompass(scope: mapScope)
-                        .mapControlVisibility(.automatic)
+                    if viewModel.mode == .draw {
+                        drawNavigateToggle
+                    }
                 }
                 .padding(.horizontal, 20)
                 Spacer()
@@ -91,8 +92,10 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
-            .mapScope(mapScope)
-            .mapControls { }
+            .mapControls {
+                MapCompass()
+                    .mapControlVisibility(.automatic)
+            }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
@@ -131,10 +134,23 @@ struct CreateRouteView: View {
         case .pin:
             PinModeOverlay(viewModel: viewModel)
         case .draw:
-            DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy)
+            DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy, isPencilActive: $isPencilActive)
         case .template:
             TemplateModeOverlay(viewModel: viewModel)
         }
+    }
+
+    private var drawNavigateToggle: some View {
+        Button {
+            isPencilActive.toggle()
+            Haptics.light()
+        } label: {
+            Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(isPencilActive ? .blue : .white)
+                .frame(width: 40, height: 40)
+        }
+        .glassEffect(.regular, in: .circle)
     }
 
     private var calculatingOverlay: some View {
