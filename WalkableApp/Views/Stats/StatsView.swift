@@ -5,7 +5,9 @@ import WalkableKit
 struct StatsView: View {
     @Query private var sessions: [WalkSession]
     @Query private var routes: [Route]
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = StatsViewModel()
+    @State private var selectedSession: WalkSession?
 
     var body: some View {
         NavigationStack {
@@ -67,6 +69,10 @@ struct StatsView: View {
                     PaceTrendChart(data: viewModel.paceData(sessions: sessions))
                         .padding(.horizontal)
 
+                    // Recent walks
+                    recentWalksSection
+                        .padding(.horizontal)
+
                     // Route leaderboard
                     RouteLeaderboard(entries: viewModel.routeBestTimes(routes: routes))
                         .padding(.horizontal)
@@ -78,7 +84,82 @@ struct StatsView: View {
             .onChange(of: viewModel.period) {
                 Task { await viewModel.loadStats(sessions: sessions) }
             }
+            .sheet(item: $selectedSession) { session in
+                SessionDetailSheet(session: session)
+                    .presentationDetents([.large])
+            }
         }
+    }
+
+    @ViewBuilder
+    private var recentWalksSection: some View {
+        let recent = viewModel.recentSessions(sessions: sessions)
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Recent Walks")
+                .font(.headline)
+
+            if recent.isEmpty {
+                Text("No walks this period")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 8)
+            } else {
+                ForEach(recent, id: \.id) { session in
+                    Button {
+                        selectedSession = session
+                    } label: {
+                        sessionRow(session)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            withAnimation {
+                                viewModel.deleteSession(session, from: modelContext)
+                            }
+                            Task { await viewModel.loadStats(sessions: sessions) }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                    if session.id != recent.last?.id {
+                        Divider()
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    @ViewBuilder
+    private func sessionRow(_ session: WalkSession) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(session.route?.name ?? "Free Walk")
+                    .font(.subheadline.weight(.medium))
+                Text(session.startedAt, style: .date)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(String(format: "%.2f km", session.totalDistance / 1000))
+                    .font(.subheadline.monospacedDigit())
+                HStack(spacing: 12) {
+                    Text(formatDuration(session.totalDuration))
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                    Text(session.formattedPace)
+                        .font(.caption.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(.green)
+                }
+            }
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
     }
 
     private func formatPace(_ pace: Double) -> String {
@@ -86,5 +167,16 @@ struct StatsView: View {
         let mins = Int(pace) / 60
         let secs = Int(pace) % 60
         return String(format: "%d:%02d /km", mins, secs)
+    }
+
+    private func formatDuration(_ seconds: TimeInterval) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        if mins >= 60 {
+            let hrs = mins / 60
+            let remainMins = mins % 60
+            return String(format: "%d:%02d:%02d", hrs, remainMins, secs)
+        }
+        return String(format: "%d:%02d", mins, secs)
     }
 }

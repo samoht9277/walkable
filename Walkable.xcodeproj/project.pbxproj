@@ -30,6 +30,7 @@
 		789071D67D46C4AE7996E31A /* RouteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C0771AA622AAF1E7D6CA3 /* RouteCardView.swift */; };
 		8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */; };
 		8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555554BF8D7071BD426467B /* SaveRouteSheet.swift */; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* SessionDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E2D3C4B5A6978869504132 /* SessionDetailSheet.swift */; };
 		97E089ADC3CA8981385F63E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307090577F05AA73E61C1159 /* ContentView.swift */; };
 		9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856C3414EF05FE64556D6E09 /* WalkableApp.swift */; };
 		99BC7ABFCFBF0765A3F8D7CD /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FE9645613CC23B11F2232C /* LibraryView.swift */; };
@@ -77,8 +78,8 @@
 		416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathSimplifierTests.swift; sourceTree = "<group>"; };
 		44DBE628CD2816AF0CC6C0E3 /* RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteListView.swift; sourceTree = "<group>"; };
 		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
-		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
+		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		57F061AAADC8839C2E49EE10 /* WalkTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkTabView.swift; sourceTree = "<group>"; };
 		6FE0975B78BD16789EBECAD7 /* WatchRouteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRouteListViewModel.swift; sourceTree = "<group>"; };
 		719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteView.swift; sourceTree = "<group>"; };
@@ -104,6 +105,7 @@
 		E8EDD0A140E15FF36623E578 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteViewModel.swift; sourceTree = "<group>"; };
 		E9D00E57C3DC5BC436ED09A3 /* WatchMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMapView.swift; sourceTree = "<group>"; };
+		F1E2D3C4B5A6978869504132 /* SessionDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailSheet.swift; sourceTree = "<group>"; };
 		F19610F12212010842919D16 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
 		F5E6D32D966038AD56757CC3 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		FE89E09A4281BDD8AACC4159 /* TemplateModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModeOverlay.swift; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 			children = (
 				DB9C7705FA9827427AC0DCB1 /* PaceTrendChart.swift */,
 				7F3914E335172E7FCBD40876 /* RouteLeaderboard.swift */,
+				F1E2D3C4B5A6978869504132 /* SessionDetailSheet.swift */,
 				2987AC77B66DB1195F140EA5 /* StatCardView.swift */,
 				169965F5AD3679689FD9268B /* StatsView.swift */,
 			);
@@ -370,6 +373,12 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					4DF7772DF0C4B7ED0E86FB13 = {
+						ProvisioningStyle = Automatic;
+					};
+					D7216D9D62AA556F4C3FD40A = {
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 279E1BD4BE4B9E93BD3830D2 /* Build configuration list for PBXProject "Walkable" */;
@@ -419,6 +428,7 @@
 				EE565D9D0866BEC3F24C75D3 /* RouteLeaderboard.swift in Sources */,
 				2270E1523F109D5066BF7B53 /* RouteMapOverlay.swift in Sources */,
 				8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* SessionDetailSheet.swift in Sources */,
 				544A9359D87948DFFF580080 /* StatCardView.swift in Sources */,
 				EF4F3E21943AF22940BB8D7C /* StatsView.swift in Sources */,
 				011791246714E964BB8E66C0 /* StatsViewModel.swift in Sources */,
@@ -473,10 +483,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableWatch/WalkableWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads health data during walks.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location for walk navigation.";
+				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.walkable.WalkableApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.walkable.WalkableWatch;
 				SDKROOT = watchos;
@@ -525,11 +538,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves your walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Walkable needs background location access to track your walks.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location to track walks and show your position on the map.";
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -546,11 +564,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves your walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Walkable needs background location access to track your walks.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location to track walks and show your position on the map.";
+				INFOPLIST_KEY_UIBackgroundModes = location;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -622,10 +645,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableWatch/WalkableWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads health data during walks.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location for walk navigation.";
+				INFOPLIST_KEY_WKApplication = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.walkable.WalkableApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.walkable.WalkableWatch;
 				SDKROOT = watchos;

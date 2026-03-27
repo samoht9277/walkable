@@ -61,6 +61,18 @@ final class StatsViewModel {
             .map { (date: $0.startedAt, pace: $0.avgPace) }
     }
 
+    func deleteSession(_ session: WalkSession, from context: ModelContext) {
+        context.delete(session)
+        try? context.save()
+    }
+
+    func recentSessions(sessions: [WalkSession]) -> [WalkSession] {
+        let range = dateRange
+        return sessions
+            .filter { $0.startedAt >= range.start && $0.startedAt <= range.end }
+            .sorted { $0.startedAt > $1.startedAt }
+    }
+
     func routeBestTimes(routes: [Route]) -> [(route: Route, bestPace: Double, sessions: Int)] {
         routes.compactMap { route in
             let sessions = route.sessions
