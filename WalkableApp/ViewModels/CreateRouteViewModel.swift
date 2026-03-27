@@ -48,12 +48,14 @@ final class CreateRouteViewModel {
     func addWaypoint(_ coordinate: CLLocationCoordinate2D) {
         waypoints.append(coordinate)
         calculatedRoute = nil
+        Haptics.light()
     }
 
     func undoLastWaypoint() {
         guard !waypoints.isEmpty else { return }
         waypoints.removeLast()
         calculatedRoute = nil
+        Haptics.light()
     }
 
     func clearAll() {
@@ -61,6 +63,7 @@ final class CreateRouteViewModel {
         calculatedRoute = nil
         errorMessage = nil
         routingService.clearCache()
+        Haptics.heavy()
     }
 
     private var calculationTask: Task<Void, Never>?
@@ -70,6 +73,7 @@ final class CreateRouteViewModel {
         isCalculating = true
         errorMessage = nil
 
+        Haptics.medium()
         calculationTask = Task {
             do {
                 let result = try await routingService.calculateLoop(through: waypoints)
@@ -77,10 +81,12 @@ final class CreateRouteViewModel {
                 if result.snappedWaypoints.count == waypoints.count {
                     waypoints = result.snappedWaypoints
                 }
+                Haptics.success()
             } catch is CancellationError {
                 // User cancelled
             } catch {
                 errorMessage = error.localizedDescription
+                Haptics.error()
             }
             isCalculating = false
         }
@@ -90,6 +96,7 @@ final class CreateRouteViewModel {
         calculationTask?.cancel()
         calculationTask = nil
         isCalculating = false
+        Haptics.heavy()
     }
 
     func saveRoute(modelContext: ModelContext) {
@@ -122,6 +129,7 @@ final class CreateRouteViewModel {
         try? modelContext.save()
 
         SyncService.shared.syncRoute(route, operation: .create)
+        Haptics.success()
 
         // Reset state
         clearAll()

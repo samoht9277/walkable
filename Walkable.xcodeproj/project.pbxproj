@@ -29,6 +29,7 @@
 		6C0D38EBBAD1D1E14D3CD667 /* TemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */; };
 		6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */; };
 		6E0401483C3C5BE0369B6DB4 /* CreateRouteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */; };
+		70EAEA4A912BD094E28BE123 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A51C3C02B3BA119213CAA1 /* Haptics.swift */; };
 		789071D67D46C4AE7996E31A /* RouteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C0771AA622AAF1E7D6CA3 /* RouteCardView.swift */; };
 		8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */; };
 		8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555554BF8D7071BD426467B /* SaveRouteSheet.swift */; };
@@ -81,8 +82,8 @@
 		4396FA147406FD118CC8FB34 /* SessionDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailSheet.swift; sourceTree = "<group>"; };
 		44DBE628CD2816AF0CC6C0E3 /* RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteListView.swift; sourceTree = "<group>"; };
 		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
-		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WalkableKit; sourceTree = SOURCE_ROOT; };
+		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		57F061AAADC8839C2E49EE10 /* WalkTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkTabView.swift; sourceTree = "<group>"; };
 		6FE0975B78BD16789EBECAD7 /* WatchRouteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRouteListViewModel.swift; sourceTree = "<group>"; };
 		719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteView.swift; sourceTree = "<group>"; };
@@ -99,6 +100,7 @@
 		AB45A54BE7D39650928B01EC /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapOverlay.swift; sourceTree = "<group>"; };
 		B44C75758EF0C7AC84CE39E7 /* CompassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassView.swift; sourceTree = "<group>"; };
+		B6A51C3C02B3BA119213CAA1 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvas.swift; sourceTree = "<group>"; };
 		C6AA5849D96973C9AD6788D2 /* DrawModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawModeOverlay.swift; sourceTree = "<group>"; };
 		C8CEF479EC71EEEE1696F797 /* WalkStatsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkStatsBar.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 			children = (
 				06955A99B18F0995ED28EAA4 /* GlassButton.swift */,
 				F5E6D32D966038AD56757CC3 /* GlassCard.swift */,
+				B6A51C3C02B3BA119213CAA1 /* Haptics.swift */,
 				ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */,
 			);
 			path = Shared;
@@ -425,6 +428,7 @@
 				C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */,
 				52DBB50296540319AFE3ABE6 /* GlassButton.swift in Sources */,
 				D616989BE078C5766CF63C77 /* GlassCard.swift in Sources */,
+				70EAEA4A912BD094E28BE123 /* Haptics.swift in Sources */,
 				99BC7ABFCFBF0765A3F8D7CD /* LibraryView.swift in Sources */,
 				67E7CC5BE31B58EAE6DB3F9F /* LibraryViewModel.swift in Sources */,
 				54D5A3D95030A148498D293F /* PaceTrendChart.swift in Sources */,
@@ -547,7 +551,6 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";
@@ -573,7 +576,6 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";

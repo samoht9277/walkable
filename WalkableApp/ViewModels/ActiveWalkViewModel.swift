@@ -157,6 +157,7 @@ final class ActiveWalkViewModel {
     func pauseWalk() {
         isPaused = true
         pauseStartTime = Date()
+        Haptics.medium()
     }
 
     func resumeWalk() {
@@ -165,9 +166,11 @@ final class ActiveWalkViewModel {
             pauseStartTime = nil
         }
         isPaused = false
+        Haptics.medium()
     }
 
     func endWalk(modelContext: ModelContext) async {
+        Haptics.heavy()
         timer?.invalidate()
         timer = nil
         locationService.stopTracking()
@@ -215,6 +218,7 @@ final class ActiveWalkViewModel {
 
         isWalking = false
         showSummary = true
+        Haptics.success()
         SyncService.shared.setActiveRoute(nil)
     }
 

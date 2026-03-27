@@ -53,6 +53,11 @@ struct PinModeOverlay: View {
                     }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+            .padding(.horizontal, 8)
         }
         .padding(.bottom, 24)
     }

@@ -50,6 +50,7 @@ struct DrawModeOverlay: View {
 
                             if !drawnPoints.isEmpty && viewModel.waypoints.isEmpty {
                                 GlassButtonLabel(title: "Snap to Roads", systemImage: "road.lanes", action: {
+                                    Haptics.medium()
                                     convertDrawingToWaypoints()
                                     viewModel.calculateRoute()
                                 }, tint: .green)
@@ -68,6 +69,11 @@ struct DrawModeOverlay: View {
                             }, tint: .blue)
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+                    .padding(.horizontal, 8)
                 }
                 .padding(.bottom, 24)
             }
