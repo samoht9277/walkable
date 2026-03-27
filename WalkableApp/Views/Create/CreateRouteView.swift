@@ -6,7 +6,7 @@ struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
     @State private var isPencilActive = true
-    @State private var mapHeading: Double = 0
+    @Namespace private var mapScope
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -36,7 +36,8 @@ struct CreateRouteView: View {
                     }
                     Spacer()
                     VStack(spacing: 8) {
-                        compassButton
+                        MapCompass(scope: mapScope)
+                            .mapControlVisibility(.automatic)
                         if viewModel.mode == .draw {
                             drawNavigateToggle
                         }
@@ -96,6 +97,7 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
+            .mapScope(mapScope)
             .mapControls { }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
@@ -105,7 +107,6 @@ struct CreateRouteView: View {
             }
             .onMapCameraChange { context in
                 viewModel.visibleRegion = context.region
-                mapHeading = context.camera.heading
             }
             .onAppear { storedMapProxy = proxy }
         }
@@ -139,29 +140,6 @@ struct CreateRouteView: View {
             DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy, isPencilActive: $isPencilActive)
         case .template:
             TemplateModeOverlay(viewModel: viewModel)
-        }
-    }
-
-    @ViewBuilder
-    private var compassButton: some View {
-        if mapHeading != 0 {
-            Button {
-                withAnimation {
-                    viewModel.cameraPosition = .camera(MapCamera(
-                        centerCoordinate: viewModel.visibleRegion?.center ?? CLLocationCoordinate2D(),
-                        distance: 3000,
-                        heading: 0
-                    ))
-                }
-            } label: {
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.red, .white)
-                    .rotationEffect(.degrees(-mapHeading))
-                    .frame(width: 40, height: 40)
-            }
-            .glassEffect(.regular, in: .circle)
-            .transition(.scale.combined(with: .opacity))
         }
     }
 
