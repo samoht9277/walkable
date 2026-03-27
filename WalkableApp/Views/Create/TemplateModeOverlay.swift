@@ -86,9 +86,18 @@ struct TemplateModeOverlay: View {
         .padding(.bottom, 24)
     }
 
+    private func centerCoordinate() -> CLLocationCoordinate2D? {
+        if let gps = locationService.currentLocation?.coordinate { return gps }
+        // Fall back to the map's visible region center
+        if let region = viewModel.cameraPosition.region {
+            return region.center
+        }
+        return nil
+    }
+
     private func generateTemplate() {
-        guard let location = locationService.currentLocation?.coordinate else {
-            viewModel.errorMessage = "Need your location to generate a template. Make sure location access is enabled."
+        guard let location = centerCoordinate() else {
+            viewModel.errorMessage = "Pan the map to your desired location and try again."
             return
         }
 
