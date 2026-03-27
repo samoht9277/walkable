@@ -20,6 +20,14 @@ final class WatchRouteListViewModel {
                 self?.handleRouteSync(payload)
             }
             .store(in: &cancellables)
+
+        // Listen for Watch-created routes arriving back from phone (dedup)
+        SyncService.shared.watchCreatedRouteReceived
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] payload in
+                self?.handleRouteSync(payload)
+            }
+            .store(in: &cancellables)
     }
 
     func setModelContext(_ context: ModelContext) {
