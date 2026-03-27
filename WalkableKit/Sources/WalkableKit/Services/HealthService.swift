@@ -11,6 +11,8 @@ public final class HealthService: NSObject, ObservableObject {
     #if os(watchOS)
     private var session: HKWorkoutSession?
     private var builder: HKLiveWorkoutBuilder?
+    #else
+    private var workoutBuilder: HKWorkoutBuilder?
     #endif
 
     private var routeBuilder: HKWorkoutRouteBuilder?
@@ -95,6 +97,46 @@ public final class HealthService: NSObject, ObservableObject {
 
         self.session = nil
         self.builder = nil
+        self.routeBuilder = nil
+
+        return workout
+    }
+    #else
+    // MARK: - iOS Workout (non-live HKWorkoutBuilder)
+
+    public func startWalkingWorkout() async throws {
+        let config = HKWorkoutConfiguration()
+        config.activityType = .walking
+        config.locationType = .outdoor
+
+        let builder = HKWorkoutBuilder(healthStore: store, configuration: config, device: .local())
+        try await builder.beginCollection(at: Date())
+        self.workoutBuilder = builder
+
+        routeBuilder = HKWorkoutRouteBuilder(healthStore: store, device: nil)
+    }
+
+    public func pauseWorkout() {
+        let event = HKWorkoutEvent(type: .pause, dateInterval: DateInterval(start: Date(), duration: 0), metadata: nil)
+        workoutBuilder?.addWorkoutEvents([event]) { _, _ in }
+    }
+
+    public func resumeWorkout() {
+        let event = HKWorkoutEvent(type: .resume, dateInterval: DateInterval(start: Date(), duration: 0), metadata: nil)
+        workoutBuilder?.addWorkoutEvents([event]) { _, _ in }
+    }
+
+    public func endWorkout() async throws -> HKWorkout? {
+        guard let workoutBuilder else { return nil }
+
+        try await workoutBuilder.endCollection(at: Date())
+        let workout: HKWorkout? = try await workoutBuilder.finishWorkout()
+
+        if let routeBuilder, let workout {
+            try await routeBuilder.finishRoute(with: workout, metadata: nil)
+        }
+
+        self.workoutBuilder = nil
         self.routeBuilder = nil
 
         return workout

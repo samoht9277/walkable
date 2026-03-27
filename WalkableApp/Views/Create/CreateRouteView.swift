@@ -114,7 +114,7 @@ struct CreateRouteView: View {
         case .pin:
             PinModeOverlay(viewModel: viewModel)
         case .draw:
-            DrawModeOverlay(viewModel: viewModel)
+            DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy)
         case .template:
             TemplateModeOverlay(viewModel: viewModel)
         }

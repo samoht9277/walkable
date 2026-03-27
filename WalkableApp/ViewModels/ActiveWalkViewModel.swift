@@ -29,6 +29,8 @@ final class ActiveWalkViewModel {
 
     private var timer: Timer?
     private var startTime: Date?
+    private var pausedDuration: TimeInterval = 0
+    private var pauseStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
 
     private let locationService = LocationService.shared
@@ -54,6 +56,8 @@ final class ActiveWalkViewModel {
         calories = 0
         gpsLocations.removeAll()
         waypointArrivalTimes.removeAll()
+        pausedDuration = 0
+        pauseStartTime = nil
         startTime = Date()
 
         // Set up waypoint monitoring
@@ -75,9 +79,21 @@ final class ActiveWalkViewModel {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] location in
                 guard let self else { return }
+                #if os(watchOS)
                 self.gpsLocations.append(location)
                 self.distanceWalked = self.healthService.distanceWalked
                 self.calories = self.healthService.activeCalories
+                #else
+                // On iOS, calculate distance from GPS since HKLiveWorkoutBuilder is unavailable
+                if let lastLocation = self.gpsLocations.last {
+                    let delta = location.distance(from: lastLocation)
+                    if delta > 0, delta < 100 { // ignore GPS jumps > 100m
+                        self.distanceWalked += delta
+                        self.calories = self.distanceWalked * 0.05 // ~0.05 kcal/meter walking estimate
+                    }
+                }
+                self.gpsLocations.append(location)
+                #endif
                 self.healthService.addRouteLocation(location)
             }
             .store(in: &cancellables)
@@ -86,7 +102,7 @@ final class ActiveWalkViewModel {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self, !self.isPaused, let start = self.startTime else { return }
-                self.elapsedTime = Date().timeIntervalSince(start)
+                self.elapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
                 if self.distanceWalked > 0 {
                     self.currentPace = self.elapsedTime / (self.distanceWalked / 1000) // sec/km
                 }
@@ -98,9 +114,14 @@ final class ActiveWalkViewModel {
 
     func pauseWalk() {
         isPaused = true
+        pauseStartTime = Date()
     }
 
     func resumeWalk() {
+        if let pauseStart = pauseStartTime {
+            pausedDuration += Date().timeIntervalSince(pauseStart)
+            pauseStartTime = nil
+        }
         isPaused = false
     }
 
