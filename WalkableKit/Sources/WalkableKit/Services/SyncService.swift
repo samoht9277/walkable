@@ -164,6 +164,75 @@ public final class SyncService: NSObject, ObservableObject {
 
         WCSession.default.transferUserInfo(["sessionSync": dict])
     }
+
+    // MARK: - Watch-Created Route Sync (Watch → Phone)
+
+    /// Send a route created on Watch to the phone via transferUserInfo (queued delivery).
+    public func syncWatchCreatedRoute(_ payload: SyncPayload) {
+        guard let data = try? JSONEncoder().encode(payload),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+
+        WCSession.default.transferUserInfo(["watchCreatedRoute": dict])
+    }
+
+    /// Called on the phone when a Watch-created route arrives.
+    public let watchCreatedRouteReceived = PassthroughSubject<SyncPayload, Never>()
+
+    // MARK: - Phone → Watch Walk Handoff
+
+    /// Send a "start walk" command to the Watch with the route data (immediate delivery).
+    public func startWalkOnWatch(route: Route) {
+        let waypoints = route.sortedWaypoints.map {
+            SyncWaypoint(index: $0.index, latitude: $0.latitude, longitude: $0.longitude, label: $0.label)
+        }
+
+        var polylineCoords: [CodableCoordinate]?
+        if let data = route.polylineData {
+            polylineCoords = try? JSONDecoder().decode([CodableCoordinate].self, from: data)
+        }
+
+        let payload = SyncPayload(
+            operation: .create,
+            routeId: route.id.uuidString,
+            name: route.name,
+            distance: route.distance,
+            estimatedDuration: route.estimatedDuration,
+            waypoints: waypoints,
+            polylineCoordinates: polylineCoords
+        )
+
+        guard let data = try? JSONEncoder().encode(payload),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+
+        let message: [String: Any] = ["startWalkOnWatch": dict]
+        WCSession.default.sendMessage(message, replyHandler: nil) { error in
+            print("Failed to send startWalkOnWatch: \(error.localizedDescription)")
+        }
+    }
+
+    /// Called on Watch when the phone requests a walk start.
+    public let startWalkRequested = PassthroughSubject<SyncPayload, Never>()
+
+    /// Notify the phone that a walk started or ended on Watch.
+    public func notifyPhoneWalkStatus(routeId: String, status: WalkHandoffStatus) {
+        let dict: [String: Any] = [
+            "watchWalkStatus": [
+                "routeId": routeId,
+                "status": status.rawValue
+            ]
+        ]
+        WCSession.default.sendMessage(dict, replyHandler: nil) { _ in
+            // Fall back to transferUserInfo if not reachable
+            WCSession.default.transferUserInfo(dict)
+        }
+    }
+
+    /// Called on the phone when Watch reports walk status.
+    public let watchWalkStatusReceived = PassthroughSubject<(routeId: String, status: WalkHandoffStatus), Never>()
+}
+
+public enum WalkHandoffStatus: String, Codable, Sendable {
+    case started, ended
 }
 
 extension SyncService: @preconcurrency WCSessionDelegate {
@@ -194,6 +263,42 @@ extension SyncService: @preconcurrency WCSessionDelegate {
            let payload = try? JSONDecoder().decode(SessionSyncPayload.self, from: data) {
             Task { @MainActor in
                 sessionSyncReceived.send(payload)
+            }
+        }
+
+        if let routeDict = userInfo["watchCreatedRoute"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: routeDict),
+           let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
+            Task { @MainActor in
+                watchCreatedRouteReceived.send(payload)
+            }
+        }
+
+        if let statusDict = userInfo["watchWalkStatus"] as? [String: Any],
+           let routeId = statusDict["routeId"] as? String,
+           let rawStatus = statusDict["status"] as? String,
+           let status = WalkHandoffStatus(rawValue: rawStatus) {
+            Task { @MainActor in
+                watchWalkStatusReceived.send((routeId: routeId, status: status))
+            }
+        }
+    }
+
+    public nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        if let routeDict = message["startWalkOnWatch"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: routeDict),
+           let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
+            Task { @MainActor in
+                startWalkRequested.send(payload)
+            }
+        }
+
+        if let statusDict = message["watchWalkStatus"] as? [String: Any],
+           let routeId = statusDict["routeId"] as? String,
+           let rawStatus = statusDict["status"] as? String,
+           let status = WalkHandoffStatus(rawValue: rawStatus) {
+            Task { @MainActor in
+                watchWalkStatusReceived.send((routeId: routeId, status: status))
             }
         }
     }
