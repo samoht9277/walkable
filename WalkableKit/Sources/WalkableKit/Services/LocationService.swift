@@ -1,0 +1,111 @@
+@preconcurrency import CoreLocation
+import Combine
+
+@MainActor
+public final class LocationService: NSObject, ObservableObject {
+    public static let shared = LocationService()
+
+    private let manager = CLLocationManager()
+
+    @Published public var currentLocation: CLLocation?
+    @Published public var heading: CLHeading?
+    @Published public var authorizationStatus: CLAuthorizationStatus = .notDetermined
+
+    /// Fires when user enters the proximity radius of a waypoint.
+    /// Value is the index of the waypoint arrived at.
+    public let waypointArrival = PassthroughSubject<Int, Never>()
+
+    private var waypointCoordinates: [CLLocationCoordinate2D] = []
+    private var arrivedWaypoints: Set<Int> = []
+    private let arrivalRadiusMeters: Double = 25
+
+    private override init() {
+        super.init()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+        manager.distanceFilter = 5
+        manager.allowsBackgroundLocationUpdates = true
+        manager.showsBackgroundLocationIndicator = true
+    }
+
+    public func requestAuthorization() {
+        manager.requestWhenInUseAuthorization()
+    }
+
+    public func startTracking() {
+        manager.startUpdatingLocation()
+    }
+
+    public func stopTracking() {
+        manager.stopUpdatingLocation()
+        manager.stopUpdatingHeading()
+    }
+
+    public func startHeadingUpdates() {
+        manager.startUpdatingHeading()
+    }
+
+    public func stopHeadingUpdates() {
+        manager.stopUpdatingHeading()
+    }
+
+    /// Set waypoints to monitor for proximity arrival during a walk.
+    public func monitorWaypoints(_ coordinates: [CLLocationCoordinate2D]) {
+        waypointCoordinates = coordinates
+        arrivedWaypoints.removeAll()
+    }
+
+    /// Clear waypoint monitoring.
+    public func clearWaypointMonitoring() {
+        waypointCoordinates.removeAll()
+        arrivedWaypoints.removeAll()
+    }
+
+    /// Check if current location is within arrival radius of any unvisited waypoint.
+    private func checkWaypointProximity(_ location: CLLocation) {
+        for (index, coord) in waypointCoordinates.enumerated() {
+            guard !arrivedWaypoints.contains(index) else { continue }
+            let waypointLocation = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
+            if location.distance(from: waypointLocation) <= arrivalRadiusMeters {
+                arrivedWaypoints.insert(index)
+                waypointArrival.send(index)
+            }
+        }
+    }
+
+    /// Bearing from current location to a target coordinate, in degrees (0 = north, clockwise).
+    nonisolated public func bearing(to target: CLLocationCoordinate2D, from current: CLLocationCoordinate2D) -> Double {
+        let lat1 = current.latitude * .pi / 180
+        let lat2 = target.latitude * .pi / 180
+        let dLng = (target.longitude - current.longitude) * .pi / 180
+
+        let y = sin(dLng) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLng)
+
+        var bearing = atan2(y, x) * 180 / .pi
+        if bearing < 0 { bearing += 360 }
+        return bearing
+    }
+
+    /// Distance from current location to a target coordinate, in meters.
+    public func distance(to target: CLLocationCoordinate2D) -> Double? {
+        guard let current = currentLocation else { return nil }
+        return current.distance(from: CLLocation(latitude: target.latitude, longitude: target.longitude))
+    }
+}
+
+extension LocationService: @preconcurrency CLLocationManagerDelegate {
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        currentLocation = location
+        checkWaypointProximity(location)
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        heading = newHeading
+    }
+
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        authorizationStatus = manager.authorizationStatus
+    }
+}
