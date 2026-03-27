@@ -98,13 +98,9 @@ public final class RoutingService {
         let totalDistance = segmentRoutes.reduce(0) { $0 + $1.distance }
         let totalTime = segmentRoutes.reduce(0) { $0 + $1.expectedTravelTime }
 
-        // Extract road-snapped waypoint positions from the start of each segment's polyline
-        var snapped = [CLLocationCoordinate2D]()
-        for route in segmentRoutes {
-            let points = route.polyline.points()
-            if route.polyline.pointCount > 0 {
-                snapped.append(points[0].coordinate)
-            }
+        // Snap each original waypoint to the nearest point on the calculated route polyline
+        let snapped = coordinates.map { waypoint in
+            PolylineSplitter.snapToPolyline(point: waypoint, polyline: allCoords)
         }
 
         return CalculatedRoute(
