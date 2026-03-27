@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4E4175BD3A88A55593C6C39B /* WalkableWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D54965837D4623422C8EE3E /* WalkableWatchApp.swift */; };
+		6C0D38EBBAD1D1E14D3CD667 /* TemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */; };
+		6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */; };
+		8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */; };
 		97E089ADC3CA8981385F63E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307090577F05AA73E61C1159 /* ContentView.swift */; };
 		9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856C3414EF05FE64556D6E09 /* WalkableApp.swift */; };
 		9AE7B3E204D6E6DAB46E602A /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFB113B25AAE0C99856458A5 /* WalkableKit */; };
@@ -27,8 +30,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateGeneratorTests.swift; sourceTree = "<group>"; };
 		307090577F05AA73E61C1159 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingServiceTests.swift; sourceTree = "<group>"; };
 		40CDD85F619FEE037E736AEB /* WalkableApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WalkableApp.entitlements; sourceTree = "<group>"; };
+		416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathSimplifierTests.swift; sourceTree = "<group>"; };
 		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		7D54965837D4623422C8EE3E /* WalkableWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableWatchApp.swift; sourceTree = "<group>"; };
@@ -101,6 +107,9 @@
 			isa = PBXGroup;
 			children = (
 				AB45A54BE7D39650928B01EC /* ModelTests.swift */,
+				416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */,
+				30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */,
+				0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */,
 			);
 			path = WalkableTests;
 			sourceTree = "<group>";
@@ -242,6 +251,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBE036444564236017088B6A /* ModelTests.swift in Sources */,
+				6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */,
+				8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */,
+				6C0D38EBBAD1D1E14D3CD667 /* TemplateGeneratorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
