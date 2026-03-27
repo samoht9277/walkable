@@ -20,7 +20,7 @@ struct RouteDetailSheet: View {
                 VStack(spacing: 16) {
                     HStack {
                         StatPill(label: "Distance", value: String(format: "%.1f km", route.distance / 1000))
-                        StatPill(label: "Est. Time", value: formatDuration(route.estimatedDuration))
+                        StatPill(label: "Est. Time", value: route.estimatedDuration.formattedEstimate)
                         StatPill(label: "Waypoints", value: "\(route.waypoints.count)")
                     }
                     .padding(.horizontal)
@@ -51,11 +51,6 @@ struct RouteDetailSheet: View {
         }
     }
 
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let minutes = Int(seconds) / 60
-        if minutes < 60 { return "~\(minutes) min" }
-        return "~\(minutes / 60)h \(minutes % 60)m"
-    }
 }
 
 struct StatPill: View {

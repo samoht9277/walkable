@@ -1,4 +1,5 @@
 import SwiftUI
+import WalkableKit
 
 struct WalkSummaryView: View {
     let distance: Double
@@ -19,8 +20,8 @@ struct WalkSummaryView: View {
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     summaryCard("Distance", value: String(format: "%.2f km", distance / 1000), icon: "ruler")
-                    summaryCard("Duration", value: formatDuration(duration), icon: "clock")
-                    summaryCard("Avg Pace", value: formatPace(pace), icon: "speedometer")
+                    summaryCard("Duration", value: duration.formattedDuration, icon: "clock")
+                    summaryCard("Avg Pace", value: pace.formattedPace, icon: "speedometer")
                     summaryCard("Calories", value: String(format: "%.0f kcal", calories), icon: "flame")
                 }
                 .padding(.horizontal)
@@ -59,18 +60,5 @@ struct WalkSummaryView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-    }
-
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%d:%02d", mins, secs)
-    }
-
-    private func formatPace(_ pace: Double) -> String {
-        guard pace > 0 && pace < 3600 else { return "--:--" }
-        let mins = Int(pace) / 60
-        let secs = Int(pace) % 60
-        return String(format: "%d:%02d /km", mins, secs)
     }
 }

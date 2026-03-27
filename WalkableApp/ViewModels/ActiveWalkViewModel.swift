@@ -15,18 +15,15 @@ final class ActiveWalkViewModel {
     // Watch handoff state
     var isWalkingOnWatch = false
 
-    // Live stats
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
     var currentPace: Double = 0
     var calories: Double = 0
 
-    // Waypoint tracking
     var currentWaypointIndex = 0
     var arrivedWaypointMessage: String?
     var showArrivalCard = false
 
-    // GPS track for saving
     var gpsLocations: [CLLocation] = []
     var waypointArrivalTimes: [Int: Date] = [:]
 
@@ -35,6 +32,7 @@ final class ActiveWalkViewModel {
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
+    private var walkCancellables = Set<AnyCancellable>()
 
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
@@ -109,20 +107,17 @@ final class ActiveWalkViewModel {
         pauseStartTime = nil
         startTime = Date()
 
-        // Set up waypoint monitoring
         let coords = route.sortedWaypoints.map { $0.coordinate }
         locationService.monitorWaypoints(coords)
         locationService.startTracking()
 
-        // Listen for waypoint arrivals
         locationService.waypointArrival
             .receive(on: DispatchQueue.main)
             .sink { [weak self] index in
                 self?.handleWaypointArrival(index)
             }
-            .store(in: &cancellables)
+            .store(in: &walkCancellables)
 
-        // Track GPS locations
         locationService.$currentLocation
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
@@ -145,9 +140,8 @@ final class ActiveWalkViewModel {
                 #endif
                 self.healthService.addRouteLocation(location)
             }
-            .store(in: &cancellables)
+            .store(in: &walkCancellables)
 
-        // Timer for elapsed time
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self, !self.isPaused, let start = self.startTime else { return }
@@ -179,9 +173,8 @@ final class ActiveWalkViewModel {
         timer = nil
         locationService.stopTracking()
         locationService.clearWaypointMonitoring()
-        cancellables.removeAll()
+        walkCancellables.removeAll()
 
-        // Save walk session
         if let route {
             let session = WalkSession(route: route)
             session.completedAt = Date()
@@ -190,11 +183,9 @@ final class ActiveWalkViewModel {
             session.calories = calories
             session.avgPace = distanceWalked > 0 ? elapsedTime / (distanceWalked / 1000) : 0
 
-            // Encode GPS track
             let coords = gpsLocations.map { CodableCoordinate($0.coordinate) }
             session.gpsTrackData = try? JSONEncoder().encode(coords)
 
-            // Calculate leg splits
             let sortedWaypoints = route.sortedWaypoints
             for i in 0..<(sortedWaypoints.count) {
                 let nextIndex = (i + 1) % sortedWaypoints.count
@@ -246,11 +237,9 @@ final class ActiveWalkViewModel {
         arrivedWaypointMessage = wp.label ?? "Waypoint \(index + 1)"
         showArrivalCard = true
 
-        // Haptic feedback
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
 
-        // Auto-dismiss after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
             self?.showArrivalCard = false
         }

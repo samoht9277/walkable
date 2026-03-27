@@ -24,7 +24,7 @@ struct RouteLeaderboard: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Text(formatPace(entry.bestPace))
+                        Text(entry.bestPace.formattedPace)
                             .font(.subheadline.weight(.bold).monospacedDigit())
                             .foregroundStyle(.green)
                     }
@@ -39,10 +39,4 @@ struct RouteLeaderboard: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
-    private func formatPace(_ pace: Double) -> String {
-        guard pace > 0 else { return "--:--" }
-        let mins = Int(pace) / 60
-        let secs = Int(pace) % 60
-        return String(format: "%d:%02d /km", mins, secs)
-    }
 }

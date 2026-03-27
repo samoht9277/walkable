@@ -21,7 +21,6 @@ final class WatchWalkViewModel {
     private var timer: Timer?
     private var startTime = Date()
     private var cancellables = Set<AnyCancellable>()
-    private var waypointArrivalTimes: [Int: Date] = [:]
 
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
@@ -44,6 +43,11 @@ final class WatchWalkViewModel {
     var bearingToNextWaypoint: Double? {
         guard let coord = nextWaypointCoordinate else { return nil }
         return locationService.bearing(to: coord)
+    }
+
+    var currentPace: Double {
+        guard distanceWalked > 0 else { return 0 }
+        return elapsedTime / (distanceWalked / 1000)
     }
 
     /// Relative bearing: subtract device heading from absolute bearing to get arrow direction.
@@ -111,7 +115,7 @@ final class WatchWalkViewModel {
             totalDuration: elapsedTime,
             calories: healthService.activeCalories,
             elevationGain: 0,
-            avgPace: distanceWalked > 0 ? elapsedTime / (distanceWalked / 1000) : 0,
+            avgPace: currentPace,
             legSplits: [] // Simplified for watch
         )
         SyncService.shared.syncWalkSession(payload)
@@ -122,7 +126,6 @@ final class WatchWalkViewModel {
 
     private func handleWaypointArrival(_ index: Int) {
         currentWaypointIndex = index + 1
-        waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
     }
 }

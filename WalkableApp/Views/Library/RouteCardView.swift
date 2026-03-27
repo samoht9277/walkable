@@ -21,7 +21,7 @@ struct RouteCardView: View {
             }
 
             HStack(spacing: 12) {
-                Label(formatDuration(route.estimatedDuration), systemImage: "clock")
+                Label(route.estimatedDuration.formattedEstimate, systemImage: "clock")
                 Label("\(route.waypoints.count) waypoints", systemImage: "mappin.and.ellipse")
                 Label("Walked \(route.sessionCount)x", systemImage: "figure.walk")
             }
@@ -45,9 +45,4 @@ struct RouteCardView: View {
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let minutes = Int(seconds) / 60
-        if minutes < 60 { return "~\(minutes) min" }
-        return "~\(minutes / 60)h \(minutes % 60)m"
-    }
 }

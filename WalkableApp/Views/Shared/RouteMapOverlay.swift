@@ -10,10 +10,8 @@ struct RouteMapOverlay: View {
 
     var body: some View {
         Map {
-            // Full route polyline
-            if let polylineData = route.polylineData,
-               let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: polylineData) {
-                MapPolyline(coordinates: coords.map { $0.clCoordinate })
+            if let coords = route.decodedPolylineCoordinates {
+                MapPolyline(coordinates: coords)
                     .stroke(.blue, lineWidth: 4)
             }
 
