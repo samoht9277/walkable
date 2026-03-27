@@ -4,6 +4,11 @@ import WalkableKit
 
 @main
 struct WalkableApp: App {
+    init() {
+        // Activate WatchConnectivity sync
+        _ = SyncService.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
