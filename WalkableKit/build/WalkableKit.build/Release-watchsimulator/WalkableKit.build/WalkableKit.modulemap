@@ -1,4 +1,0 @@
-module WalkableKit {
-header "WalkableKit-Swift.h"
-export *
-}
