@@ -57,6 +57,7 @@ targets:
     settings:
       GENERATE_INFOPLIST_FILE: true
       CODE_SIGN_STYLE: Automatic
+      PRODUCT_BUNDLE_IDENTIFIER: com.walkable.WalkableApp.watchkitapp
       INFOPLIST_KEY_CFBundleDisplayName: Walkable
       INFOPLIST_KEY_WKApplication: true
       INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location for walk navigation."
