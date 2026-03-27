@@ -8,9 +8,7 @@ struct PinModeOverlay: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
-
+        VStack(spacing: 12) {
             if hasButtons {
                 HStack(spacing: 8) {
                     if viewModel.isCalculating {
