@@ -64,21 +64,23 @@ struct TemplateModeOverlay: View {
             .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
 
             HStack(spacing: 12) {
-                if !viewModel.waypoints.isEmpty {
-                    GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
-                        viewModel.clearAll()
-                    }, tint: .red)
-                }
-
-                GlassButtonLabel(title: "Generate", systemImage: "wand.and.stars", action: {
-                    generateTemplate()
-                }, tint: .green)
-
                 if viewModel.isCalculating {
                     GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
                         viewModel.cancelCalculation()
                     }, tint: .red)
-                } else if viewModel.canCalculate && !viewModel.hasRoute {
+                } else {
+                    if !viewModel.waypoints.isEmpty {
+                        GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                            viewModel.clearAll()
+                        }, tint: .red)
+                    }
+
+                    GlassButtonLabel(title: "Generate", systemImage: "wand.and.stars", action: {
+                        generateTemplate()
+                    }, tint: .green)
+                }
+
+                if !viewModel.isCalculating && viewModel.canCalculate && !viewModel.hasRoute {
                     GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
                         viewModel.calculateRoute()
                     }, tint: .green)

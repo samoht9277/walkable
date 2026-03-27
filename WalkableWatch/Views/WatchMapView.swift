@@ -14,8 +14,16 @@ struct WatchMapView: View {
         ZStack {
             Map {
                 if let coords = route.decodedPolylineCoordinates {
-                    MapPolyline(coordinates: coords)
-                        .stroke(.blue, lineWidth: 3)
+                    if let currentLoc = currentLocation {
+                        let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
+                        MapPolyline(coordinates: split.walked)
+                            .stroke(.gray, lineWidth: 3)
+                        MapPolyline(coordinates: split.remaining)
+                            .stroke(.blue, lineWidth: 3)
+                    } else {
+                        MapPolyline(coordinates: coords)
+                            .stroke(.blue, lineWidth: 3)
+                    }
                 }
 
                 ForEach(route.sortedWaypoints, id: \.id) { wp in

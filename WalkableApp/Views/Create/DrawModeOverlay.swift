@@ -33,25 +33,27 @@ struct DrawModeOverlay: View {
                     }
 
                     HStack(spacing: 12) {
-                        if !drawnPoints.isEmpty || !viewModel.waypoints.isEmpty {
-                            GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
-                                drawnPoints.removeAll()
-                                viewModel.clearAll()
-                                isDrawing = true
-                            }, tint: .red)
-                        }
-
-                        if !drawnPoints.isEmpty && viewModel.waypoints.isEmpty {
-                            GlassButtonLabel(title: "Snap to Roads", systemImage: "road.lanes", action: {
-                                convertDrawingToWaypoints()
-                            }, tint: .green)
-                        }
-
                         if viewModel.isCalculating {
                             GlassButtonLabel(title: "Cancel", systemImage: "xmark", action: {
                                 viewModel.cancelCalculation()
                             }, tint: .red)
-                        } else if viewModel.canCalculate && !viewModel.hasRoute {
+                        } else {
+                            if !drawnPoints.isEmpty || !viewModel.waypoints.isEmpty {
+                                GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                                    drawnPoints.removeAll()
+                                    viewModel.clearAll()
+                                    isDrawing = true
+                                }, tint: .red)
+                            }
+
+                            if !drawnPoints.isEmpty && viewModel.waypoints.isEmpty {
+                                GlassButtonLabel(title: "Snap to Roads", systemImage: "road.lanes", action: {
+                                    convertDrawingToWaypoints()
+                                }, tint: .green)
+                            }
+                        }
+
+                        if !viewModel.isCalculating && viewModel.canCalculate && !viewModel.hasRoute {
                             GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
                                 viewModel.calculateRoute()
                             }, tint: .green)
