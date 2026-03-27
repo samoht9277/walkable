@@ -12,9 +12,11 @@ struct PinModeOverlay: View {
             // Waypoint counter — always visible, part of the panel when buttons show
             if hasButtons {
                 VStack(spacing: 10) {
-                    Text("\(viewModel.waypoints.count) waypoints")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    Text("\(viewModel.waypoints.count)")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(width: 32, height: 32)
+                        .glassEffect(.regular, in: .circle)
 
                     HStack(spacing: 8) {
                         if viewModel.isCalculating {
