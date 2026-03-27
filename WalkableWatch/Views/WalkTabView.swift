@@ -19,7 +19,7 @@ struct WalkTabView: View {
             WatchSummaryView(
                 distance: viewModel.distanceWalked,
                 duration: viewModel.elapsedTime,
-                pace: viewModel.distanceWalked > 0 ? viewModel.elapsedTime / (viewModel.distanceWalked / 1000) : 0,
+                pace: viewModel.currentPace,
                 onDismiss: onEnd
             )
         } else {

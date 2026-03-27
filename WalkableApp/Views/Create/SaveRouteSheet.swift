@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WalkableKit
 
 struct SaveRouteSheet: View {
     @Bindable var viewModel: CreateRouteViewModel
@@ -20,7 +21,7 @@ struct SaveRouteSheet: View {
                             Text(String(format: "%.1f km", route.distance / 1000))
                         }
                         LabeledContent("Est. Time") {
-                            Text(formatDuration(route.expectedTravelTime))
+                            Text(route.expectedTravelTime.formattedEstimate)
                         }
                         LabeledContent("Waypoints") {
                             Text("\(viewModel.waypoints.count)")
@@ -45,13 +46,4 @@ struct SaveRouteSheet: View {
         }
     }
 
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let minutes = Int(seconds) / 60
-        if minutes < 60 {
-            return "\(minutes) min"
-        }
-        let hours = minutes / 60
-        let remaining = minutes % 60
-        return "\(hours)h \(remaining)m"
-    }
 }

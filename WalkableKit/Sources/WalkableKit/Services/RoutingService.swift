@@ -82,11 +82,12 @@ public final class RoutingService {
         var segmentRoutes = [MKRoute]()
         for (index, pair) in pairs.enumerated() {
             try Task.checkCancellation()
+            let wasCacheHit = cache[Self.cacheKey(from: pair.from, to: pair.to)] != nil
             let route = try await calculateSegment(from: pair.from, to: pair.to)
             segmentRoutes.append(route)
 
-            // Rate limit delay between requests (skip after last)
-            if index < pairs.count - 1 {
+            // Rate limit delay between API requests (skip for cache hits and after last)
+            if index < pairs.count - 1 && !wasCacheHit {
                 try await Task.sleep(for: .seconds(1))
             }
         }

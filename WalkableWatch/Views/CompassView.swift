@@ -1,4 +1,5 @@
 import SwiftUI
+import WalkableKit
 
 struct CompassView: View {
     let arrowAngle: Double // degrees, 0 = straight ahead
@@ -34,7 +35,7 @@ struct CompassView: View {
 
             // Distance
             if let dist = distanceToWaypoint {
-                Text(formatDistance(dist))
+                Text(dist.formattedDistance)
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.orange)
             }
@@ -58,8 +59,4 @@ struct CompassView: View {
         }
     }
 
-    private func formatDistance(_ meters: Double) -> String {
-        if meters < 1000 { return String(format: "%.0fm", meters) }
-        return String(format: "%.1fkm", meters / 1000)
-    }
 }

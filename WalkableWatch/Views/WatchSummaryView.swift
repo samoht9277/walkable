@@ -1,4 +1,5 @@
 import SwiftUI
+import WalkableKit
 
 struct WatchSummaryView: View {
     let distance: Double
@@ -18,8 +19,8 @@ struct WatchSummaryView: View {
 
                 VStack(spacing: 8) {
                     summaryRow("Distance", value: String(format: "%.2f km", distance / 1000))
-                    summaryRow("Time", value: formatTime(duration))
-                    summaryRow("Pace", value: formatPace(pace))
+                    summaryRow("Time", value: duration.formattedDuration)
+                    summaryRow("Pace", value: pace.formattedPace)
                 }
                 .padding()
 
@@ -37,18 +38,5 @@ struct WatchSummaryView: View {
             Text(value)
                 .fontWeight(.semibold)
         }
-    }
-
-    private func formatTime(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%d:%02d", mins, secs)
-    }
-
-    private func formatPace(_ pace: Double) -> String {
-        guard pace > 0 else { return "--:--" }
-        let mins = Int(pace) / 60
-        let secs = Int(pace) % 60
-        return String(format: "%d:%02d /km", mins, secs)
     }
 }

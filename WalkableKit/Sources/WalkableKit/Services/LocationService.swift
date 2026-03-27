@@ -43,7 +43,6 @@ public final class LocationService: NSObject, ObservableObject {
 
     public func stopTracking() {
         manager.stopUpdatingLocation()
-        manager.stopUpdatingHeading()
     }
 
     public func startHeadingUpdates() {

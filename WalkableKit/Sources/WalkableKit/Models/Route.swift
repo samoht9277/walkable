@@ -53,4 +53,8 @@ public final class Route {
     public var centerCoordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: centerLatitude, longitude: centerLongitude)
     }
+
+    public var decodedPolylineCoordinates: [CLLocationCoordinate2D]? {
+        polylineData?.decodedCoordinates()
+    }
 }

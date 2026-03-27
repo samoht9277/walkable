@@ -25,7 +25,7 @@ struct SessionDetailSheet: View {
                         )
                         StatCardView(
                             title: "Duration",
-                            value: formatDuration(session.totalDuration),
+                            value: session.totalDuration.formattedDuration,
                             icon: "clock",
                             color: .indigo
                         )
@@ -83,31 +83,16 @@ struct SessionDetailSheet: View {
     @ViewBuilder
     private var sessionMap: some View {
         Map {
-            // Planned route polyline (blue)
-            if let polylineData = session.route?.polylineData,
-               let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: polylineData) {
-                MapPolyline(coordinates: coords.map { $0.clCoordinate })
+            if let coords = session.route?.decodedPolylineCoordinates {
+                MapPolyline(coordinates: coords)
                     .stroke(.blue, lineWidth: 4)
             }
 
-            // Actual GPS track (green)
-            if let gpsData = session.gpsTrackData,
-               let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: gpsData) {
-                MapPolyline(coordinates: coords.map { $0.clCoordinate })
+            if let coords = session.gpsTrackData?.decodedCoordinates() {
+                MapPolyline(coordinates: coords)
                     .stroke(.green, lineWidth: 4)
             }
         }
         .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
-    }
-
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        if mins >= 60 {
-            let hrs = mins / 60
-            let remainMins = mins % 60
-            return String(format: "%d:%02d:%02d", hrs, remainMins, secs)
-        }
-        return String(format: "%d:%02d", mins, secs)
     }
 }

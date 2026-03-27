@@ -52,7 +52,7 @@ struct StatsView: View {
                         )
                         StatCardView(
                             title: "Avg Pace",
-                            value: formatPace(viewModel.avgPace),
+                            value: viewModel.avgPace.formattedPace,
                             icon: "speedometer",
                             color: .purple
                         )
@@ -146,7 +146,7 @@ struct StatsView: View {
                 Text(String(format: "%.2f km", session.totalDistance / 1000))
                     .font(.subheadline.monospacedDigit())
                 HStack(spacing: 12) {
-                    Text(formatDuration(session.totalDuration))
+                    Text(session.totalDuration.formattedDuration)
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                     Text(session.formattedPace)
@@ -162,21 +162,4 @@ struct StatsView: View {
         .contentShape(Rectangle())
     }
 
-    private func formatPace(_ pace: Double) -> String {
-        guard pace > 0 else { return "--:--" }
-        let mins = Int(pace) / 60
-        let secs = Int(pace) % 60
-        return String(format: "%d:%02d /km", mins, secs)
-    }
-
-    private func formatDuration(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        if mins >= 60 {
-            let hrs = mins / 60
-            let remainMins = mins % 60
-            return String(format: "%d:%02d:%02d", hrs, remainMins, secs)
-        }
-        return String(format: "%d:%02d", mins, secs)
-    }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import WalkableKit
 
 struct WalkStatsBar: View {
     let distance: Double // meters
@@ -10,9 +11,9 @@ struct WalkStatsBar: View {
         HStack {
             statItem(label: "DISTANCE", value: String(format: "%.2f km", distance / 1000))
             Divider().frame(height: 30)
-            statItem(label: "TIME", value: formatTime(elapsed))
+            statItem(label: "TIME", value: elapsed.formattedDuration)
             Divider().frame(height: 30)
-            statItem(label: "PACE", value: formatPace(pace))
+            statItem(label: "PACE", value: pace.formattedPaceShort)
             Divider().frame(height: 30)
             statItem(label: "CAL", value: String(format: "%.0f", calories))
         }
@@ -31,18 +32,5 @@ struct WalkStatsBar: View {
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private func formatTime(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%d:%02d", mins, secs)
-    }
-
-    private func formatPace(_ pace: Double) -> String {
-        guard pace > 0 && pace < 3600 else { return "--:--" }
-        let mins = Int(pace) / 60
-        let secs = Int(pace) % 60
-        return String(format: "%d:%02d", mins, secs)
     }
 }

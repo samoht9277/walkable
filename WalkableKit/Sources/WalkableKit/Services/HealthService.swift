@@ -21,7 +21,6 @@ public final class HealthService: NSObject, ObservableObject {
     @Published public var heartRate: Double = 0
     @Published public var activeCalories: Double = 0
     @Published public var distanceWalked: Double = 0
-    @Published public var currentPace: Double = 0 // sec/km
 
     private var cancellables = Set<AnyCancellable>()
 

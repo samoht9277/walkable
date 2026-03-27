@@ -13,14 +13,11 @@ struct WatchMapView: View {
     var body: some View {
         ZStack {
             Map {
-                // Route polyline
-                if let data = route.polylineData,
-                   let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: data) {
-                    MapPolyline(coordinates: coords.map { $0.clCoordinate })
+                if let coords = route.decodedPolylineCoordinates {
+                    MapPolyline(coordinates: coords)
                         .stroke(.blue, lineWidth: 3)
                 }
 
-                // Waypoint markers
                 ForEach(route.sortedWaypoints, id: \.id) { wp in
                     Annotation("", coordinate: wp.coordinate) {
                         Circle()
@@ -32,7 +29,6 @@ struct WatchMapView: View {
                     }
                 }
 
-                // Current position
                 if let loc = currentLocation {
                     Annotation("", coordinate: loc) {
                         Circle()
@@ -44,7 +40,6 @@ struct WatchMapView: View {
             }
             .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
 
-            // Bottom stats bar
             VStack {
                 Spacer()
                 HStack {
@@ -52,7 +47,7 @@ struct WatchMapView: View {
                         Text("DIST")
                             .font(.system(size: 8))
                             .foregroundStyle(.secondary)
-                        Text(String(format: "%.1fkm", distanceWalked / 1000))
+                        Text(distanceWalked.formattedDistance)
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                     }
                     Spacer()
@@ -60,7 +55,7 @@ struct WatchMapView: View {
                         Text("TIME")
                             .font(.system(size: 8))
                             .foregroundStyle(.secondary)
-                        Text(formatTime(elapsedTime))
+                        Text(elapsedTime.formattedDuration)
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                     }
                     Spacer()
@@ -68,7 +63,7 @@ struct WatchMapView: View {
                         Text("NEXT")
                             .font(.system(size: 8))
                             .foregroundStyle(.secondary)
-                        Text(formatDistance(distanceToNext))
+                        Text(distanceToNext?.formattedDistance ?? "--")
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(.orange)
                     }
@@ -78,17 +73,5 @@ struct WatchMapView: View {
                 .background(.ultraThinMaterial)
             }
         }
-    }
-
-    private func formatTime(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%d:%02d", mins, secs)
-    }
-
-    private func formatDistance(_ meters: Double?) -> String {
-        guard let m = meters else { return "--" }
-        if m < 1000 { return String(format: "%.0fm", m) }
-        return String(format: "%.1fkm", m / 1000)
     }
 }
