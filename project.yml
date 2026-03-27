@@ -1,0 +1,64 @@
+name: Walkable
+options:
+  bundleIdPrefix: com.walkable
+  deploymentTarget:
+    iOS: "18.0"
+    watchOS: "11.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  WalkableKit:
+    path: WalkableKit
+
+targets:
+  WalkableApp:
+    type: application
+    platform: iOS
+    sources:
+      - WalkableApp
+    dependencies:
+      - package: WalkableKit
+    settings:
+      GENERATE_INFOPLIST_FILE: true
+      INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location to track walks and show your position on the map."
+      INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription: "Walkable needs background location access to track your walks."
+      INFOPLIST_KEY_NSHealthShareUsageDescription: "Walkable reads your health data to show fitness stats."
+      INFOPLIST_KEY_NSHealthUpdateUsageDescription: "Walkable saves your walking workouts to Apple Health."
+    entitlements:
+      path: WalkableApp/WalkableApp.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access:
+          - health-records
+
+  WalkableWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - WalkableWatch
+    dependencies:
+      - package: WalkableKit
+    settings:
+      GENERATE_INFOPLIST_FILE: true
+      INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location for walk navigation."
+      INFOPLIST_KEY_NSHealthShareUsageDescription: "Walkable reads health data during walks."
+      INFOPLIST_KEY_NSHealthUpdateUsageDescription: "Walkable saves walking workouts to Apple Health."
+      INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.walkable.WalkableApp
+    entitlements:
+      path: WalkableWatch/WalkableWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access:
+          - health-records
+
+  WalkableTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - WalkableTests
+    settings:
+      GENERATE_INFOPLIST_FILE: true
+    dependencies:
+      - target: WalkableApp
+      - package: WalkableKit
