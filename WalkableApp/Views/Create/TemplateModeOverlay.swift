@@ -63,8 +63,13 @@ struct TemplateModeOverlay: View {
             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
             .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
 
-            // Generate button
             HStack(spacing: 12) {
+                if !viewModel.waypoints.isEmpty {
+                    GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                        viewModel.clearAll()
+                    }, tint: .red)
+                }
+
                 GlassButtonLabel(title: "Generate", systemImage: "wand.and.stars", action: {
                     generateTemplate()
                 }, tint: .green)
