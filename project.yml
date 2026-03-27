@@ -2,8 +2,8 @@ name: Walkable
 options:
   bundleIdPrefix: com.walkable
   deploymentTarget:
-    iOS: "18.0"
-    watchOS: "11.0"
+    iOS: "26.0"
+    watchOS: "26.0"
   xcodeVersion: "16.0"
   createIntermediateGroups: true
 

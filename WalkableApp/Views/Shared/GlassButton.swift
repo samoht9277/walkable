@@ -12,8 +12,8 @@ struct GlassButton: View {
                 .font(.system(size: size * 0.4, weight: .semibold))
                 .foregroundStyle(tint)
                 .frame(width: size, height: size)
-                .background(.thinMaterial, in: Circle())
         }
+        .buttonStyle(.glass)
     }
 }
 
@@ -30,7 +30,7 @@ struct GlassButtonLabel: View {
                 .foregroundStyle(tint)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
-                .background(.thinMaterial, in: Capsule())
         }
+        .glassEffect(.regular, in: .capsule)
     }
 }
