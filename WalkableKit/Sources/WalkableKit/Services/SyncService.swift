@@ -58,6 +58,28 @@ public struct SessionSyncPayload: Codable, Sendable {
     public let elevationGain: Double
     public let avgPace: Double
     public let legSplits: [SyncLegSplit]
+
+    public init(
+        routeId: String,
+        startedAt: Date,
+        completedAt: Date,
+        totalDistance: Double,
+        totalDuration: TimeInterval,
+        calories: Double,
+        elevationGain: Double,
+        avgPace: Double,
+        legSplits: [SyncLegSplit]
+    ) {
+        self.routeId = routeId
+        self.startedAt = startedAt
+        self.completedAt = completedAt
+        self.totalDistance = totalDistance
+        self.totalDuration = totalDuration
+        self.calories = calories
+        self.elevationGain = elevationGain
+        self.avgPace = avgPace
+        self.legSplits = legSplits
+    }
 }
 
 public struct SyncLegSplit: Codable, Sendable {
@@ -66,6 +88,14 @@ public struct SyncLegSplit: Codable, Sendable {
     public let distance: Double
     public let duration: TimeInterval
     public let pace: Double
+
+    public init(fromWaypointIndex: Int, toWaypointIndex: Int, distance: Double, duration: TimeInterval, pace: Double) {
+        self.fromWaypointIndex = fromWaypointIndex
+        self.toWaypointIndex = toWaypointIndex
+        self.distance = distance
+        self.duration = duration
+        self.pace = pace
+    }
 }
 
 @MainActor

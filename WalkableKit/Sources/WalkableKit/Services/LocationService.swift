@@ -27,7 +27,9 @@ public final class LocationService: NSObject, ObservableObject {
         if let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String],
            modes.contains("location") {
             manager.allowsBackgroundLocationUpdates = true
+            #if os(iOS)
             manager.showsBackgroundLocationIndicator = true
+            #endif
         }
     }
 
@@ -88,6 +90,12 @@ public final class LocationService: NSObject, ObservableObject {
         var bearing = atan2(y, x) * 180 / .pi
         if bearing < 0 { bearing += 360 }
         return bearing
+    }
+
+    /// Bearing from current location to a target coordinate, in degrees (0 = north, clockwise).
+    public func bearing(to target: CLLocationCoordinate2D) -> Double? {
+        guard let current = currentLocation?.coordinate else { return nil }
+        return bearing(to: target, from: current)
     }
 
     /// Distance from current location to a target coordinate, in meters.
