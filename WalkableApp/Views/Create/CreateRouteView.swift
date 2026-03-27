@@ -88,28 +88,17 @@ struct CreateRouteView: View {
     }
 
     private var modeSelector: some View {
-        HStack(spacing: 0) {
+        Picker("Mode", selection: $viewModel.mode) {
             ForEach(RouteCreationMode.allCases, id: \.self) { mode in
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        viewModel.mode = mode
-                    }
-                } label: {
-                    Label(mode.rawValue, systemImage: mode.icon)
-                        .font(.subheadline.weight(.medium))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .foregroundStyle(viewModel.mode == mode ? .white : .primary)
-                        .background(
-                            viewModel.mode == mode
-                                ? AnyShapeStyle(.blue)
-                                : AnyShapeStyle(.ultraThinMaterial)
-                        )
-                }
+                Label(mode.rawValue, systemImage: mode.icon)
+                    .tag(mode)
             }
         }
-        .clipShape(Capsule())
-        .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 16)
+        .onChange(of: viewModel.mode) {
+            viewModel.clearAll()
+        }
     }
 
     @ViewBuilder
