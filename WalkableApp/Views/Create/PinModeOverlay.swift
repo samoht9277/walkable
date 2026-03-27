@@ -1,0 +1,53 @@
+import SwiftUI
+
+struct PinModeOverlay: View {
+    @Bindable var viewModel: CreateRouteViewModel
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Waypoint count hint
+            if viewModel.waypoints.isEmpty {
+                Text("Tap the map to place waypoints")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial, in: Capsule())
+            } else {
+                Text("\(viewModel.waypoints.count) waypoints")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial, in: Capsule())
+            }
+
+            HStack(spacing: 12) {
+                if !viewModel.waypoints.isEmpty {
+                    GlassButtonLabel(title: "Undo", systemImage: "arrow.uturn.backward") {
+                        viewModel.undoLastWaypoint()
+                    }
+                }
+
+                if viewModel.waypoints.count >= 2 {
+                    GlassButtonLabel(title: "Clear", systemImage: "trash", action: {
+                        viewModel.clearAll()
+                    }, tint: .red)
+                }
+
+                if viewModel.canCalculate && !viewModel.hasRoute {
+                    GlassButtonLabel(title: "Calculate", systemImage: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath", action: {
+                        Task { await viewModel.calculateRoute() }
+                    }, tint: .green)
+                }
+
+                if viewModel.hasRoute {
+                    GlassButtonLabel(title: "Save", systemImage: "square.and.arrow.down", action: {
+                        viewModel.showSaveSheet = true
+                    }, tint: .blue)
+                }
+            }
+        }
+        .padding(.bottom, 24)
+    }
+}
