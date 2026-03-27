@@ -11,6 +11,7 @@ struct CompassView: View {
 
     var body: some View {
         VStack(spacing: 6) {
+            Spacer(minLength: 0)
             ZStack {
                 Circle()
                     .stroke(.tertiary, lineWidth: 1.5)
@@ -40,7 +41,8 @@ struct CompassView: View {
             Text("\(currentWaypointIndex + 1) of \(totalWaypoints)")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
         }
-        .padding(.top, 8)
+        .ignoresSafeArea()
     }
 }
