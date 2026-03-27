@@ -31,7 +31,7 @@ struct GlassButtonLabel: View {
                 .foregroundStyle(tint)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(.regularMaterial, in: Capsule())
+                .background(.ultraThinMaterial, in: Capsule())
                 .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
         }
     }

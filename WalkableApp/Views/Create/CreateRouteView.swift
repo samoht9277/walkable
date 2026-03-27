@@ -80,7 +80,7 @@ struct CreateRouteView: View {
                 MapCompass()
                     .mapControlVisibility(.automatic)
             }
-            .safeAreaPadding(.top, 110)
+            .safeAreaInset(edge: .top) { Color.clear.frame(height: 110) }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
