@@ -10,6 +10,10 @@ struct WalkableWatchApp: App {
     @State private var isCreatingRoute = false
     @State private var routeListViewModel = WatchRouteListViewModel()
 
+    init() {
+        _ = SyncService.shared
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentWrapper(
