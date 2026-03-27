@@ -31,6 +31,6 @@ struct GlassButtonLabel: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
         }
-        .glassEffect(.regular, in: .capsule)
+        .glassEffect(.clear, in: .capsule)
     }
 }
