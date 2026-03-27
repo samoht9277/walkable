@@ -205,8 +205,12 @@ public final class SyncService: NSObject, ObservableObject {
               let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
 
         let message: [String: Any] = ["startWalkOnWatch": dict]
-        WCSession.default.sendMessage(message, replyHandler: nil) { error in
-            print("Failed to send startWalkOnWatch: \(error.localizedDescription)")
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(message, replyHandler: nil) { _ in
+                WCSession.default.transferUserInfo(message)
+            }
+        } else {
+            WCSession.default.transferUserInfo(message)
         }
     }
 
@@ -280,6 +284,15 @@ extension SyncService: @preconcurrency WCSessionDelegate {
            let status = WalkHandoffStatus(rawValue: rawStatus) {
             Task { @MainActor in
                 watchWalkStatusReceived.send((routeId: routeId, status: status))
+            }
+        }
+
+        // Handle startWalkOnWatch via transferUserInfo fallback
+        if let routeDict = userInfo["startWalkOnWatch"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: routeDict),
+           let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
+            Task { @MainActor in
+                startWalkRequested.send(payload)
             }
         }
     }

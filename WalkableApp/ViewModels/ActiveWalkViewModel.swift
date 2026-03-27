@@ -48,8 +48,11 @@ final class ActiveWalkViewModel {
                 guard let self else { return }
                 switch status {
                 case .started:
-                    // Watch confirmed it started the walk
-                    break
+                    self.isWalkingOnWatch = true
+                    self.walkCancellables.removeAll()
+                    self.locationService.stopTracking()
+                    self.locationService.clearWaypointMonitoring()
+                    self.timer?.invalidate()
                 case .ended:
                     // Watch walk completed, return to normal state
                     self.isWalkingOnWatch = false
@@ -86,13 +89,9 @@ final class ActiveWalkViewModel {
     func startWalk(with route: Route) async {
         self.route = route
 
-        // If Watch is reachable, hand off the walk to the Watch instead of tracking locally
-        if SyncService.shared.isReachable {
-            SyncService.shared.startWalkOnWatch(route: route)
-            isWalkingOnWatch = true
-            isWalking = true
-            return
-        }
+        // Try to hand off to Watch (sends via message if reachable, transferUserInfo if not)
+        // Phone still tracks locally as primary — Watch will take over if it receives the handoff
+        SyncService.shared.startWalkOnWatch(route: route)
 
         isWalking = true
         isPaused = false
