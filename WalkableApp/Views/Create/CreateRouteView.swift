@@ -76,6 +76,9 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .flat))
+            .mapControls {
+                MapUserLocationButton()
+            }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
