@@ -94,8 +94,6 @@ struct TemplateModeOverlay: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .glassEffect(.regular, in: .rect(cornerRadius: 20))
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 24)
