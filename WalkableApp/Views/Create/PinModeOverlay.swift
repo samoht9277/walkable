@@ -50,8 +50,8 @@ struct PinModeOverlay: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .padding(.horizontal, 8)
+                .glassEffect(.regular, in: .rect(cornerRadius: 20))
+                .padding(.horizontal, 16)
             } else {
                 Text("Tap the map to place waypoints")
                     .font(.subheadline)
