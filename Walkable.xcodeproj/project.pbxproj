@@ -7,16 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09541AEE08342CF4928ADE53 /* TemplateModeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE89E09A4281BDD8AACC4159 /* TemplateModeOverlay.swift */; };
+		2270E1523F109D5066BF7B53 /* RouteMapOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */; };
 		4E4175BD3A88A55593C6C39B /* WalkableWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D54965837D4623422C8EE3E /* WalkableWatchApp.swift */; };
+		52DBB50296540319AFE3ABE6 /* GlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06955A99B18F0995ED28EAA4 /* GlassButton.swift */; };
+		55AB96BC7D959B5C67430B60 /* DrawModeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6AA5849D96973C9AD6788D2 /* DrawModeOverlay.swift */; };
 		6C0D38EBBAD1D1E14D3CD667 /* TemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */; };
 		6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */; };
+		6E0401483C3C5BE0369B6DB4 /* CreateRouteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */; };
 		8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */; };
+		8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555554BF8D7071BD426467B /* SaveRouteSheet.swift */; };
 		97E089ADC3CA8981385F63E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307090577F05AA73E61C1159 /* ContentView.swift */; };
 		9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856C3414EF05FE64556D6E09 /* WalkableApp.swift */; };
 		9AE7B3E204D6E6DAB46E602A /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFB113B25AAE0C99856458A5 /* WalkableKit */; };
+		C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */; };
+		D4A93ABF11B70E3BE0C210C5 /* PinModeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC07428EAB927C5ADA70A0E /* PinModeOverlay.swift */; };
+		D616989BE078C5766CF63C77 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E6D32D966038AD56757CC3 /* GlassCard.swift */; };
 		EF99E335EA5D7771BA7495DC /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 92EC3129040AA494D4682AD8 /* WalkableKit */; };
 		F2552A0C8273F1C1B2925135 /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 41BAECEC5FD1E464FD56214F /* WalkableKit */; };
 		FBE036444564236017088B6A /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB45A54BE7D39650928B01EC /* ModelTests.swift */; };
+		FC0843E178DB095D134F44C8 /* CreateRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,19 +40,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06955A99B18F0995ED28EAA4 /* GlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButton.swift; sourceTree = "<group>"; };
 		0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateGeneratorTests.swift; sourceTree = "<group>"; };
+		0CC07428EAB927C5ADA70A0E /* PinModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinModeOverlay.swift; sourceTree = "<group>"; };
 		307090577F05AA73E61C1159 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingServiceTests.swift; sourceTree = "<group>"; };
 		40CDD85F619FEE037E736AEB /* WalkableApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WalkableApp.entitlements; sourceTree = "<group>"; };
 		416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathSimplifierTests.swift; sourceTree = "<group>"; };
+		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
 		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
+		719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteView.swift; sourceTree = "<group>"; };
 		7D54965837D4623422C8EE3E /* WalkableWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableWatchApp.swift; sourceTree = "<group>"; };
 		856C3414EF05FE64556D6E09 /* WalkableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableApp.swift; sourceTree = "<group>"; };
 		8855CF19B5A514FC074BB5F7 /* WalkableWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97764333F6CF336841ABCC15 /* WalkableWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WalkableWatch.entitlements; sourceTree = "<group>"; };
 		AB45A54BE7D39650928B01EC /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapOverlay.swift; sourceTree = "<group>"; };
+		C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingCanvas.swift; sourceTree = "<group>"; };
+		C6AA5849D96973C9AD6788D2 /* DrawModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawModeOverlay.swift; sourceTree = "<group>"; };
 		E3F1F1C1001288B7384FF7C0 /* WalkableTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WalkableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteViewModel.swift; sourceTree = "<group>"; };
+		F5E6D32D966038AD56757CC3 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		FE89E09A4281BDD8AACC4159 /* TemplateModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModeOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +112,14 @@
 			path = WalkableWatch;
 			sourceTree = "<group>";
 		};
+		1CCD1316C1DE77671B688B3B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		3ACC4E626DE05E61A300CDEA = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +129,16 @@
 				10DA4AE3078B1B1ACD36B463 /* WalkableWatch */,
 				0586DB7DA0D65056FB17F594 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		496FF750C87457A70096964D /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				06955A99B18F0995ED28EAA4 /* GlassButton.swift */,
+				F5E6D32D966038AD56757CC3 /* GlassCard.swift */,
+				ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		4DBE5F22F746CDC9FC8AFC51 /* WalkableTests */ = {
@@ -122,12 +160,36 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		A874B785337632610AB3CE16 /* Create */ = {
+			isa = PBXGroup;
+			children = (
+				719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */,
+				C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */,
+				C6AA5849D96973C9AD6788D2 /* DrawModeOverlay.swift */,
+				0CC07428EAB927C5ADA70A0E /* PinModeOverlay.swift */,
+				4555554BF8D7071BD426467B /* SaveRouteSheet.swift */,
+				FE89E09A4281BDD8AACC4159 /* TemplateModeOverlay.swift */,
+			);
+			path = Create;
+			sourceTree = "<group>";
+		};
+		B6BA86073BF86838F33CA326 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A874B785337632610AB3CE16 /* Create */,
+				496FF750C87457A70096964D /* Shared */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		E9E1E5475C66E48B94B94066 /* WalkableApp */ = {
 			isa = PBXGroup;
 			children = (
 				307090577F05AA73E61C1159 /* ContentView.swift */,
 				40CDD85F619FEE037E736AEB /* WalkableApp.entitlements */,
 				856C3414EF05FE64556D6E09 /* WalkableApp.swift */,
+				1CCD1316C1DE77671B688B3B /* ViewModels */,
+				B6BA86073BF86838F33CA326 /* Views */,
 			);
 			path = WalkableApp;
 			sourceTree = "<group>";
@@ -234,6 +296,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				97E089ADC3CA8981385F63E7 /* ContentView.swift in Sources */,
+				FC0843E178DB095D134F44C8 /* CreateRouteView.swift in Sources */,
+				6E0401483C3C5BE0369B6DB4 /* CreateRouteViewModel.swift in Sources */,
+				55AB96BC7D959B5C67430B60 /* DrawModeOverlay.swift in Sources */,
+				C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */,
+				52DBB50296540319AFE3ABE6 /* GlassButton.swift in Sources */,
+				D616989BE078C5766CF63C77 /* GlassCard.swift in Sources */,
+				D4A93ABF11B70E3BE0C210C5 /* PinModeOverlay.swift in Sources */,
+				2270E1523F109D5066BF7B53 /* RouteMapOverlay.swift in Sources */,
+				8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */,
+				09541AEE08342CF4928ADE53 /* TemplateModeOverlay.swift in Sources */,
 				9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

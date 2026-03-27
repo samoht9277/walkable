@@ -4,6 +4,7 @@ import WalkableKit
 
 struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
+    @State private var storedMapProxy: MapProxy?
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -77,6 +78,7 @@ struct CreateRouteView: View {
                     viewModel.addWaypoint(mapCoord)
                 }
             }
+            .onAppear { storedMapProxy = proxy }
         }
         .ignoresSafeArea()
     }
