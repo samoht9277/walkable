@@ -21,16 +21,15 @@ struct CreateRouteView: View {
             }
 
             // Top controls - rendered last so they stay clickable above the canvas
-            VStack {
+            VStack(spacing: 8) {
+                modeSelector
+                    .padding(.top, 8)
                 HStack {
                     Spacer()
                     MapCompass(scope: mapScope)
-                        .mapControlVisibility(.visible)
+                        .mapControlVisibility(.automatic)
                 }
                 .padding(.trailing, 16)
-                .padding(.top, 4)
-                modeSelector
-                    .padding(.top, 4)
                 Spacer()
             }
 
