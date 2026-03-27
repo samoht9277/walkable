@@ -15,8 +15,8 @@ struct WatchMapView: View {
             Map {
                 // Route polyline
                 if let data = route.polylineData,
-                   let polyline = try? MKPolyline.from(encodedData: data) {
-                    MapPolyline(polyline)
+                   let coords = try? JSONDecoder().decode([CodableCoordinate].self, from: data) {
+                    MapPolyline(coordinates: coords.map { $0.clCoordinate })
                         .stroke(.blue, lineWidth: 3)
                 }
 

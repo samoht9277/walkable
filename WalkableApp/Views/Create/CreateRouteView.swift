@@ -68,7 +68,7 @@ struct CreateRouteView: View {
 
                 // Calculated route polyline
                 if let route = viewModel.calculatedRoute {
-                    MapPolyline(route.polyline)
+                    MapPolyline(coordinates: route.coordinates)
                         .stroke(.blue, lineWidth: 4)
                 }
 
