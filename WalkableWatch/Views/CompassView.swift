@@ -10,24 +10,22 @@ struct CompassView: View {
     private let cardinals: [(String, Double)] = [("N", 0), ("E", 90), ("S", 180), ("W", 270)]
 
     var body: some View {
-        VStack(spacing: 4) {
-            Spacer()
-
+        VStack(spacing: 6) {
             ZStack {
                 Circle()
                     .stroke(.tertiary, lineWidth: 1.5)
-                    .frame(width: 110, height: 110)
+                    .frame(width: 100, height: 100)
 
                 ForEach(cardinals, id: \.0) { label, angle in
                     Text(label)
                         .font(.system(size: 9, weight: .medium))
                         .foregroundStyle(.tertiary)
-                        .offset(y: -50)
+                        .offset(y: -45)
                         .rotationEffect(.degrees(angle))
                 }
 
                 Image(systemName: "location.north.fill")
-                    .font(.system(size: 36))
+                    .font(.system(size: 34))
                     .foregroundStyle(.orange)
                     .rotationEffect(.degrees(arrowAngle))
                     .animation(.smooth(duration: 0.3), value: arrowAngle)
@@ -35,15 +33,14 @@ struct CompassView: View {
 
             if let dist = distanceToWaypoint {
                 Text(dist.formattedDistance)
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(.orange)
             }
 
             Text("\(currentWaypointIndex + 1) of \(totalWaypoints)")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-
-            Spacer()
         }
+        .padding(.top, 8)
     }
 }
