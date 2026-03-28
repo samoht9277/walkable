@@ -52,7 +52,7 @@ struct CreateRouteView: View {
                     }
                 }
                 .padding(.leading, 20)
-                .padding(.trailing, 15)
+                .padding(.trailing, 16)
                 .padding(.top, 8)
                 Spacer()
             }
@@ -113,6 +113,12 @@ struct CreateRouteView: View {
                         .background {
                             if viewModel.movingWaypointIndex == index {
                                 PulsingRing()
+                            }
+                            if viewModel.lastPlacedIndex == index {
+                                InwardRing(color: .green, onDone: { viewModel.lastPlacedIndex = nil })
+                            }
+                            if viewModel.lastEditedIndex == index {
+                                InwardRing(color: .orange, count: 2, onDone: { viewModel.lastEditedIndex = nil })
                             }
                         }
                         .contextMenu {
@@ -253,6 +259,45 @@ private struct PulsingRing: View {
                     isAnimating = true
                 }
             }
+    }
+}
+
+private struct InwardRing: View {
+    var color: Color = .green
+    var count: Int = 1
+    var onDone: () -> Void
+
+    @State private var iteration = 0
+    @State private var scale: CGFloat = 2.5
+    @State private var opacity: CGFloat = 0
+
+    var body: some View {
+        Circle()
+            .stroke(color.opacity(0.7), lineWidth: 2)
+            .frame(width: 28, height: 28)
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .onAppear { playRing() }
+    }
+
+    private func playRing() {
+        scale = 2.5
+        opacity = 0
+        withAnimation(.easeIn(duration: 0.05)) { opacity = 0.9 }
+        withAnimation(.easeIn(duration: 0.4)) {
+            scale = 1.0
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            withAnimation(.easeOut(duration: 0.15)) { opacity = 0 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                iteration += 1
+                if iteration < count {
+                    playRing()
+                } else {
+                    onDone()
+                }
+            }
+        }
     }
 
 }
