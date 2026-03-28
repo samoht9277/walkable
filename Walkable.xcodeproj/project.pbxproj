@@ -64,6 +64,7 @@
 		F6FAEFF54C853F1E9B81B269 /* WatchSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF6B8E22583E08984B290DD /* WatchSummaryView.swift */; };
 		FBE036444564236017088B6A /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB45A54BE7D39650928B01EC /* ModelTests.swift */; };
 		FC0843E178DB095D134F44C8 /* CreateRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */; };
+		FCE978145BA5B5CA5567FA8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D67A9E3E74F2085B5D00F5B /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +115,7 @@
 		2473363F5C159BB97A60F8BE /* WaypointArrivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaypointArrivalCard.swift; sourceTree = "<group>"; };
 		2648CDD8B7FCC2AEE85A5D0A /* CreateTabUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTabUITests.swift; sourceTree = "<group>"; };
 		2987AC77B66DB1195F140EA5 /* StatCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCardView.swift; sourceTree = "<group>"; };
+		2D67A9E3E74F2085B5D00F5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2E35D80372841BFF77ADE9BA /* ActiveWalkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWalkViewModel.swift; sourceTree = "<group>"; };
 		307090577F05AA73E61C1159 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingServiceTests.swift; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 		E9E1E5475C66E48B94B94066 /* WalkableApp */ = {
 			isa = PBXGroup;
 			children = (
+				2D67A9E3E74F2085B5D00F5B /* Assets.xcassets */,
 				307090577F05AA73E61C1159 /* ContentView.swift */,
 				40CDD85F619FEE037E736AEB /* WalkableApp.entitlements */,
 				856C3414EF05FE64556D6E09 /* WalkableApp.swift */,
@@ -426,6 +429,7 @@
 			buildConfigurationList = 32BF782BC10488DC29820F31 /* Build configuration list for PBXNativeTarget "WalkableApp" */;
 			buildPhases = (
 				0717AC68B024E98C231CE304 /* Sources */,
+				CD0869CDE15FE0C8BD82388D /* Resources */,
 				924AA5C87676C9349EE38A7A /* Frameworks */,
 				2D014403C2EF4107594F4C64 /* Embed Foundation Extensions */,
 			);
@@ -547,6 +551,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CD0869CDE15FE0C8BD82388D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCE978145BA5B5CA5567FA8D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0717AC68B024E98C231CE304 /* Sources */ = {
