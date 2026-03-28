@@ -44,7 +44,7 @@ struct RouteMapOverlay: View {
                 }
             }
         }
-        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
     }
 
     @ViewBuilder

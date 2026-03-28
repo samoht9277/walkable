@@ -4,6 +4,7 @@ import WalkableKit
 
 struct SessionDetailSheet: View {
     let session: WalkSession
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -15,6 +16,35 @@ struct SessionDetailSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .padding(.horizontal)
 
+                    // Date and time header
+                    VStack(spacing: 4) {
+                        Text(session.startedAt, format: .dateTime.weekday(.wide).month(.wide).day().year())
+                            .font(.headline)
+                        HStack(spacing: 16) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "clock")
+                                Text(session.startedAt, format: .dateTime.hour().minute())
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            if let end = session.completedAt {
+                                Image(systemName: "arrow.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                                Text(end, format: .dateTime.hour().minute())
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal)
+
+                    // Duration prominently
+                    Text(session.totalDuration.formattedDuration)
+                        .font(.system(size: 48, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(.primary)
+
                     // Stats grid
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCardView(
@@ -24,13 +54,7 @@ struct SessionDetailSheet: View {
                             color: .blue
                         )
                         StatCardView(
-                            title: "Duration",
-                            value: session.totalDuration.formattedDuration,
-                            icon: "clock",
-                            color: .indigo
-                        )
-                        StatCardView(
-                            title: "Pace",
+                            title: "Avg Pace",
                             value: session.formattedPace,
                             icon: "speedometer",
                             color: .purple
@@ -40,6 +64,12 @@ struct SessionDetailSheet: View {
                             value: String(format: "%.0f kcal", session.calories),
                             icon: "flame",
                             color: .orange
+                        )
+                        StatCardView(
+                            title: "Elevation",
+                            value: String(format: "%.0f m", session.elevationGain),
+                            icon: "mountain.2",
+                            color: .green
                         )
                     }
                     .padding(.horizontal)
@@ -52,7 +82,7 @@ struct SessionDetailSheet: View {
 
                             ForEach(session.sortedLegSplits, id: \.id) { leg in
                                 HStack {
-                                    Text("Leg \(leg.fromWaypointIndex + 1) → \(leg.toWaypointIndex + 1)")
+                                    Text("Leg \(leg.fromWaypointIndex + 1) \u{2192} \(leg.toWaypointIndex + 1)")
                                         .font(.subheadline)
                                     Spacer()
                                     Text(String(format: "%.0f m", leg.distance))
@@ -77,6 +107,16 @@ struct SessionDetailSheet: View {
             }
             .navigationTitle(session.route?.name ?? "Walk Session")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
     }
 
@@ -93,6 +133,6 @@ struct SessionDetailSheet: View {
                     .stroke(.green, lineWidth: 4)
             }
         }
-        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
     }
 }

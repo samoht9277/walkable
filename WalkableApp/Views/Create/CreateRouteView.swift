@@ -6,7 +6,7 @@ struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
     @State private var isPencilActive = true
-    @Namespace private var mapScope
+    @State private var mapHeading: Double = 0
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -36,8 +36,7 @@ struct CreateRouteView: View {
                     }
                     Spacer()
                     VStack(spacing: 8) {
-                        MapCompass(scope: mapScope)
-                            .mapControlVisibility(.automatic)
+                        compassButton
                         if viewModel.mode == .draw {
                             drawNavigateToggle
                         }
@@ -96,8 +95,7 @@ struct CreateRouteView: View {
                 // Keep user location dot visible when camera moves
                 UserAnnotation()
             }
-            .mapStyle(.standard(elevation: .flat))
-            .mapScope(mapScope)
+            .mapStyle(.standard(elevation: .realistic))
             .mapControls { }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
@@ -107,6 +105,7 @@ struct CreateRouteView: View {
             }
             .onMapCameraChange { context in
                 viewModel.visibleRegion = context.region
+                mapHeading = context.camera.heading
             }
             .onAppear { storedMapProxy = proxy }
         }
@@ -160,12 +159,39 @@ struct CreateRouteView: View {
         VStack(spacing: 12) {
             ProgressView()
                 .controlSize(.large)
+                .tint(.blue)
             Text("Calculating route...")
-                .font(.subheadline)
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
         }
-        .padding(24)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-        .shadow(radius: 10)
+        .padding(28)
+        .glassEffect(.regular, in: .rect(cornerRadius: 20))
+    }
+
+    @ViewBuilder
+    private var compassButton: some View {
+        if abs(mapHeading) > 0.5 {
+            Button {
+                withAnimation(.smooth) {
+                    viewModel.cameraPosition = .camera(MapCamera(
+                        centerCoordinate: viewModel.visibleRegion?.center ?? CLLocationCoordinate2D(),
+                        distance: viewModel.visibleRegion.map {
+                            max($0.span.latitudeDelta, $0.span.longitudeDelta) * 111000
+                        } ?? 3000,
+                        heading: 0
+                    ))
+                }
+                Haptics.light()
+            } label: {
+                Image(systemName: "location.north.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.red, .white)
+                    .rotationEffect(.degrees(-mapHeading))
+                    .frame(width: 40, height: 40)
+            }
+            .glassEffect(.regular, in: .circle)
+            .transition(.scale.combined(with: .opacity))
+            .animation(.smooth, value: mapHeading)
+        }
     }
 }

@@ -6,32 +6,57 @@ struct ContentView: View {
     @State private var walkViewModel = ActiveWalkViewModel()
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            CreateRouteView()
+        ZStack {
+            TabView(selection: $selectedTab) {
+                CreateRouteView()
+                    .tabItem {
+                        Label("Create", systemImage: "map")
+                    }
+                    .tag(0)
+                LibraryView { route in
+                    Task {
+                        await walkViewModel.startWalk(with: route)
+                        selectedTab = 2
+                    }
+                }
                 .tabItem {
-                    Label("Create", systemImage: "map")
+                    Label("Library", systemImage: "books.vertical")
                 }
-                .tag(0)
-            LibraryView { route in
-                Task {
-                    await walkViewModel.startWalk(with: route)
-                    selectedTab = 2
-                }
+                .tag(1)
+                ActiveWalkView(viewModel: walkViewModel)
+                    .tabItem {
+                        Label("Walk", systemImage: "figure.walk")
+                    }
+                    .tag(2)
+                StatsView()
+                    .tabItem {
+                        Label("Stats", systemImage: "chart.bar")
+                    }
+                    .tag(3)
             }
-            .tabItem {
-                Label("Library", systemImage: "books.vertical")
+
+            // Active walk banner on non-Walk tabs
+            if (walkViewModel.isWalking || walkViewModel.isWalkingOnWatch) && selectedTab != 2 {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Image(systemName: "figure.walk")
+                        Text("Walk in progress")
+                            .font(.subheadline.weight(.medium))
+                        Spacer()
+                        Text(walkViewModel.elapsedTime.formattedDuration)
+                            .font(.subheadline.monospacedDigit())
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .glassEffect(.regular, in: .capsule)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 60)
+                    .onTapGesture { selectedTab = 2 }
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.smooth, value: selectedTab)
             }
-            .tag(1)
-            ActiveWalkView(viewModel: walkViewModel)
-                .tabItem {
-                    Label("Walk", systemImage: "figure.walk")
-                }
-                .tag(2)
-            StatsView()
-                .tabItem {
-                    Label("Stats", systemImage: "chart.bar")
-                }
-                .tag(3)
         }
         .onAppear {
             LocationService.shared.requestAuthorization()

@@ -8,6 +8,7 @@ struct StatsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = StatsViewModel()
     @State private var selectedSession: WalkSession?
+    @State private var showAllSessions = false
 
     var body: some View {
         NavigationStack {
@@ -88,6 +89,9 @@ struct StatsView: View {
                 SessionDetailSheet(session: session)
                     .presentationDetents([.large])
             }
+            .sheet(isPresented: $showAllSessions) {
+                AllSessionsView()
+            }
         }
     }
 
@@ -95,8 +99,15 @@ struct StatsView: View {
     private var recentWalksSection: some View {
         let recent = viewModel.recentSessions(sessions: sessions)
         VStack(alignment: .leading, spacing: 8) {
-            Text("Recent Walks")
-                .font(.headline)
+            HStack {
+                Text("Recent Walks")
+                    .font(.headline)
+                Spacer()
+                Button("View All") {
+                    showAllSessions = true
+                }
+                .font(.subheadline)
+            }
 
             if recent.isEmpty {
                 Text("No walks this period")
