@@ -58,6 +58,20 @@ final class CreateRouteViewModel {
         Haptics.light()
     }
 
+    func removeWaypoint(at index: Int) {
+        guard waypoints.indices.contains(index) else { return }
+        waypoints.remove(at: index)
+        calculatedRoute = nil
+        Haptics.medium()
+    }
+
+    func moveWaypoint(at index: Int, to coordinate: CLLocationCoordinate2D) {
+        guard waypoints.indices.contains(index) else { return }
+        waypoints[index] = coordinate
+        calculatedRoute = nil
+        Haptics.light()
+    }
+
     func clearAll() {
         waypoints.removeAll()
         calculatedRoute = nil

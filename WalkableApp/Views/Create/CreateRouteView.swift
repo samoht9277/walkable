@@ -46,11 +46,8 @@ struct CreateRouteView: View {
                             .glassEffect(.regular, in: .capsule)
                     }
                     Spacer()
-                    VStack(spacing: 8) {
-                        compassButton
-                        if viewModel.mode == .draw {
-                            drawNavigateToggle
-                        }
+                    if viewModel.mode == .draw {
+                        drawNavigateToggle
                     }
                 }
                 .padding(.horizontal, 20)
@@ -94,6 +91,13 @@ struct CreateRouteView: View {
                                 .foregroundStyle(.white)
                         }
                         .shadow(radius: 2)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                viewModel.removeWaypoint(at: index)
+                            } label: {
+                                Label("Delete Waypoint", systemImage: "trash")
+                            }
+                        }
                     }
                 }
 
@@ -107,7 +111,10 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .realistic))
-            .mapControls { }
+            .mapControls {
+                MapCompass()
+                    .mapControlVisibility(.automatic)
+            }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
@@ -152,7 +159,7 @@ struct CreateRouteView: View {
         case .draw:
             DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy, isPencilActive: $isPencilActive, drawnPoints: $drawingPoints, canvasId: $drawCanvasId)
         case .template:
-            TemplateModeOverlay(viewModel: viewModel)
+            TemplateModeOverlay(viewModel: viewModel, mapHeading: mapHeading)
         }
     }
 
@@ -167,32 +174,6 @@ struct CreateRouteView: View {
                 .frame(width: 40, height: 40)
         }
         .glassEffect(.regular, in: .circle)
-    }
-
-    @ViewBuilder
-    private var compassButton: some View {
-        if abs(mapHeading) > 0.5 {
-            Button {
-                withAnimation(.smooth) {
-                    guard let region = viewModel.visibleRegion else { return }
-                    viewModel.cameraPosition = .camera(MapCamera(
-                        centerCoordinate: region.center,
-                        distance: max(region.span.latitudeDelta, region.span.longitudeDelta) * 111000,
-                        heading: 0
-                    ))
-                }
-                Haptics.light()
-            } label: {
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.red, .white)
-                    .rotationEffect(.degrees(-mapHeading))
-                    .animation(.smooth(duration: 0.15), value: mapHeading)
-                    .frame(width: 36, height: 36)
-            }
-            .glassEffect(.regular, in: .circle)
-            .transition(.scale.combined(with: .opacity))
-        }
     }
 
     private var calculatingOverlay: some View {

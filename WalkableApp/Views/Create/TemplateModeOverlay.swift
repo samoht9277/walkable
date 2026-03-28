@@ -18,6 +18,7 @@ enum TemplateShape: String, CaseIterable {
 
 struct TemplateModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
+    var mapHeading: Double = 0
     @State private var selectedShape: TemplateShape = .loop
     @State private var targetDistanceKm: Double = 2.0
 
@@ -112,7 +113,7 @@ struct TemplateModeOverlay: View {
         case .loop:
             waypoints = TemplateGenerator.loop(center: location, targetDistanceMeters: distanceMeters)
         case .outAndBack:
-            waypoints = TemplateGenerator.outAndBack(center: location, targetDistanceMeters: distanceMeters, bearingDegrees: 0)
+            waypoints = TemplateGenerator.outAndBack(center: location, targetDistanceMeters: distanceMeters, bearingDegrees: mapHeading)
         case .figure8:
             waypoints = TemplateGenerator.figure8(center: location, targetDistanceMeters: distanceMeters)
         }
