@@ -103,7 +103,7 @@ struct CreateRouteView: View {
                     viewModel.addWaypoint(mapCoord)
                 }
             }
-            .onMapCameraChange { context in
+            .onMapCameraChange(frequency: .onEnd) { context in
                 viewModel.visibleRegion = context.region
                 mapHeading = context.camera.heading
             }

@@ -61,7 +61,7 @@ struct LibraryView: View {
                                 }
                                 .tint(.yellow)
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
                                     viewModel.deleteRoute(route, modelContext: modelContext)
                                 } label: {

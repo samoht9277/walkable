@@ -43,39 +43,33 @@ struct WalkableLiveActivity: Widget {
             .padding()
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded regions
                 DynamicIslandExpandedRegion(.leading) {
-                    Label(
-                        String(format: "%.1f km", context.state.distance / 1000),
-                        systemImage: "ruler"
-                    )
-                    .font(.caption)
+                    VStack(alignment: .leading) {
+                        Text(context.attributes.routeName)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Text(String(format: "%.2f km", context.state.distance / 1000))
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                    }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Label(
-                        context.state.elapsedTime.formattedDuration,
-                        systemImage: "clock"
-                    )
-                    .font(.caption)
-                }
-                DynamicIslandExpandedRegion(.center) {
-                    Text(context.attributes.routeName)
-                        .font(.headline)
+                    VStack(alignment: .trailing) {
+                        Text("Time")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Text(context.state.elapsedTime.formattedDuration)
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .monospacedDigit()
+                    }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack {
-                        Label(
-                            context.state.pace.formattedPaceShort,
-                            systemImage: "speedometer"
-                        )
+                        Label(context.state.pace.formattedPaceShort, systemImage: "speedometer")
                         Spacer()
-                        if let nextDist = context.state.nextWaypointDistance {
-                            Label(nextDist.formattedDistance, systemImage: "mappin")
-                        }
-                        Spacer()
-                        Text("WP \(context.state.currentWaypointIndex)/\(context.state.totalWaypoints)")
+                        Text("WP \(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)")
                     }
                     .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
             } compactLeading: {
                 Image(systemName: "figure.walk")
@@ -83,6 +77,7 @@ struct WalkableLiveActivity: Widget {
             } compactTrailing: {
                 Text(String(format: "%.1fkm", context.state.distance / 1000))
                     .font(.caption.monospacedDigit())
+                    .foregroundStyle(.blue)
             } minimal: {
                 Image(systemName: "figure.walk")
                     .foregroundStyle(.blue)
