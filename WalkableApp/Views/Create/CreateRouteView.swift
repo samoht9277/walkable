@@ -51,9 +51,24 @@ struct CreateRouteView: View {
                             .padding(.top, 50)
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.leading, 20)
+                .padding(.trailing, 8)
                 .padding(.top, 8)
                 Spacer()
+            }
+
+            // Move mode hint
+            if viewModel.movingWaypointIndex != nil {
+                VStack {
+                    Text("Tap to relocate waypoint \(viewModel.movingWaypointIndex! + 1)")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .glassEffect(.regular, in: .capsule)
+                        .padding(.top, 8)
+                    Spacer()
+                }
             }
 
             // Loading overlay
@@ -95,8 +110,16 @@ struct CreateRouteView: View {
                         .padding(4)
                         .contentShape(Circle())
                         .shadow(radius: 2)
+                        .scaleEffect(viewModel.movingWaypointIndex == index ? 1.5 : 1.0)
+                        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: viewModel.movingWaypointIndex == index)
                         .contextMenu {
                             Text("Waypoint \(index + 1)")
+                            Button {
+                                viewModel.movingWaypointIndex = index
+                                Haptics.medium()
+                            } label: {
+                                Label("Move", systemImage: "arrow.up.and.down.and.arrow.left.and.right")
+                            }
                             Button(role: .destructive) {
                                 viewModel.removeWaypoint(at: index)
                             } label: {
@@ -131,10 +154,18 @@ struct CreateRouteView: View {
                     .mapControlVisibility(.automatic)
             }
             .onTapGesture { screenCoord in
-                guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
-                if let mapCoord = proxy.convert(screenCoord, from: .local) {
-                    viewModel.addWaypoint(mapCoord)
+                guard !viewModel.isCalculating else { return }
+                guard let mapCoord = proxy.convert(screenCoord, from: .local) else { return }
+
+                // If moving a waypoint, place it at the tapped location
+                if let movingIndex = viewModel.movingWaypointIndex {
+                    viewModel.moveWaypoint(at: movingIndex, to: mapCoord)
+                    viewModel.movingWaypointIndex = nil
+                    return
                 }
+
+                guard viewModel.mode == .pin else { return }
+                viewModel.addWaypoint(mapCoord)
             }
             .onMapCameraChange { context in
                 viewModel.visibleRegion = context.region
@@ -184,9 +215,9 @@ struct CreateRouteView: View {
             Haptics.light()
         } label: {
             Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.white)
-                .frame(width: 40, height: 40)
+                .frame(width: 36, height: 36)
         }
         .glassEffect(.regular, in: .circle)
     }
