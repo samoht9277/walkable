@@ -78,7 +78,8 @@ final class CreateRouteViewModel {
             do {
                 let result = try await routingService.calculateLoop(through: waypoints)
                 calculatedRoute = result
-                if result.snappedWaypoints.count == waypoints.count {
+                // Snap waypoints to roads (only for pin/draw modes, not templates which overlap)
+                if mode != .template, result.snappedWaypoints.count == waypoints.count {
                     waypoints = result.snappedWaypoints
                 }
                 Haptics.success()
