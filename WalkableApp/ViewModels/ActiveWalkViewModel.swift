@@ -167,7 +167,7 @@ final class ActiveWalkViewModel {
             Task { @MainActor [weak self] in
                 guard let self, !self.isPaused, let start = self.startTime else { return }
                 self.elapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
-                if self.distanceWalked > 0 {
+                if self.distanceWalked > 20 {
                     self.currentPace = self.elapsedTime / (self.distanceWalked / 1000) // sec/km
                 }
                 self.updateLiveActivity()
@@ -254,6 +254,14 @@ final class ActiveWalkViewModel {
         walkCancellables.removeAll()
         isFollowMode = false
         endLiveActivity()
+
+        // Skip saving trivially short walks (accidental starts)
+        if distanceWalked < 10, elapsedTime < 30 {
+            isWalking = false
+            route = nil
+            SyncService.shared.setActiveRoute(nil)
+            return
+        }
 
         if let route {
             let session = WalkSession(route: route)
