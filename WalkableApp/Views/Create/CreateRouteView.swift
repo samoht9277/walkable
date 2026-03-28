@@ -6,6 +6,8 @@ struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
     @State private var isPencilActive = true
+    @State private var drawCanvasId = UUID()
+    @State private var drawingPoints: [CGPoint] = []
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -13,8 +15,17 @@ struct CreateRouteView: View {
             // Full-screen map
             mapView
 
-            // Bottom controls (mode-specific) - rendered before mode selector
-            // so the drawing canvas doesn't cover the mode selector
+            // Drawing canvas (full-screen, between map and controls)
+            if viewModel.mode == .draw && isPencilActive && !viewModel.hasRoute && viewModel.waypoints.isEmpty {
+                DrawingCanvas(isDrawing: $isPencilActive) { points in
+                    drawingPoints = points
+                }
+                .id(drawCanvasId)
+                .ignoresSafeArea()
+                .allowsHitTesting(true)
+            }
+
+            // Bottom controls
             VStack {
                 Spacer()
                 bottomControls
@@ -125,6 +136,9 @@ struct CreateRouteView: View {
         .onChange(of: viewModel.mode) {
             Haptics.light()
             viewModel.clearAll()
+            drawingPoints.removeAll()
+            isPencilActive = true
+            drawCanvasId = UUID()
         }
     }
 
@@ -134,7 +148,7 @@ struct CreateRouteView: View {
         case .pin:
             PinModeOverlay(viewModel: viewModel)
         case .draw:
-            DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy, isPencilActive: $isPencilActive)
+            DrawModeOverlay(viewModel: viewModel, mapProxy: storedMapProxy, isPencilActive: $isPencilActive, drawnPoints: $drawingPoints, canvasId: $drawCanvasId)
         case .template:
             TemplateModeOverlay(viewModel: viewModel)
         }

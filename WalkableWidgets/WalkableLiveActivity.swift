@@ -35,13 +35,13 @@ struct WalkableLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack(alignment: .firstTextBaseline) {
                         Text(String(format: "%.2f", context.state.distance / 1000))
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
                         Text("km")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Spacer()
                         Text(context.state.elapsedTime.formattedDuration)
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
                             .monospacedDigit()
                     }
                 }

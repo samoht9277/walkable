@@ -6,8 +6,8 @@ struct DrawModeOverlay: View {
     @Bindable var viewModel: CreateRouteViewModel
     var mapProxy: MapProxy?
     @Binding var isPencilActive: Bool
-    @State private var drawnPoints: [CGPoint] = []
-    @State private var canvasId = UUID()
+    @Binding var drawnPoints: [CGPoint]
+    @Binding var canvasId: UUID
 
     private var hasButtons: Bool {
         viewModel.isCalculating || !viewModel.waypoints.isEmpty || viewModel.hasRoute || !drawnPoints.isEmpty
@@ -63,16 +63,6 @@ struct DrawModeOverlay: View {
             }
         }
         .padding(.bottom, 24)
-        .overlay {
-            if isPencilActive && !viewModel.hasRoute && viewModel.waypoints.isEmpty {
-                DrawingCanvas(isDrawing: $isPencilActive) { points in
-                    drawnPoints = points
-                }
-                .id(canvasId)
-                .ignoresSafeArea()
-                .allowsHitTesting(isPencilActive)
-            }
-        }
     }
 
     private func convertDrawingToWaypoints() {
