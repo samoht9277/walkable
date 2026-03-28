@@ -16,18 +16,9 @@ struct WalkableLiveActivity: Widget {
                     Text(context.attributes.routeName)
                         .font(.headline)
                     HStack(spacing: 12) {
-                        Label(
-                            String(format: "%.2f km", context.state.distance / 1000),
-                            systemImage: "ruler"
-                        )
-                        Label(
-                            context.state.elapsedTime.formattedDuration,
-                            systemImage: "clock"
-                        )
-                        Label(
-                            context.state.pace.formattedPaceShort,
-                            systemImage: "speedometer"
-                        )
+                        Label(String(format: "%.2f km", context.state.distance / 1000), systemImage: "ruler")
+                        Label(context.state.elapsedTime.formattedDuration, systemImage: "clock")
+                        Label(context.state.pace.formattedPaceShort, systemImage: "speedometer")
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -35,41 +26,42 @@ struct WalkableLiveActivity: Widget {
 
                 Spacer()
 
-                // Waypoint progress
-                Text("\(context.state.currentWaypointIndex)/\(context.state.totalWaypoints)")
+                Text("\(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)")
                     .font(.title3.weight(.bold).monospacedDigit())
                     .foregroundStyle(.blue)
             }
             .padding()
         } dynamicIsland: { context in
             DynamicIsland {
-                DynamicIslandExpandedRegion(.leading) {
-                    VStack(alignment: .leading) {
-                        Text(context.attributes.routeName)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.2f km", context.state.distance / 1000))
-                            .font(.system(.title3, design: .rounded, weight: .bold))
+                // Keep content away from rounded corners
+                DynamicIslandExpandedRegion(.center) {
+                    VStack(spacing: 8) {
+                        // Top row: distance + time
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(String(format: "%.2f km", context.state.distance / 1000))
+                                    .font(.system(.title2, design: .rounded, weight: .bold))
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(context.state.elapsedTime.formattedDuration)
+                                    .font(.system(.title2, design: .rounded, weight: .bold))
+                                    .monospacedDigit()
+                            }
+                        }
+
+                        // Bottom row: pace + route + waypoints
+                        HStack {
+                            Label(context.state.pace.formattedPaceShort, systemImage: "speedometer")
+                            Spacer()
+                            Text(context.attributes.routeName)
+                                .foregroundStyle(.blue)
+                            Spacer()
+                            Label("\(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)", systemImage: "mappin")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
-                }
-                DynamicIslandExpandedRegion(.trailing) {
-                    VStack(alignment: .trailing) {
-                        Text("Time")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Text(context.state.elapsedTime.formattedDuration)
-                            .font(.system(.title3, design: .rounded, weight: .bold))
-                            .monospacedDigit()
-                    }
-                }
-                DynamicIslandExpandedRegion(.bottom) {
-                    HStack(spacing: 16) {
-                        Label(context.state.pace.formattedPaceShort, systemImage: "speedometer")
-                        Spacer()
-                        Label("\(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)", systemImage: "mappin")
-                    }
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
                     .padding(.top, 4)
                 }
             } compactLeading: {
