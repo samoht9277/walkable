@@ -27,6 +27,11 @@ final class ActiveWalkViewModel {
     var gpsLocations: [CLLocation] = []
     var waypointArrivalTimes: [Int: Date] = [:]
 
+    // Follow camera mode
+    var isFollowMode = false
+    var followCameraPosition: MapCameraPosition = .automatic
+    var deviceHeading: Double = 0
+
     private var timer: Timer?
     private var startTime: Date?
     private var pausedDuration: TimeInterval = 0
@@ -138,6 +143,21 @@ final class ActiveWalkViewModel {
                 self.gpsLocations.append(location)
                 #endif
                 self.healthService.addRouteLocation(location)
+                self.updateFollowCamera(location: location.coordinate)
+            }
+            .store(in: &walkCancellables)
+
+        // Subscribe to heading updates for follow camera
+        locationService.startHeadingUpdates()
+        locationService.$heading
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] heading in
+                guard let self else { return }
+                self.deviceHeading = heading.trueHeading >= 0 ? heading.trueHeading : heading.magneticHeading
+                if self.isFollowMode, let loc = self.locationService.currentLocation?.coordinate {
+                    self.updateFollowCamera(location: loc)
+                }
             }
             .store(in: &walkCancellables)
 
@@ -169,13 +189,27 @@ final class ActiveWalkViewModel {
         Haptics.medium()
     }
 
+    func updateFollowCamera(location: CLLocationCoordinate2D) {
+        guard isFollowMode else { return }
+        followCameraPosition = .camera(
+            MapCamera(
+                centerCoordinate: location,
+                distance: 400,
+                heading: deviceHeading,
+                pitch: 60
+            )
+        )
+    }
+
     func endWalk(modelContext: ModelContext) async {
         Haptics.heavy()
         timer?.invalidate()
         timer = nil
         locationService.stopTracking()
+        locationService.stopHeadingUpdates()
         locationService.clearWaypointMonitoring()
         walkCancellables.removeAll()
+        isFollowMode = false
 
         if let route {
             let session = WalkSession(route: route)

@@ -13,22 +13,47 @@ struct ActiveWalkView: View {
                 // Passive Watch handoff view
                 watchHandoffView(route: route)
             } else if viewModel.isWalking, let route = viewModel.route {
-                // Map with route
-                RouteMapOverlay(
-                    route: route,
-                    walkedDistance: viewModel.distanceWalked,
-                    currentLocation: locationService.currentLocation?.coordinate,
-                    nextWaypointIndex: viewModel.currentWaypointIndex
-                )
-                .ignoresSafeArea()
+                // Map layer: overview or follow mode
+                if viewModel.isFollowMode {
+                    followModeMap(route: route)
+                        .ignoresSafeArea()
+                } else {
+                    RouteMapOverlay(
+                        route: route,
+                        walkedDistance: viewModel.distanceWalked,
+                        currentLocation: locationService.currentLocation?.coordinate,
+                        nextWaypointIndex: viewModel.currentWaypointIndex
+                    )
+                    .ignoresSafeArea()
+                }
 
                 // Stats and controls overlay
                 VStack {
+                    HStack {
+                        Spacer()
+                        // View mode toggle
+                        Button {
+                            viewModel.isFollowMode.toggle()
+                            if viewModel.isFollowMode,
+                               let loc = locationService.currentLocation?.coordinate {
+                                viewModel.updateFollowCamera(location: loc)
+                            }
+                            Haptics.light()
+                        } label: {
+                            Image(systemName: viewModel.isFollowMode ? "map" : "location.viewfinder")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.primary)
+                                .frame(width: 40, height: 40)
+                        }
+                        .buttonStyle(.glass)
+                        .padding(.trailing, 12)
+                        .padding(.top, 8)
+                    }
+
                     // Waypoint arrival notification
                     if viewModel.showArrivalCard, let msg = viewModel.arrivedWaypointMessage {
                         WaypointArrivalCard(waypointName: msg)
                             .padding(.horizontal)
-                            .padding(.top, 8)
                     }
 
                     Spacer()
@@ -85,6 +110,48 @@ struct ActiveWalkView: View {
             )
             .interactiveDismissDisabled()
         }
+    }
+
+    @ViewBuilder
+    private func followModeMap(route: Route) -> some View {
+        Map(position: Bindable(viewModel).followCameraPosition) {
+            if let coords = route.decodedPolylineCoordinates {
+                if let currentLoc = locationService.currentLocation?.coordinate {
+                    let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
+                    MapPolyline(coordinates: split.walked)
+                        .stroke(.gray, lineWidth: 4)
+                    MapPolyline(coordinates: split.remaining)
+                        .stroke(.blue, lineWidth: 4)
+                } else {
+                    MapPolyline(coordinates: coords)
+                        .stroke(.blue, lineWidth: 4)
+                }
+            }
+
+            // Next waypoint marker
+            if viewModel.currentWaypointIndex < route.sortedWaypoints.count {
+                let wp = route.sortedWaypoints[viewModel.currentWaypointIndex]
+                Annotation(wp.label ?? "Waypoint \(wp.index + 1)", coordinate: wp.coordinate) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.orange)
+                            .frame(width: 20, height: 20)
+                        Circle()
+                            .stroke(.white, lineWidth: 2)
+                            .frame(width: 20, height: 20)
+                        Text("\(wp.index + 1)")
+                            .font(.caption2.bold())
+                            .foregroundStyle(.white)
+                    }
+                    .shadow(radius: 2)
+                }
+            }
+
+            // User location marker
+            UserAnnotation()
+        }
+        .mapStyle(.standard(elevation: .realistic))
+        .mapControlVisibility(.hidden)
     }
 
     @ViewBuilder
