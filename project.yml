@@ -33,12 +33,15 @@ targets:
       - WalkableApp
     dependencies:
       - package: WalkableKit
+      - target: WalkableWidgets
+        embed: true
     settings:
       GENERATE_INFOPLIST_FILE: true
       CODE_SIGN_STYLE: Automatic
       INFOPLIST_KEY_UILaunchScreen_Generation: true
       INFOPLIST_KEY_CFBundleDisplayName: Walkable
       INFOPLIST_KEY_UIBackgroundModes: location
+      INFOPLIST_KEY_NSSupportsLiveActivities: true
       INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location to track walks and show your position on the map."
       INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription: "Walkable needs background location access to track your walks."
       INFOPLIST_KEY_NSHealthShareUsageDescription: "Walkable reads your health data to show fitness stats."
@@ -69,6 +72,23 @@ targets:
       path: WalkableWatch/WalkableWatch.entitlements
       properties:
         com.apple.developer.healthkit: true
+
+  WalkableWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - WalkableWidgets
+    dependencies:
+      - package: WalkableKit
+    info:
+      path: WalkableWidgets/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      CODE_SIGN_STYLE: Automatic
+      PRODUCT_BUNDLE_IDENTIFIER: com.walkable.WalkableApp.widgets
+      INFOPLIST_KEY_CFBundleDisplayName: Walkable
 
   WalkableTests:
     type: bundle.unit-test
