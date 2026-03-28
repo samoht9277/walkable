@@ -26,16 +26,16 @@ struct CreateRouteView: View {
                 .allowsHitTesting(true)
             }
 
-            // Bottom controls
-            VStack {
+            // Bottom controls + mode selector
+            VStack(spacing: 8) {
                 Spacer()
                 bottomControls
+                modeSelector
+                    .padding(.bottom, 4)
             }
 
-            // Top controls - rendered last so they stay clickable above the canvas
-            VStack(spacing: 6) {
-                modeSelector
-                    .padding(.top, 8)
+            // Top controls - pin counter + draw toggle
+            VStack {
                 HStack(alignment: .top) {
                     if !viewModel.waypoints.isEmpty {
                         Label("\(viewModel.waypoints.count)", systemImage: "mappin")
@@ -51,6 +51,7 @@ struct CreateRouteView: View {
                     }
                 }
                 .padding(.horizontal, 20)
+                .padding(.top, 8)
                 Spacer()
             }
 
@@ -92,11 +93,22 @@ struct CreateRouteView: View {
                         }
                         .shadow(radius: 2)
                         .contextMenu {
+                            Text("Waypoint \(index + 1)")
                             Button(role: .destructive) {
                                 viewModel.removeWaypoint(at: index)
                             } label: {
-                                Label("Delete Waypoint", systemImage: "trash")
+                                Label("Delete", systemImage: "trash")
                             }
+                        } preview: {
+                            VStack {
+                                Text("\(index + 1)")
+                                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    .foregroundStyle(index == 0 ? .red : .blue)
+                                Text("Waypoint")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(width: 100, height: 80)
                         }
                     }
                 }
