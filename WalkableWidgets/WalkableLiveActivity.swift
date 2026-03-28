@@ -33,31 +33,16 @@ struct WalkableLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 6) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(String(format: "%.2f", context.state.distance / 1000))
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                            Text("km")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text(context.state.elapsedTime.formattedDuration)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .monospacedDigit()
-                        }
-
-                        HStack {
-                            Image(systemName: "speedometer")
-                            Text(context.state.pace.formattedPaceShort)
-                            Spacer()
-                            Text(context.attributes.routeName)
-                                .foregroundStyle(.blue)
-                            Spacer()
-                            Image(systemName: "mappin")
-                            Text("\(context.state.currentWaypointIndex)/\(context.state.totalWaypoints)")
-                        }
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(String(format: "%.2f", context.state.distance / 1000))
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                        Text("km")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text(context.state.elapsedTime.formattedDuration)
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                            .monospacedDigit()
                     }
                 }
             } compactLeading: {

@@ -8,25 +8,6 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            if !isReady {
-                Color(.systemBackground)
-                    .ignoresSafeArea()
-                    .overlay {
-                        VStack(spacing: 12) {
-                            Image(systemName: "figure.walk.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundStyle(.blue)
-                            Text("Walkable")
-                                .font(.title2.weight(.bold))
-                        }
-                    }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation(.easeOut(duration: 0.3)) { isReady = true }
-                        }
-                    }
-            }
-
             TabView(selection: $selectedTab) {
                 CreateRouteView()
                     .tabItem {
@@ -53,6 +34,26 @@ struct ContentView: View {
                         Label("Stats", systemImage: "chart.bar")
                     }
                     .tag(3)
+            }
+
+            // Splash overlay (TabView renders behind so MapKit initializes)
+            if !isReady {
+                Color(.systemBackground)
+                    .ignoresSafeArea()
+                    .overlay {
+                        VStack(spacing: 12) {
+                            Image(systemName: "figure.walk.circle.fill")
+                                .font(.system(size: 60))
+                                .foregroundStyle(.blue)
+                            Text("Walkable")
+                                .font(.title2.weight(.bold))
+                        }
+                    }
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            withAnimation(.easeOut(duration: 0.3)) { isReady = true }
+                        }
+                    }
             }
 
             // Active walk banner on non-Walk tabs
