@@ -1,6 +1,18 @@
-# Walkable
+<p align="center">
+  <img src="assets/banner.png" alt="Walkable" width="100%">
+</p>
 
-A native iOS + watchOS app for creating and walking custom loops around your neighborhood. Built entirely with Apple frameworks, no external dependencies.
+<p align="center">
+  <strong>A native iOS + watchOS app for creating and walking custom loops around your neighborhood.</strong><br>
+  Built entirely with Apple frameworks, zero external dependencies.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/iOS-26.0+-007AFF?logo=apple" alt="iOS 26+">
+  <img src="https://img.shields.io/badge/watchOS-26.0+-007AFF?logo=apple" alt="watchOS 26+">
+  <img src="https://img.shields.io/badge/Swift-6.0-F05138?logo=swift" alt="Swift 6">
+  <img src="https://img.shields.io/badge/Dependencies-0-30D158" alt="Zero dependencies">
+</p>
 
 ## Features
 
