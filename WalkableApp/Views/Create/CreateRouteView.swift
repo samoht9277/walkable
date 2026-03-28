@@ -34,7 +34,7 @@ struct CreateRouteView: View {
                     .padding(.bottom, 4)
             }
 
-            // Top controls - pin counter + draw toggle
+            // Top controls - pin counter (left) + draw toggle (right, below compass)
             VStack {
                 HStack(alignment: .top) {
                     if !viewModel.waypoints.isEmpty {
@@ -48,6 +48,7 @@ struct CreateRouteView: View {
                     Spacer()
                     if viewModel.mode == .draw {
                         drawNavigateToggle
+                            .padding(.top, 50)
                     }
                 }
                 .padding(.horizontal, 20)
@@ -83,14 +84,16 @@ struct CreateRouteView: View {
                         ZStack {
                             Circle()
                                 .fill(index == 0 ? Color.red : Color.blue)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 20, height: 20)
                             Circle()
                                 .stroke(.white, lineWidth: 2)
-                                .frame(width: 16, height: 16)
+                                .frame(width: 20, height: 20)
                             Text("\(index + 1)")
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.system(size: 9, weight: .bold))
                                 .foregroundStyle(.white)
                         }
+                        .padding(4)
+                        .contentShape(Circle())
                         .shadow(radius: 2)
                         .contextMenu {
                             Text("Waypoint \(index + 1)")
