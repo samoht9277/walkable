@@ -44,8 +44,8 @@ public enum TemplateGenerator {
             outbound.append(point)
         }
 
-        // Mirror back (skip the turnaround point to avoid duplicate)
-        let inbound = outbound.dropLast().reversed()
+        // Mirror back, skipping both the turnaround point and the start to avoid duplicates
+        let inbound = Array(outbound.dropFirst().dropLast().reversed())
         return outbound + inbound
     }
 

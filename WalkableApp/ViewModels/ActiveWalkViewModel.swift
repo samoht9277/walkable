@@ -94,6 +94,9 @@ final class ActiveWalkViewModel {
     }
 
     func startWalk(with route: Route) async {
+        // End any lingering activity from a previous walk
+        endLiveActivity()
+
         self.route = route
 
         // Try to hand off to Watch (sends via message if reachable, transferUserInfo if not)
@@ -213,7 +216,9 @@ final class ActiveWalkViewModel {
     }
 
     private func endLiveActivity() {
-        let finalState = WalkActivityAttributes.ContentState(
+        guard let activity = liveActivity else { return }
+        liveActivity = nil
+        let state = WalkActivityAttributes.ContentState(
             distance: distanceWalked,
             elapsedTime: elapsedTime,
             pace: currentPace,
@@ -222,12 +227,11 @@ final class ActiveWalkViewModel {
             totalWaypoints: route?.waypoints.count ?? 0
         )
         Task {
-            await liveActivity?.end(
-                ActivityContent(state: finalState, staleDate: nil),
+            await activity.end(
+                ActivityContent(state: state, staleDate: nil),
                 dismissalPolicy: .immediate
             )
         }
-        liveActivity = nil
     }
 
     func pauseWalk() {
@@ -322,6 +326,7 @@ final class ActiveWalkViewModel {
     }
 
     func dismissSummary() {
+        endLiveActivity()
         showSummary = false
         route = nil
         elapsedTime = 0
