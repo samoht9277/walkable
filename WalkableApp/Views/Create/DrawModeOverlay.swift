@@ -54,7 +54,7 @@ struct DrawModeOverlay: View {
                 }
                 .padding(.horizontal, 16)
             } else {
-                Text("Draw a loop on the map")
+                Text("Hold and drag to draw a loop")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 16)

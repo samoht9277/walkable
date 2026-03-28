@@ -6,7 +6,6 @@ struct CreateRouteView: View {
     @State private var viewModel = CreateRouteViewModel()
     @State private var storedMapProxy: MapProxy?
     @State private var isPencilActive = true
-    @State private var mapHeading: Double = 0
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -35,11 +34,8 @@ struct CreateRouteView: View {
                             .glassEffect(.regular, in: .capsule)
                     }
                     Spacer()
-                    VStack(spacing: 8) {
-                        compassButton
-                        if viewModel.mode == .draw {
-                            drawNavigateToggle
-                        }
+                    if viewModel.mode == .draw {
+                        drawNavigateToggle
                     }
                 }
                 .padding(.horizontal, 20)
@@ -96,7 +92,10 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .realistic))
-            .mapControls { }
+            .mapControls {
+                MapCompass()
+                    .mapControlVisibility(.automatic)
+            }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
@@ -105,7 +104,6 @@ struct CreateRouteView: View {
             }
             .onMapCameraChange(frequency: .onEnd) { context in
                 viewModel.visibleRegion = context.region
-                mapHeading = context.camera.heading
             }
             .onAppear { storedMapProxy = proxy }
         }
@@ -168,30 +166,4 @@ struct CreateRouteView: View {
         .glassEffect(.regular, in: .rect(cornerRadius: 20))
     }
 
-    @ViewBuilder
-    private var compassButton: some View {
-        if abs(mapHeading) > 0.5 {
-            Button {
-                withAnimation(.smooth) {
-                    viewModel.cameraPosition = .camera(MapCamera(
-                        centerCoordinate: viewModel.visibleRegion?.center ?? CLLocationCoordinate2D(),
-                        distance: viewModel.visibleRegion.map {
-                            max($0.span.latitudeDelta, $0.span.longitudeDelta) * 111000
-                        } ?? 3000,
-                        heading: 0
-                    ))
-                }
-                Haptics.light()
-            } label: {
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.red, .white)
-                    .rotationEffect(.degrees(-mapHeading))
-                    .frame(width: 40, height: 40)
-            }
-            .glassEffect(.regular, in: .circle)
-            .transition(.scale.combined(with: .opacity))
-            .animation(.smooth, value: mapHeading)
-        }
-    }
 }

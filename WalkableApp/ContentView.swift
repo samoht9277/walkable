@@ -1,16 +1,6 @@
 import SwiftUI
 import WalkableKit
 
-struct LazyView<Content: View>: View {
-    let build: () -> Content
-    init(_ build: @autoclosure @escaping () -> Content) {
-        self.build = build
-    }
-    var body: some View {
-        build()
-    }
-}
-
 struct ContentView: View {
     @State private var selectedTab = 0
     @State private var walkViewModel = ActiveWalkViewModel()
@@ -18,27 +8,27 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             TabView(selection: $selectedTab) {
-                LazyView(CreateRouteView())
+                CreateRouteView()
                     .tabItem {
                         Label("Create", systemImage: "map")
                     }
                     .tag(0)
-                LazyView(LibraryView { route in
+                LibraryView { route in
                     Task {
                         await walkViewModel.startWalk(with: route)
                         selectedTab = 2
                     }
-                })
+                }
                 .tabItem {
                     Label("Library", systemImage: "books.vertical")
                 }
                 .tag(1)
-                LazyView(ActiveWalkView(viewModel: walkViewModel))
+                ActiveWalkView(viewModel: walkViewModel)
                     .tabItem {
                         Label("Walk", systemImage: "figure.walk")
                     }
                     .tag(2)
-                LazyView(StatsView())
+                StatsView()
                     .tabItem {
                         Label("Stats", systemImage: "chart.bar")
                     }

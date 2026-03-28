@@ -20,30 +20,39 @@ struct DrawingCanvas: View {
                 context.stroke(path, with: .color(.blue.opacity(0.6)), lineWidth: 4)
             }
             .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 1, coordinateSpace: .local)
-                    .updating($isDragging) { _, state, _ in state = true }
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.15)
+                    .sequenced(before: DragGesture(minimumDistance: 1, coordinateSpace: .local))
                     .onChanged { value in
-                        let local = value.location
-                        // Convert to global by adding the geometry's frame origin
-                        let frame = geo.frame(in: .global)
-                        let global = CGPoint(x: local.x + frame.origin.x, y: local.y + frame.origin.y)
+                        switch value {
+                        case .second(true, let drag):
+                            guard let drag else { return }
+                            let local = drag.location
+                            let frame = geo.frame(in: .global)
+                            let global = CGPoint(x: local.x + frame.origin.x, y: local.y + frame.origin.y)
 
-                        if localPoints.isEmpty {
-                            localPoints = [local]
-                            globalPoints = [global]
-                        } else {
-                            localPoints.append(local)
-                            globalPoints.append(global)
+                            if localPoints.isEmpty {
+                                localPoints = [local]
+                                globalPoints = [global]
+                            } else {
+                                localPoints.append(local)
+                                globalPoints.append(global)
+                            }
+                        default:
+                            break
                         }
                     }
-                    .onEnded { _ in
-                        // Close the loop
-                        if let firstLocal = localPoints.first, let firstGlobal = globalPoints.first {
-                            localPoints.append(firstLocal)
-                            globalPoints.append(firstGlobal)
+                    .onEnded { value in
+                        switch value {
+                        case .second(true, _):
+                            if let firstLocal = localPoints.first, let firstGlobal = globalPoints.first {
+                                localPoints.append(firstLocal)
+                                globalPoints.append(firstGlobal)
+                            }
+                            onDrawingComplete(globalPoints)
+                        default:
+                            break
                         }
-                        onDrawingComplete(globalPoints)
                     }
             )
         }

@@ -24,7 +24,7 @@ final class CreateTabUITests: XCTestCase {
 
     func testDrawMode_showsHint() {
         app.buttons["Draw"].tap()
-        XCTAssertTrue(app.staticTexts["Draw a loop on the map"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Hold and drag to draw a loop"].waitForExistence(timeout: 2))
     }
 
     func testTemplateMode_showsShapePicker() {
