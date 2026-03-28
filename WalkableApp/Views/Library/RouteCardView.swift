@@ -41,8 +41,7 @@ struct RouteCardView: View {
                 }
             }
         }
-        .padding()
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .padding(.vertical, 4)
     }
 
 }

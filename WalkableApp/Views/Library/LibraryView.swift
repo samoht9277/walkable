@@ -44,30 +44,30 @@ struct LibraryView: View {
                 } else {
                     List {
                         ForEach(filtered) { route in
-                            RouteCardView(route: route)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                                .onTapGesture {
-                                    viewModel.selectedRoute = route
+                            Button {
+                                viewModel.selectedRoute = route
+                            } label: {
+                                RouteCardView(route: route)
+                            }
+                            .buttonStyle(.plain)
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    viewModel.toggleFavorite(route)
+                                } label: {
+                                    Label(
+                                        route.isFavorite ? "Unfavorite" : "Favorite",
+                                        systemImage: route.isFavorite ? "star.slash" : "star.fill"
+                                    )
                                 }
-                                .swipeActions(edge: .leading) {
-                                    Button {
-                                        viewModel.toggleFavorite(route)
-                                    } label: {
-                                        Label(
-                                            route.isFavorite ? "Unfavorite" : "Favorite",
-                                            systemImage: route.isFavorite ? "star.slash" : "star.fill"
-                                        )
-                                    }
-                                    .tint(.yellow)
+                                .tint(.yellow)
+                            }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button(role: .destructive) {
+                                    viewModel.deleteRoute(route, modelContext: modelContext)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
                                 }
-                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                    Button(role: .destructive) {
-                                        viewModel.deleteRoute(route, modelContext: modelContext)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
+                            }
                         }
                     }
                     .listStyle(.plain)
