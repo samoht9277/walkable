@@ -63,13 +63,14 @@ struct WalkableLiveActivity: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    HStack {
+                    HStack(spacing: 16) {
                         Label(context.state.pace.formattedPaceShort, systemImage: "speedometer")
                         Spacer()
-                        Text("WP \(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)")
+                        Label("\(context.state.currentWaypointIndex + 1)/\(context.state.totalWaypoints)", systemImage: "mappin")
                     }
-                    .font(.caption)
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .padding(.top, 4)
                 }
             } compactLeading: {
                 Image(systemName: "figure.walk")
