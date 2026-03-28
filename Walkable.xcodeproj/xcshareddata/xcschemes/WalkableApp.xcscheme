@@ -50,6 +50,17 @@
                ReferencedContainer = "container:Walkable.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8F2D3ED88A48ED82E4D410AA"
+               BuildableName = "WalkableUITests.xctest"
+               BlueprintName = "WalkableUITests"
+               ReferencedContainer = "container:Walkable.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
