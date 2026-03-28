@@ -38,21 +38,17 @@ struct ContentView: View {
 
             // Splash overlay (TabView renders behind so MapKit initializes)
             if !isReady {
-                Color(.systemBackground)
+                LinearGradient(colors: [Color(red: 0, green: 0.78, blue: 0.92), Color(red: 0.12, green: 0.47, blue: 1.0)],
+                               startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                     .overlay {
-                        VStack(spacing: 12) {
-                            Image(systemName: "figure.walk.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundStyle(.blue)
-                            Text("Walkable")
-                                .font(.title2.weight(.bold))
-                        }
+                        Image(systemName: "figure.walk.circle.fill")
+                            .font(.system(size: 80))
+                            .foregroundStyle(.white)
                     }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            withAnimation(.easeOut(duration: 0.3)) { isReady = true }
-                        }
+                    .task {
+                        try? await Task.sleep(for: .seconds(1))
+                        withAnimation(.easeOut(duration: 0.4)) { isReady = true }
                     }
             }
 
