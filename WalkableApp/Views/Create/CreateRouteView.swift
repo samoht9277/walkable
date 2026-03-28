@@ -96,7 +96,6 @@ struct CreateRouteView: View {
                 MapCompass()
                     .mapControlVisibility(.automatic)
             }
-            .safeAreaPadding(.top, 50)
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
