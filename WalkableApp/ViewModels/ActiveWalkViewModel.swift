@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import Combine
 import SwiftData
+import ActivityKit
 import WalkableKit
 
 @MainActor
@@ -38,6 +39,7 @@ final class ActiveWalkViewModel {
     private var pauseStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
     private var walkCancellables = Set<AnyCancellable>()
+    private var liveActivity: Activity<WalkActivityAttributes>?
 
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
@@ -168,10 +170,51 @@ final class ActiveWalkViewModel {
                 if self.distanceWalked > 0 {
                     self.currentPace = self.elapsedTime / (self.distanceWalked / 1000) // sec/km
                 }
+                self.updateLiveActivity()
             }
         }
 
+        startLiveActivity()
         SyncService.shared.setActiveRoute(route)
+    }
+
+    // MARK: - Live Activity
+
+    private func startLiveActivity() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let attributes = WalkActivityAttributes(
+            routeName: route?.name ?? "Walk",
+            totalDistance: route?.distance ?? 0
+        )
+        let state = WalkActivityAttributes.ContentState(
+            distance: 0,
+            elapsedTime: 0,
+            pace: 0,
+            nextWaypointDistance: distanceToNextWaypoint,
+            currentWaypointIndex: currentWaypointIndex,
+            totalWaypoints: route?.waypoints.count ?? 0
+        )
+        liveActivity = try? Activity.request(
+            attributes: attributes,
+            content: .init(state: state, staleDate: nil)
+        )
+    }
+
+    private func updateLiveActivity() {
+        let state = WalkActivityAttributes.ContentState(
+            distance: distanceWalked,
+            elapsedTime: elapsedTime,
+            pace: currentPace,
+            nextWaypointDistance: distanceToNextWaypoint,
+            currentWaypointIndex: currentWaypointIndex,
+            totalWaypoints: route?.waypoints.count ?? 0
+        )
+        Task { await liveActivity?.update(.init(state: state, staleDate: nil)) }
+    }
+
+    private func endLiveActivity() {
+        Task { await liveActivity?.end(nil, dismissalPolicy: .immediate) }
+        liveActivity = nil
     }
 
     func pauseWalk() {
@@ -210,6 +253,7 @@ final class ActiveWalkViewModel {
         locationService.clearWaypointMonitoring()
         walkCancellables.removeAll()
         isFollowMode = false
+        endLiveActivity()
 
         if let route {
             let session = WalkSession(route: route)

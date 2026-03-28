@@ -14,6 +14,7 @@
 		195959BDA7C345D4BDD1A1CD /* WatchWalkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2DD36DF427DED9A72E1EB5 /* WatchWalkViewModel.swift */; };
 		2270E1523F109D5066BF7B53 /* RouteMapOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */; };
 		354F616FC4FAD1FDE8A1023B /* FormatUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A5ABBA0A32C3DE84D9F5BE /* FormatUtilsTests.swift */; };
+		380C6C213E16B7B0DDED251B /* WalkableLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB7618EACDEED770EA1628E /* WalkableLiveActivity.swift */; };
 		3D83AD6B01BFAE9364B5AFD8 /* WalkTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57F061AAADC8839C2E49EE10 /* WalkTabView.swift */; };
 		40EF31F52821985C3477936C /* ActiveWalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE952FDFB9CA2FC0DBA3903 /* ActiveWalkView.swift */; };
 		45A875A26F31A8510B294D7C /* WatchCreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E6FC4977D14C9010A6E800 /* WatchCreateViewModel.swift */; };
@@ -35,12 +36,15 @@
 		70EAEA4A912BD094E28BE123 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A51C3C02B3BA119213CAA1 /* Haptics.swift */; };
 		76FF5497A92BB432FCA9ACD4 /* StatsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59ED20DEE31A8F577687C4B /* StatsUITests.swift */; };
 		789071D67D46C4AE7996E31A /* RouteCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9C0771AA622AAF1E7D6CA3 /* RouteCardView.swift */; };
+		7B7B351861A6DDCC3BB96658 /* WalkableWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5515782EF765667BB5836D12 /* WalkableWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8189B2B4D2149DE73BC178CA /* RoutingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B818683D809F25E0BCBF4C /* RoutingServiceTests.swift */; };
 		8E28EA1F1188392F072F34B7 /* SaveRouteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555554BF8D7071BD426467B /* SaveRouteSheet.swift */; };
 		97E089ADC3CA8981385F63E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307090577F05AA73E61C1159 /* ContentView.swift */; };
 		9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856C3414EF05FE64556D6E09 /* WalkableApp.swift */; };
 		99BC7ABFCFBF0765A3F8D7CD /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FE9645613CC23B11F2232C /* LibraryView.swift */; };
 		9AE7B3E204D6E6DAB46E602A /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = FFB113B25AAE0C99856458A5 /* WalkableKit */; };
+		9B71571B0C080603A2CF3097 /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 64DAB2236C6F897B31E25AAD /* WalkableKit */; };
+		A039DE54EC3CF6A5646C55A7 /* WalkableWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65910331A837344A3DF7308C /* WalkableWidgetsBundle.swift */; };
 		A547BBF79642102F9C408EC3 /* RouteDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD25E2B689A23CD64502A618 /* RouteDetailSheet.swift */; };
 		B854C09C21F548C1E1FCEE2F /* WalkableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151B33648D4EBA203CF68828 /* WalkableUITests.swift */; };
 		C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */; };
@@ -63,6 +67,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		117BD6F1E395E99B50F8E095 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D277DE1B71D7955078E83022 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C67977720271797BA338E2D;
+			remoteInfo = WalkableWidgets;
+		};
 		92F3C33C6E84D200497840E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D277DE1B71D7955078E83022 /* Project object */;
@@ -78,6 +89,20 @@
 			remoteInfo = WalkableApp;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2D014403C2EF4107594F4C64 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7B7B351861A6DDCC3BB96658 /* WalkableWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06955A99B18F0995ED28EAA4 /* GlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButton.swift; sourceTree = "<group>"; };
@@ -98,9 +123,13 @@
 		4396FA147406FD118CC8FB34 /* SessionDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailSheet.swift; sourceTree = "<group>"; };
 		44DBE628CD2816AF0CC6C0E3 /* RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteListView.swift; sourceTree = "<group>"; };
 		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
+		4A200AD9B414882AC6C7C572 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5515782EF765667BB5836D12 /* WalkableWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WalkableWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		57F061AAADC8839C2E49EE10 /* WalkTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkTabView.swift; sourceTree = "<group>"; };
+		5DB7618EACDEED770EA1628E /* WalkableLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableLiveActivity.swift; sourceTree = "<group>"; };
+		65910331A837344A3DF7308C /* WalkableWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableWidgetsBundle.swift; sourceTree = "<group>"; };
 		6765B12731821E706EA6FBEC /* PolylineSplitterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineSplitterTests.swift; sourceTree = "<group>"; };
 		6FE0975B78BD16789EBECAD7 /* WatchRouteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRouteListViewModel.swift; sourceTree = "<group>"; };
 		719F6149C0E7BD387CAE29C9 /* CreateRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteView.swift; sourceTree = "<group>"; };
@@ -164,9 +193,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E30055AAA0F91F60FF4AC2FE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B71571B0C080603A2CF3097 /* WalkableKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00CC85F13AF685DB1E754D4A /* WalkableWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				4A200AD9B414882AC6C7C572 /* Info.plist */,
+				5DB7618EACDEED770EA1628E /* WalkableLiveActivity.swift */,
+				65910331A837344A3DF7308C /* WalkableWidgetsBundle.swift */,
+			);
+			path = WalkableWidgets;
+			sourceTree = "<group>";
+		};
 		0586DB7DA0D65056FB17F594 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +221,7 @@
 				E3F1F1C1001288B7384FF7C0 /* WalkableTests.xctest */,
 				91B4EB17D013CF933CC786A8 /* WalkableUITests.xctest */,
 				8855CF19B5A514FC074BB5F7 /* WalkableWatch.app */,
+				5515782EF765667BB5836D12 /* WalkableWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -233,6 +281,7 @@
 				4DBE5F22F746CDC9FC8AFC51 /* WalkableTests */,
 				78DDEFD4D2F1DBD1EB8ED7CB /* WalkableUITests */,
 				10DA4AE3078B1B1ACD36B463 /* WalkableWatch */,
+				00CC85F13AF685DB1E754D4A /* WalkableWidgets */,
 				0586DB7DA0D65056FB17F594 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -353,16 +402,37 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4C67977720271797BA338E2D /* WalkableWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D86C45BC61E6F88C70A62728 /* Build configuration list for PBXNativeTarget "WalkableWidgets" */;
+			buildPhases = (
+				4D022D4FA31139CE0E3E16D6 /* Sources */,
+				E30055AAA0F91F60FF4AC2FE /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WalkableWidgets;
+			packageProductDependencies = (
+				64DAB2236C6F897B31E25AAD /* WalkableKit */,
+			);
+			productName = WalkableWidgets;
+			productReference = 5515782EF765667BB5836D12 /* WalkableWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		4DF7772DF0C4B7ED0E86FB13 /* WalkableApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32BF782BC10488DC29820F31 /* Build configuration list for PBXNativeTarget "WalkableApp" */;
 			buildPhases = (
 				0717AC68B024E98C231CE304 /* Sources */,
 				924AA5C87676C9349EE38A7A /* Frameworks */,
+				2D014403C2EF4107594F4C64 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6268591B654D8BDA2C35E73C /* PBXTargetDependency */,
 			);
 			name = WalkableApp;
 			packageProductDependencies = (
@@ -438,6 +508,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					4C67977720271797BA338E2D = {
+						ProvisioningStyle = Automatic;
+					};
 					4DF7772DF0C4B7ED0E86FB13 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -470,6 +543,7 @@
 				6E6950EB8716ABF21EE4789D /* WalkableTests */,
 				8F2D3ED88A48ED82E4D410AA /* WalkableUITests */,
 				D7216D9D62AA556F4C3FD40A /* WalkableWatch */,
+				4C67977720271797BA338E2D /* WalkableWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -508,6 +582,15 @@
 				170ABD1DACA88670BD6C90EE /* WalkSummaryView.swift in Sources */,
 				9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */,
 				5F0E584E87636F6B3F0E46E1 /* WaypointArrivalCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D022D4FA31139CE0E3E16D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				380C6C213E16B7B0DDED251B /* WalkableLiveActivity.swift in Sources */,
+				A039DE54EC3CF6A5646C55A7 /* WalkableWidgetsBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +644,11 @@
 			target = 4DF7772DF0C4B7ED0E86FB13 /* WalkableApp */;
 			targetProxy = F1240D250418A36BA2A0F56D /* PBXContainerItemProxy */;
 		};
+		6268591B654D8BDA2C35E73C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C67977720271797BA338E2D /* WalkableWidgets */;
+			targetProxy = 117BD6F1E395E99B50F8E095 /* PBXContainerItemProxy */;
+		};
 		E6FBE9A366B7426ED87225CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4DF7772DF0C4B7ED0E86FB13 /* WalkableApp */;
@@ -586,6 +674,23 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		1859B57DFAF02D1EEE456FCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WalkableWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.walkable.WalkableApp.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -636,6 +741,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves your walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Walkable needs background location access to track your walks.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location to track walks and show your position on the map.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIBackgroundModes = location;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -661,6 +767,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Walkable saves your walking workouts to Apple Health.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Walkable needs background location access to track your walks.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Walkable needs your location to track walks and show your position on the map.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIBackgroundModes = location;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -668,6 +775,23 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.walkable.WalkableApp;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4DEA08195214BEE24DC1AEA6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WalkableWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.walkable.WalkableApp.widgets;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -885,6 +1009,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		D86C45BC61E6F88C70A62728 /* Build configuration list for PBXNativeTarget "WalkableWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DEA08195214BEE24DC1AEA6 /* Debug */,
+				1859B57DFAF02D1EEE456FCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		FE8AE42BAE3A2C6424638F89 /* Build configuration list for PBXNativeTarget "WalkableWatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -905,6 +1038,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		41BAECEC5FD1E464FD56214F /* WalkableKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WalkableKit;
+		};
+		64DAB2236C6F897B31E25AAD /* WalkableKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WalkableKit;
 		};
