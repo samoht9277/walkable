@@ -8,6 +8,7 @@ struct CreateRouteView: View {
     @State private var isPencilActive = true
     @State private var drawCanvasId = UUID()
     @State private var drawingPoints: [CGPoint] = []
+    @State private var mapHeading: Double = 0
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -45,8 +46,11 @@ struct CreateRouteView: View {
                             .glassEffect(.regular, in: .capsule)
                     }
                     Spacer()
-                    if viewModel.mode == .draw {
-                        drawNavigateToggle
+                    VStack(spacing: 8) {
+                        compassButton
+                        if viewModel.mode == .draw {
+                            drawNavigateToggle
+                        }
                     }
                 }
                 .padding(.horizontal, 20)
@@ -103,18 +107,16 @@ struct CreateRouteView: View {
                 UserAnnotation()
             }
             .mapStyle(.standard(elevation: .realistic))
-            .mapControls {
-                MapCompass()
-                    .mapControlVisibility(.automatic)
-            }
+            .mapControls { }
             .onTapGesture { screenCoord in
                 guard viewModel.mode == .pin, !viewModel.isCalculating else { return }
                 if let mapCoord = proxy.convert(screenCoord, from: .local) {
                     viewModel.addWaypoint(mapCoord)
                 }
             }
-            .onMapCameraChange(frequency: .onEnd) { context in
+            .onMapCameraChange { context in
                 viewModel.visibleRegion = context.region
+                mapHeading = context.camera.heading
             }
             .onAppear { storedMapProxy = proxy }
         }
@@ -165,6 +167,32 @@ struct CreateRouteView: View {
                 .frame(width: 40, height: 40)
         }
         .glassEffect(.regular, in: .circle)
+    }
+
+    @ViewBuilder
+    private var compassButton: some View {
+        if abs(mapHeading) > 0.5 {
+            Button {
+                withAnimation(.smooth) {
+                    guard let region = viewModel.visibleRegion else { return }
+                    viewModel.cameraPosition = .camera(MapCamera(
+                        centerCoordinate: region.center,
+                        distance: max(region.span.latitudeDelta, region.span.longitudeDelta) * 111000,
+                        heading: 0
+                    ))
+                }
+                Haptics.light()
+            } label: {
+                Image(systemName: "location.north.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.red, .white)
+                    .rotationEffect(.degrees(-mapHeading))
+                    .animation(.smooth(duration: 0.15), value: mapHeading)
+                    .frame(width: 36, height: 36)
+            }
+            .glassEffect(.regular, in: .circle)
+            .transition(.scale.combined(with: .opacity))
+        }
     }
 
     private var calculatingOverlay: some View {

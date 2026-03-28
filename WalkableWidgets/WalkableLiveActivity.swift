@@ -32,7 +32,7 @@ struct WalkableLiveActivity: Widget {
             .padding()
         } dynamicIsland: { context in
             DynamicIsland {
-                DynamicIslandExpandedRegion(.bottom) {
+                DynamicIslandExpandedRegion(.center) {
                     HStack(alignment: .firstTextBaseline) {
                         Text(String(format: "%.2f", context.state.distance / 1000))
                             .font(.system(size: 24, weight: .bold, design: .rounded))

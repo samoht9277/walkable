@@ -45,8 +45,15 @@ public enum TemplateGenerator {
         }
 
         // Mirror back: skip turnaround point (already in outbound) to avoid duplicate
+        // Offset inbound waypoints slightly to the right to avoid overlap with outbound
+        let perpBearing = bearingRad + .pi / 2
+        let offsetDistance = 15.0 // meters
+
         let inbound = Array(outbound.dropLast().reversed().dropFirst())
-        return outbound + inbound
+        let offsetInbound = inbound.map { coord in
+            coordinateAt(center: coord, distanceMeters: offsetDistance, bearingRadians: perpBearing)
+        }
+        return outbound + offsetInbound
     }
 
     /// Generate waypoints for a figure-8 route.
