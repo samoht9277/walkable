@@ -19,6 +19,7 @@ schemes:
     test:
       targets:
         - WalkableTests
+        - WalkableUITests
   WalkableWatch:
     build:
       targets:
@@ -79,3 +80,13 @@ targets:
     dependencies:
       - target: WalkableApp
       - package: WalkableKit
+
+  WalkableUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - WalkableUITests
+    settings:
+      GENERATE_INFOPLIST_FILE: true
+    dependencies:
+      - target: WalkableApp
