@@ -14,6 +14,10 @@
   <img src="https://img.shields.io/badge/Dependencies-0-30D158" alt="Zero dependencies">
 </p>
 
+<p align="center">
+  <img src="assets/screenshot_route.png" alt="Walkable route creation" width="300">
+</p>
+
 ## Features
 
 ### Create Walking Loops
