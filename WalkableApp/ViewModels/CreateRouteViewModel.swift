@@ -25,6 +25,8 @@ final class CreateRouteViewModel {
     var calculatedRoute: CalculatedRoute?
     var isCalculating = false
     var movingWaypointIndex: Int? = nil
+    var lastPlacedIndex: Int? = nil    // triggers "new pin" ring
+    var lastEditedIndex: Int? = nil    // triggers "edited pin" ring
     var errorMessage: String?
     var showSaveSheet = false
 
@@ -49,6 +51,7 @@ final class CreateRouteViewModel {
     func addWaypoint(_ coordinate: CLLocationCoordinate2D) {
         waypoints.append(coordinate)
         calculatedRoute = nil
+        lastPlacedIndex = waypoints.count - 1
         Haptics.light()
     }
 
@@ -70,6 +73,7 @@ final class CreateRouteViewModel {
         guard waypoints.indices.contains(index) else { return }
         waypoints[index] = coordinate
         calculatedRoute = nil
+        lastEditedIndex = index
         Haptics.light()
     }
 
