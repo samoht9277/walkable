@@ -24,6 +24,7 @@ final class CreateRouteViewModel {
     var waypoints: [CLLocationCoordinate2D] = []
     var calculatedRoute: CalculatedRoute?
     var isCalculating = false
+    var movingWaypointIndex: Int? = nil
     var errorMessage: String?
     var showSaveSheet = false
 
