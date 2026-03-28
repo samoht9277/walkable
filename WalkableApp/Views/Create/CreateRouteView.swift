@@ -52,7 +52,7 @@ struct CreateRouteView: View {
                     }
                 }
                 .padding(.leading, 20)
-                .padding(.trailing, 10)
+                .padding(.trailing, 14)
                 .padding(.top, 8)
                 Spacer()
             }
@@ -110,8 +110,7 @@ struct CreateRouteView: View {
                         .padding(4)
                         .contentShape(Circle())
                         .shadow(radius: viewModel.movingWaypointIndex == index ? 4 : 2)
-                        .opacity(viewModel.movingWaypointIndex == index ? 0.6 : 1.0)
-                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: viewModel.movingWaypointIndex == index)
+                        .symbolEffect(.pulse, isActive: viewModel.movingWaypointIndex == index)
                         .contextMenu {
                             Text("Waypoint \(index + 1)")
                             Button {
