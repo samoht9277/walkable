@@ -213,7 +213,20 @@ final class ActiveWalkViewModel {
     }
 
     private func endLiveActivity() {
-        Task { await liveActivity?.end(nil, dismissalPolicy: .immediate) }
+        let finalState = WalkActivityAttributes.ContentState(
+            distance: distanceWalked,
+            elapsedTime: elapsedTime,
+            pace: currentPace,
+            nextWaypointDistance: nil,
+            currentWaypointIndex: currentWaypointIndex,
+            totalWaypoints: route?.waypoints.count ?? 0
+        )
+        Task {
+            await liveActivity?.end(
+                ActivityContent(state: finalState, staleDate: nil),
+                dismissalPolicy: .immediate
+            )
+        }
         liveActivity = nil
     }
 
