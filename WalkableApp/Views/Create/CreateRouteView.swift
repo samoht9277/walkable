@@ -48,11 +48,11 @@ struct CreateRouteView: View {
                     Spacer()
                     if viewModel.mode == .draw {
                         drawNavigateToggle
-                            .padding(.top, 50)
+                            .padding(.top, 56)
                     }
                 }
                 .padding(.leading, 20)
-                .padding(.trailing, 8)
+                .padding(.trailing, 10)
                 .padding(.top, 8)
                 Spacer()
             }
@@ -109,9 +109,9 @@ struct CreateRouteView: View {
                         }
                         .padding(4)
                         .contentShape(Circle())
-                        .shadow(radius: 2)
-                        .scaleEffect(viewModel.movingWaypointIndex == index ? 1.5 : 1.0)
-                        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: viewModel.movingWaypointIndex == index)
+                        .shadow(radius: viewModel.movingWaypointIndex == index ? 4 : 2)
+                        .opacity(viewModel.movingWaypointIndex == index ? 0.6 : 1.0)
+                        .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: viewModel.movingWaypointIndex == index)
                         .contextMenu {
                             Text("Waypoint \(index + 1)")
                             Button {
@@ -215,9 +215,9 @@ struct CreateRouteView: View {
             Haptics.light()
         } label: {
             Image(systemName: isPencilActive ? "pencil.tip" : "hand.draw")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(.white)
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
         }
         .glassEffect(.regular, in: .circle)
     }
