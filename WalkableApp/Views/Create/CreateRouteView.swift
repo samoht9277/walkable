@@ -52,7 +52,7 @@ struct CreateRouteView: View {
                     }
                 }
                 .padding(.leading, 20)
-                .padding(.trailing, 14)
+                .padding(.trailing, 15)
                 .padding(.top, 8)
                 Spacer()
             }
@@ -109,8 +109,12 @@ struct CreateRouteView: View {
                         }
                         .padding(4)
                         .contentShape(Circle())
-                        .shadow(radius: viewModel.movingWaypointIndex == index ? 4 : 2)
-                        .symbolEffect(.pulse, isActive: viewModel.movingWaypointIndex == index)
+                        .shadow(radius: viewModel.movingWaypointIndex == index ? 6 : 2)
+                        .background {
+                            if viewModel.movingWaypointIndex == index {
+                                PulsingRing()
+                            }
+                        }
                         .contextMenu {
                             Text("Waypoint \(index + 1)")
                             Button {
@@ -232,6 +236,23 @@ struct CreateRouteView: View {
         }
         .padding(28)
         .glassEffect(.regular, in: .rect(cornerRadius: 20))
+    }
+}
+
+private struct PulsingRing: View {
+    @State private var isAnimating = false
+
+    var body: some View {
+        Circle()
+            .stroke(.blue.opacity(0.6), lineWidth: 2)
+            .frame(width: 32, height: 32)
+            .scaleEffect(isAnimating ? 2.0 : 1.0)
+            .opacity(isAnimating ? 0 : 0.8)
+            .onAppear {
+                withAnimation(.easeOut(duration: 1.0).repeatForever(autoreverses: false)) {
+                    isAnimating = true
+                }
+            }
     }
 
 }
