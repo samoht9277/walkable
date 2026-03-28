@@ -107,7 +107,7 @@ struct CreateRouteView: View {
             }
             .onAppear { storedMapProxy = proxy }
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private var modeSelector: some View {

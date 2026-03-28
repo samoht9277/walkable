@@ -4,9 +4,29 @@ import WalkableKit
 struct ContentView: View {
     @State private var selectedTab = 0
     @State private var walkViewModel = ActiveWalkViewModel()
+    @State private var isReady = false
 
     var body: some View {
         ZStack {
+            if !isReady {
+                Color(.systemBackground)
+                    .ignoresSafeArea()
+                    .overlay {
+                        VStack(spacing: 12) {
+                            Image(systemName: "figure.walk.circle.fill")
+                                .font(.system(size: 60))
+                                .foregroundStyle(.blue)
+                            Text("Walkable")
+                                .font(.title2.weight(.bold))
+                        }
+                    }
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            withAnimation(.easeOut(duration: 0.3)) { isReady = true }
+                        }
+                    }
+            }
+
             TabView(selection: $selectedTab) {
                 CreateRouteView()
                     .tabItem {
