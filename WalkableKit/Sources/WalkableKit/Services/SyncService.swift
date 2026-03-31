@@ -118,6 +118,18 @@ public final class SyncService: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Sync All Routes to Watch
+
+    /// Push all routes to Watch. Called when Watch first connects or on demand.
+    public func syncAllRoutes(_ routes: [Route]) {
+        for route in routes {
+            syncRoute(route, operation: .create)
+        }
+    }
+
+    /// Fired when the Watch becomes reachable so the phone can push all routes.
+    public let watchBecameReachable = PassthroughSubject<Void, Never>()
+
     // MARK: - Send Route to Watch
 
     public func syncRoute(_ route: Route, operation: SyncOperation) {
@@ -318,7 +330,11 @@ extension SyncService: @preconcurrency WCSessionDelegate {
 
     public nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         Task { @MainActor in
+            let wasReachable = isReachable
             isReachable = session.isReachable
+            if !wasReachable && session.isReachable {
+                watchBecameReachable.send()
+            }
         }
     }
 }
