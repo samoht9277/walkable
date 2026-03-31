@@ -1,0 +1,29 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Tab navigation works
+- launchApp
+- assertVisible: "Create"
+- assertVisible: "Library"
+- assertVisible: "Walk"
+- assertVisible: "Stats"
+- takeScreenshot: screenshots/01_create_tab
+
+# Switch to Library
+- tapOn: "Library"
+- takeScreenshot: screenshots/02_library_tab
+
+# Switch to Walk
+- tapOn: "Walk"
+- assertVisible: "No Active Walk"
+- takeScreenshot: screenshots/03_walk_tab
+
+# Switch to Stats
+- tapOn: "Stats"
+- takeScreenshot: screenshots/04_stats_tab
+
+# Back to Create
+- tapOn: "Create"
+- assertVisible: "Pin"
+- assertVisible: "Draw"
+- assertVisible: "Template"
+- takeScreenshot: screenshots/05_back_to_create

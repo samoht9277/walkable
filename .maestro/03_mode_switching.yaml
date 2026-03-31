@@ -1,0 +1,27 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Mode switching clears state
+- launchApp
+- tapOn: "Create"
+
+# Start in Pin mode, place a pin
+- tapOn: "Pin"
+- tapOn:
+    point: "50%,40%"
+
+# Switch to Draw
+- tapOn: "Draw"
+- takeScreenshot: screenshots/08_draw_mode
+
+# Switch to Template
+- tapOn: "Template"
+- assertVisible: "Loop"
+- assertVisible: "Out & Back"
+- assertVisible: "Figure-8"
+- assertVisible: "Generate"
+- takeScreenshot: screenshots/09_template_mode
+
+# Back to Pin - should show hint (pins cleared)
+- tapOn: "Pin"
+- assertVisible: "Tap the map to place waypoints"
+- takeScreenshot: screenshots/10_pin_cleared

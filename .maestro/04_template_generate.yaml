@@ -1,0 +1,17 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Template generation
+- launchApp
+- tapOn: "Create"
+- tapOn: "Template"
+
+# Select Loop shape (should be default)
+- tapOn: "Loop"
+- takeScreenshot: screenshots/11_template_loop
+
+# Tap Generate
+- tapOn: "Generate"
+- extendedWaitUntil:
+    visible: "Calculate"
+    timeout: 5000
+- takeScreenshot: screenshots/12_template_generated

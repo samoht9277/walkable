@@ -40,7 +40,7 @@ struct CreateRouteView: View {
                     if !viewModel.waypoints.isEmpty {
                         Label("\(viewModel.waypoints.count)", systemImage: "mappin")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .glassEffect(.regular, in: .capsule)
