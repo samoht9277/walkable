@@ -17,7 +17,12 @@ struct WalkableLiveActivity: Widget {
                         .font(.headline)
                     HStack(spacing: 12) {
                         Label(String(format: "%.2f km", context.state.distance / 1000), systemImage: "ruler")
-                        Label(context.state.elapsedTime.formattedDuration, systemImage: "clock")
+                        if context.state.isPaused {
+                            Text("PAUSED")
+                                .foregroundStyle(.orange)
+                        } else {
+                            Text(context.state.timerStart, style: .timer)
+                        }
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -42,20 +47,37 @@ struct WalkableLiveActivity: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(context.state.elapsedTime.formattedDuration)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .monospacedDigit()
+                    if context.state.isPaused {
+                        Text("PAUSED")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text(context.state.timerStart, style: .timer)
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .monospacedDigit()
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    // Empty bottom pushes leading/trailing content to center vertically
+                    Spacer(minLength: 0)
                 }
             } compactLeading: {
-                Image(systemName: "figure.walk")
-                    .foregroundStyle(.blue)
+                Image(systemName: context.state.isPaused ? "pause.fill" : "figure.walk")
+                    .foregroundStyle(context.state.isPaused ? .orange : .blue)
             } compactTrailing: {
-                Text(String(format: "%.1fkm", context.state.distance / 1000))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.blue)
+                if context.state.isPaused {
+                    Text("||")
+                        .font(.caption.bold())
+                        .foregroundStyle(.orange)
+                } else {
+                    Text(context.state.timerStart, style: .timer)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.blue)
+                }
             } minimal: {
-                Image(systemName: "figure.walk")
-                    .foregroundStyle(.blue)
+                Image(systemName: context.state.isPaused ? "pause.fill" : "figure.walk")
+                    .foregroundStyle(context.state.isPaused ? .orange : .blue)
             }
         }
     }

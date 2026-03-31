@@ -175,7 +175,9 @@ final class ActiveWalkViewModel {
             pace: 0,
             nextWaypointDistance: distanceToNextWaypoint,
             currentWaypointIndex: currentWaypointIndex,
-            totalWaypoints: route?.waypoints.count ?? 0
+            totalWaypoints: route?.waypoints.count ?? 0,
+            isPaused: false,
+            timerStart: startTime ?? .now
         )
         liveActivity = try? Activity.request(
             attributes: attributes,
@@ -184,13 +186,17 @@ final class ActiveWalkViewModel {
     }
 
     private func updateLiveActivity() {
+        // timerStart = now minus elapsed time, so the widget's .timer style shows correct time
+        let timerStart = Date().addingTimeInterval(-elapsedTime)
         let state = WalkActivityAttributes.ContentState(
             distance: distanceWalked,
             elapsedTime: elapsedTime,
             pace: currentPace,
             nextWaypointDistance: distanceToNextWaypoint,
             currentWaypointIndex: currentWaypointIndex,
-            totalWaypoints: route?.waypoints.count ?? 0
+            totalWaypoints: route?.waypoints.count ?? 0,
+            isPaused: isPaused,
+            timerStart: isPaused ? Date.distantFuture : timerStart
         )
         Task { await liveActivity?.update(.init(state: state, staleDate: nil)) }
     }
@@ -204,7 +210,9 @@ final class ActiveWalkViewModel {
             pace: currentPace,
             nextWaypointDistance: nil,
             currentWaypointIndex: currentWaypointIndex,
-            totalWaypoints: route?.waypoints.count ?? 0
+            totalWaypoints: route?.waypoints.count ?? 0,
+            isPaused: false,
+            timerStart: .distantFuture
         )
         Task {
             await activity.end(
@@ -217,6 +225,7 @@ final class ActiveWalkViewModel {
     func pauseWalk() {
         isPaused = true
         pauseStartTime = Date()
+        updateLiveActivity()
         Haptics.medium()
     }
 
@@ -226,6 +235,7 @@ final class ActiveWalkViewModel {
             pauseStartTime = nil
         }
         isPaused = false
+        updateLiveActivity()
         Haptics.medium()
     }
 

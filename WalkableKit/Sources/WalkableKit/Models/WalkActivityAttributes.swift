@@ -10,6 +10,8 @@ public struct WalkActivityAttributes: ActivityAttributes {
         public var nextWaypointDistance: Double?
         public var currentWaypointIndex: Int
         public var totalWaypoints: Int
+        public var isPaused: Bool
+        public var timerStart: Date
 
         public init(
             distance: Double,
@@ -17,7 +19,9 @@ public struct WalkActivityAttributes: ActivityAttributes {
             pace: Double,
             nextWaypointDistance: Double?,
             currentWaypointIndex: Int,
-            totalWaypoints: Int
+            totalWaypoints: Int,
+            isPaused: Bool = false,
+            timerStart: Date = .now
         ) {
             self.distance = distance
             self.elapsedTime = elapsedTime
@@ -25,6 +29,8 @@ public struct WalkActivityAttributes: ActivityAttributes {
             self.nextWaypointDistance = nextWaypointDistance
             self.currentWaypointIndex = currentWaypointIndex
             self.totalWaypoints = totalWaypoints
+            self.isPaused = isPaused
+            self.timerStart = timerStart
         }
     }
 
