@@ -1,0 +1,33 @@
+appId: com.walkable.WalkableApp
+---
+# Test: All three template shapes generate waypoints
+- launchApp
+- tapOn: "Create"
+- tapOn: "Template"
+
+# Test Loop
+- tapOn: "Loop"
+- tapOn: "Generate"
+- extendedWaitUntil:
+    visible: "Calculate"
+    timeout: 5000
+- takeScreenshot: screenshots/14_loop_generated
+- assertVisible: "Calculate"
+
+# Clear and try Out & Back
+- tapOn: "Clear"
+- tapOn: "Out & Back"
+- tapOn: "Generate"
+- extendedWaitUntil:
+    visible: "Calculate"
+    timeout: 5000
+- takeScreenshot: screenshots/15_outandback_generated
+
+# Clear and try Figure-8
+- tapOn: "Clear"
+- tapOn: "Figure-8"
+- tapOn: "Generate"
+- extendedWaitUntil:
+    visible: "Calculate"
+    timeout: 5000
+- takeScreenshot: screenshots/16_figure8_generated

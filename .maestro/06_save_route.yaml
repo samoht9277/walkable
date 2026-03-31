@@ -1,0 +1,49 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Save a route and verify it appears in Library
+- launchApp
+- tapOn: "Create"
+- tapOn: "Pin"
+
+# Place 3 pins
+- tapOn:
+    point: "40%,30%"
+- tapOn:
+    point: "70%,45%"
+- tapOn:
+    point: "30%,55%"
+
+# Calculate
+- tapOn: "Calculate"
+- extendedWaitUntil:
+    visible: "Save"
+    timeout: 30000
+
+# Tap Save
+- tapOn: "Save"
+
+# Save sheet should appear
+- extendedWaitUntil:
+    visible: "Route name"
+    timeout: 5000
+- takeScreenshot: screenshots/10_save_sheet
+
+# Type a name
+- tapOn: "Route name"
+- inputText: "Maestro Test Route"
+
+# Tap the bold Save in the sheet toolbar (not the tab bar "Save")
+- tapOn:
+    id: "Save"
+    optional: true
+- tapOn:
+    text: "Save"
+    index: 0
+
+# Verify route was saved - go to Library
+- tapOn: "Library"
+- extendedWaitUntil:
+    visible: "Maestro Test Route"
+    timeout: 5000
+- takeScreenshot: screenshots/11_library_with_route
+- assertVisible: "Maestro Test Route"

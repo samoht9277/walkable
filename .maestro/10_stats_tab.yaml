@@ -1,0 +1,22 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Stats tab displays correctly
+- launchApp
+- tapOn: "Stats"
+
+# Period picker should exist
+- assertVisible: "Week"
+- assertVisible: "Month"
+- takeScreenshot: screenshots/18_stats_week
+
+# Switch to Month
+- tapOn: "Month"
+- takeScreenshot: screenshots/19_stats_month
+
+# Switch back to Week
+- tapOn: "Week"
+
+# Stat cards should exist
+- assertVisible: "Total Distance"
+- assertVisible: "Total Walks"
+- takeScreenshot: screenshots/20_stats_cards

@@ -1,0 +1,30 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Undo removes last pin, Clear removes all
+- launchApp
+- tapOn: "Create"
+- tapOn: "Pin"
+
+# Place 3 pins
+- tapOn:
+    point: "50%,30%"
+- tapOn:
+    point: "70%,50%"
+- tapOn:
+    point: "30%,50%"
+- assertVisible: "Undo"
+
+# Undo one pin
+- tapOn: "Undo"
+- takeScreenshot: screenshots/12_after_undo
+
+# Should still have buttons (2 pins left)
+- assertVisible: "Undo"
+- assertVisible: "Calculate"
+
+# Clear all
+- tapOn: "Clear"
+- takeScreenshot: screenshots/13_after_clear
+
+# Should show hint again
+- assertVisible: "Tap the map to place waypoints"
