@@ -258,6 +258,7 @@ final class ActiveWalkViewModel {
 
         if let route {
             let session = WalkSession(route: route)
+            session.startedAt = startTime ?? Date()
             session.completedAt = Date()
             session.totalDistance = distanceWalked
             session.totalDuration = elapsedTime
