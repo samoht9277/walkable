@@ -15,6 +15,7 @@ final class ActiveWalkViewModel {
 
     // Watch handoff state
     var isWalkingOnWatch = false
+    var pendingWatchSession: SessionSyncPayload?
 
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
@@ -67,8 +68,9 @@ final class ActiveWalkViewModel {
         // Also listen for session sync (results from Watch)
         SyncService.shared.sessionSyncReceived
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] payload in
                 guard let self else { return }
+                self.pendingWatchSession = payload
                 if self.isWalkingOnWatch {
                     self.isWalkingOnWatch = false
                     self.isWalking = false
