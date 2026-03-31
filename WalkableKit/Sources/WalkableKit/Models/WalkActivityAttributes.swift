@@ -1,12 +1,13 @@
+#if canImport(ActivityKit)
 import ActivityKit
 import Foundation
 
 public struct WalkActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        public var distance: Double // meters
+        public var distance: Double
         public var elapsedTime: TimeInterval
-        public var pace: Double // sec/km
-        public var nextWaypointDistance: Double? // meters
+        public var pace: Double
+        public var nextWaypointDistance: Double?
         public var currentWaypointIndex: Int
         public var totalWaypoints: Int
 
@@ -35,3 +36,4 @@ public struct WalkActivityAttributes: ActivityAttributes {
         self.totalDistance = totalDistance
     }
 }
+#endif
