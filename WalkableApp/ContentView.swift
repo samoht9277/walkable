@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import WalkableKit
 
 struct ContentView: View {
@@ -79,5 +80,17 @@ struct ContentView: View {
             LocationService.shared.requestAuthorization()
             Task { try? await HealthService.shared.requestAuthorization() }
         }
+        .onReceive(SyncService.shared.watchBecameReachable) {
+            syncAllRoutesToWatch()
+        }
+    }
+
+    @MainActor
+    private func syncAllRoutesToWatch() {
+        guard let container = try? ModelContainer(for: Route.self) else { return }
+        let context = ModelContext(container)
+        let descriptor = FetchDescriptor<Route>()
+        guard let routes = try? context.fetch(descriptor) else { return }
+        SyncService.shared.syncAllRoutes(routes)
     }
 }
