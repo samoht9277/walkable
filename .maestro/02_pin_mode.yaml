@@ -1,0 +1,26 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Pin mode - place waypoints and see buttons
+- launchApp
+- tapOn: "Create"
+- tapOn: "Pin"
+
+# Place pins by tapping on the map
+- tapOn:
+    point: "30%,35%"
+- takeScreenshot: screenshots/06_first_pin
+
+- tapOn:
+    point: "70%,30%"
+- tapOn:
+    point: "75%,55%"
+- tapOn:
+    point: "50%,65%"
+- tapOn:
+    point: "25%,55%"
+
+# Should see Undo, Clear, Calculate
+- assertVisible: "Undo"
+- assertVisible: "Clear"
+- assertVisible: "Calculate"
+- takeScreenshot: screenshots/07_five_pins

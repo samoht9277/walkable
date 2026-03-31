@@ -91,7 +91,7 @@ struct TemplateModeOverlay: View {
             .padding(.horizontal, 16)
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 24)
+        .padding(.bottom, 12)
     }
 
     private func centerCoordinate() -> CLLocationCoordinate2D? {

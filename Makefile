@@ -42,6 +42,14 @@ loc:
 	@find WalkableKit WalkableApp WalkableWatch WalkableWidgets WalkableTests WalkableUITests -name "*.swift" | xargs wc -l | tail -1
 	@echo "Files:" && find WalkableKit WalkableApp WalkableWatch WalkableWidgets WalkableTests WalkableUITests -name "*.swift" | wc -l
 
+# Maestro UI tests (visual, takes screenshots)
+maestro:
+	./scripts/maestro-test.sh
+
+# Run a specific maestro flow
+maestro-flow:
+	./scripts/maestro-test.sh $(FLOW)
+
 # Install on connected device (run from Xcode instead for signing)
 device:
 	@echo "Use Xcode: select your device and press Cmd+R"
