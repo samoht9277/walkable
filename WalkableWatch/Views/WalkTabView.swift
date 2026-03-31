@@ -6,7 +6,7 @@ struct WalkTabView: View {
     let onEnd: () -> Void
 
     @State private var viewModel: WatchWalkViewModel
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1
 
     init(route: Route, onEnd: @escaping () -> Void) {
         self.route = route
@@ -24,7 +24,19 @@ struct WalkTabView: View {
             )
         } else {
             TabView(selection: $selectedTab) {
-                // View 1: Route Map
+                // View 1: Controls
+                WalkControlsView(
+                    elapsedTime: viewModel.elapsedTime,
+                    distance: viewModel.distanceWalked,
+                    pace: viewModel.currentPace,
+                    isPaused: viewModel.isPaused,
+                    onPause: { viewModel.pauseWalk() },
+                    onResume: { viewModel.resumeWalk() },
+                    onEnd: { Task { await viewModel.endWalk() } }
+                )
+                .tag(0)
+
+                // View 2: Top-down Map (default)
                 WatchMapView(
                     route: route,
                     currentLocation: viewModel.currentLocation,
@@ -33,32 +45,22 @@ struct WalkTabView: View {
                     elapsedTime: viewModel.elapsedTime,
                     distanceToNext: viewModel.distanceToNextWaypoint
                 )
-                .tag(0)
+                .tag(1)
 
-                // View 2: Compass
+                // View 3: Compass
                 CompassView(
                     arrowAngle: viewModel.relativeArrowAngle,
                     distanceToWaypoint: viewModel.distanceToNextWaypoint,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     totalWaypoints: route.waypoints.count
                 )
-                .tag(1)
+                .tag(2)
 
-                // View 3: Now Playing
+                // View 4: Now Playing
                 WalkableNowPlayingView()
-                    .tag(2)
+                    .tag(3)
             }
-            .tabViewStyle(.verticalPage)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        Task { await viewModel.endWalk() }
-                    } label: {
-                        Image(systemName: "stop.fill")
-                            .foregroundStyle(.red)
-                    }
-                }
-            }
+            .tabViewStyle(.page)
             .task {
                 await viewModel.startWalk()
             }

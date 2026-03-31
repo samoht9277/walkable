@@ -10,6 +10,7 @@ final class WatchWalkViewModel {
     let route: Route
 
     var isWalking = true
+    var isPaused = false
     var showSummary = false
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
@@ -20,6 +21,8 @@ final class WatchWalkViewModel {
 
     private var timer: Timer?
     private var startTime = Date()
+    private var pausedDuration: TimeInterval = 0
+    private var pauseStartTime: Date?
     private var cancellables = Set<AnyCancellable>()
 
     private let locationService = LocationService.shared
@@ -92,9 +95,25 @@ final class WatchWalkViewModel {
         let walkStart = startTime
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.elapsedTime = Date().timeIntervalSince(walkStart)
+                guard let self, !self.isPaused else { return }
+                self.elapsedTime = Date().timeIntervalSince(walkStart) - self.pausedDuration
             }
         }
+    }
+
+    func pauseWalk() {
+        isPaused = true
+        pauseStartTime = Date()
+        WKInterfaceDevice.current().play(.stop)
+    }
+
+    func resumeWalk() {
+        if let pauseStart = pauseStartTime {
+            pausedDuration += Date().timeIntervalSince(pauseStart)
+            pauseStartTime = nil
+        }
+        isPaused = false
+        WKInterfaceDevice.current().play(.start)
     }
 
     func endWalk() async {
