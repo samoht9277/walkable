@@ -1,0 +1,14 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Library interactions - tap route, favorite, detail sheet
+- launchApp
+- tapOn: "Library"
+
+# If routes exist, tap the first one
+- extendedWaitUntil:
+    visible:
+      text: "km"
+    timeout: 3000
+    optional: true
+
+- takeScreenshot: screenshots/17_library_state

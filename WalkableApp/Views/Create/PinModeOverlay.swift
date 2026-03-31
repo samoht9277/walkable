@@ -51,6 +51,6 @@ struct PinModeOverlay: View {
                     .glassEffect(.regular, in: .capsule)
             }
         }
-        .padding(.bottom, 12)
+        .padding(.bottom, 2)
     }
 }

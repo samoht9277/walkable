@@ -1,0 +1,27 @@
+appId: com.walkable.WalkableApp
+---
+# Test: Full route calculation flow
+- launchApp
+- tapOn: "Create"
+- tapOn: "Pin"
+
+# Place 3 pins in a triangle
+- tapOn:
+    point: "50%,25%"
+- tapOn:
+    point: "75%,50%"
+- tapOn:
+    point: "25%,50%"
+
+# Calculate route
+- tapOn: "Calculate"
+- takeScreenshot: screenshots/08_calculating
+
+# Wait for calculation to finish (Save button appears)
+- extendedWaitUntil:
+    visible: "Save"
+    timeout: 30000
+- takeScreenshot: screenshots/09_route_calculated
+
+# Verify route was calculated - Save should be visible
+- assertVisible: "Save"

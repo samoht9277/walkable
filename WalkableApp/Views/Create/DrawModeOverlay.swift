@@ -62,7 +62,7 @@ struct DrawModeOverlay: View {
                     .glassEffect(.regular, in: .capsule)
             }
         }
-        .padding(.bottom, 12)
+        .padding(.bottom, 2)
     }
 
     private func convertDrawingToWaypoints() {
