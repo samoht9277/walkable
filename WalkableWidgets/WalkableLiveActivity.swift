@@ -32,18 +32,19 @@ struct WalkableLiveActivity: Widget {
             .padding()
         } dynamicIsland: { context in
             DynamicIsland {
-                DynamicIslandExpandedRegion(.center) {
-                    HStack(alignment: .firstTextBaseline) {
+                DynamicIslandExpandedRegion(.leading) {
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
                         Text(String(format: "%.2f", context.state.distance / 1000))
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
                         Text("km")
-                            .font(.caption)
+                            .font(.system(size: 11))
                             .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(context.state.elapsedTime.formattedDuration)
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .monospacedDigit()
                     }
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    Text(context.state.elapsedTime.formattedDuration)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .monospacedDigit()
                 }
             } compactLeading: {
                 Image(systemName: "figure.walk")
