@@ -85,11 +85,52 @@ struct ContentView: View {
         .onReceive(SyncService.shared.watchBecameReachable) {
             SyncService.shared.syncAllRoutes(allRoutes)
         }
+        .onChange(of: walkViewModel.pendingWatchSession?.routeId) {
+            saveWatchSession()
+        }
         .onAppear {
-            // Also sync on launch in case Watch is already connected
             if SyncService.shared.isReachable {
                 SyncService.shared.syncAllRoutes(allRoutes)
             }
         }
+    }
+
+    private func saveWatchSession() {
+        guard let payload = walkViewModel.pendingWatchSession else { return }
+        walkViewModel.pendingWatchSession = nil
+
+        // Find the route by ID
+        guard let routeId = UUID(uuidString: payload.routeId),
+              let route = allRoutes.first(where: { $0.id == routeId }) else { return }
+
+        let session = WalkSession(route: route)
+        session.startedAt = payload.startedAt
+        session.completedAt = payload.completedAt
+        session.totalDistance = payload.totalDistance
+        session.totalDuration = payload.totalDuration
+        session.calories = payload.calories
+        session.elevationGain = payload.elevationGain
+        session.avgPace = payload.avgPace
+
+        // Store GPS track
+        if let gpsTrack = payload.gpsTrack {
+            session.gpsTrackData = try? JSONEncoder().encode(gpsTrack)
+        }
+
+        // Store leg splits
+        for split in payload.legSplits {
+            let legSplit = LegSplit(
+                session: session,
+                fromWaypointIndex: split.fromWaypointIndex,
+                toWaypointIndex: split.toWaypointIndex,
+                distance: split.distance,
+                duration: split.duration,
+                pace: split.pace
+            )
+            session.legSplits.append(legSplit)
+        }
+
+        modelContext.insert(session)
+        try? modelContext.save()
     }
 }

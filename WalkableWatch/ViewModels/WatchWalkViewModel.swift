@@ -23,6 +23,8 @@ final class WatchWalkViewModel {
     private var startTime = Date()
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
+    private var gpsLocations: [CLLocation] = []
+    private var waypointArrivalTimes: [Int: Date] = [:]
     private var cancellables = Set<AnyCancellable>()
 
     private let locationService = LocationService.shared
@@ -74,11 +76,13 @@ final class WatchWalkViewModel {
             .store(in: &cancellables)
 
         locationService.$currentLocation
-            .compactMap { $0?.coordinate }
+            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] coord in
-                self?.currentLocation = coord
+            .sink { [weak self] location in
+                self?.currentLocation = location.coordinate
                 self?.distanceWalked = self?.healthService.distanceWalked ?? 0
+                self?.gpsLocations.append(location)
+                self?.healthService.addRouteLocation(location)
             }
             .store(in: &cancellables)
 
@@ -125,7 +129,29 @@ final class WatchWalkViewModel {
 
         _ = try? await healthService.endWorkout()
 
-        // Sync session back to phone
+        // Build leg splits from waypoint arrival times
+        let sortedWaypoints = route.sortedWaypoints
+        var splits = [SyncLegSplit]()
+        for i in 0..<sortedWaypoints.count {
+            let nextIndex = (i + 1) % sortedWaypoints.count
+            if let arriveTime = waypointArrivalTimes[i],
+               let nextArriveTime = waypointArrivalTimes[nextIndex] {
+                let duration = nextArriveTime.timeIntervalSince(arriveTime)
+                let wpA = sortedWaypoints[i].coordinate
+                let wpB = sortedWaypoints[nextIndex].coordinate
+                let dist = CLLocation(latitude: wpA.latitude, longitude: wpA.longitude)
+                    .distance(from: CLLocation(latitude: wpB.latitude, longitude: wpB.longitude))
+                let pace = dist > 0 ? duration / (dist / 1000) : 0
+                splits.append(SyncLegSplit(
+                    fromWaypointIndex: i, toWaypointIndex: nextIndex,
+                    distance: dist, duration: duration, pace: pace
+                ))
+            }
+        }
+
+        // GPS track as codable coordinates
+        let gpsTrack = gpsLocations.map { CodableCoordinate($0.coordinate) }
+
         let payload = SessionSyncPayload(
             routeId: route.id.uuidString,
             startedAt: startTime,
@@ -135,7 +161,8 @@ final class WatchWalkViewModel {
             calories: healthService.activeCalories,
             elevationGain: 0,
             avgPace: currentPace,
-            legSplits: [] // Simplified for watch
+            legSplits: splits,
+            gpsTrack: gpsTrack
         )
         SyncService.shared.syncWalkSession(payload)
 
@@ -145,6 +172,7 @@ final class WatchWalkViewModel {
 
     private func handleWaypointArrival(_ index: Int) {
         currentWaypointIndex = index + 1
+        waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
     }
 }
