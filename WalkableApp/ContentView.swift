@@ -6,6 +6,8 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var walkViewModel = ActiveWalkViewModel()
     @State private var isReady = false
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allRoutes: [Route]
 
     var body: some View {
         ZStack {
@@ -81,16 +83,13 @@ struct ContentView: View {
             Task { try? await HealthService.shared.requestAuthorization() }
         }
         .onReceive(SyncService.shared.watchBecameReachable) {
-            syncAllRoutesToWatch()
+            SyncService.shared.syncAllRoutes(allRoutes)
         }
-    }
-
-    @MainActor
-    private func syncAllRoutesToWatch() {
-        guard let container = try? ModelContainer(for: Route.self) else { return }
-        let context = ModelContext(container)
-        let descriptor = FetchDescriptor<Route>()
-        guard let routes = try? context.fetch(descriptor) else { return }
-        SyncService.shared.syncAllRoutes(routes)
+        .onAppear {
+            // Also sync on launch in case Watch is already connected
+            if SyncService.shared.isReachable {
+                SyncService.shared.syncAllRoutes(allRoutes)
+            }
+        }
     }
 }
