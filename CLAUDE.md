@@ -7,7 +7,7 @@ iOS + watchOS walking loop app. SwiftUI, MapKit, SwiftData, HealthKit, WatchConn
 - `xcodebuild -scheme WalkableApp -destination 'platform=iOS Simulator,name=iPhone 16' build`
 - `xcodebuild -scheme WalkableWatch -destination 'platform=watchOS Simulator,name=Apple Watch Ultra 3 (49mm)' build`
 - `xcodebuild test -scheme WalkableApp -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:WalkableTests`
-- GPG signing is configured via 1Password SSH agent. If signing fails, ensure 1Password is unlocked.
+- GPG signing works via 1Password SSH agent (prompts for fingerprint). Do NOT use `commit.gpgsign=false`.
 
 ## Architecture
 - MVVM: Views in Views/, ViewModels in ViewModels/, shared logic in WalkableKit package
