@@ -17,9 +17,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/screenshot_route.png" alt="Walkable - iPhone route creation" width="280">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshot_watch.png" alt="Walkable - Apple Watch" width="160">
+  <img src="assets/screenshot_route.png" alt="Walkable - iPhone route creation" width="300">
 </p>
 
 > **Note:** This app is under active development. Features may change, break, or disappear. Contributions and feedback welcome!
