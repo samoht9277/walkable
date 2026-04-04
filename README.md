@@ -2,6 +2,8 @@
   <img src="assets/banner.png" alt="Walkable" width="100%">
 </p>
 
+<h2 align="center">:construction: Work In Progress :construction:</h2>
+
 <p align="center">
   <strong>A native iOS + watchOS app for creating and walking custom loops around your neighborhood.</strong><br>
   Built entirely with Apple frameworks, zero external dependencies.
@@ -15,8 +17,12 @@
 </p>
 
 <p align="center">
-  <img src="assets/screenshot_route.png" alt="Walkable route creation" width="300">
+  <img src="assets/screenshot_route.png" alt="Walkable - iPhone route creation" width="280">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/screenshot_watch.png" alt="Walkable - Apple Watch" width="160">
 </p>
+
+> **Note:** This app is under active development. Features may change, break, or disappear. Contributions and feedback welcome!
 
 ## Features
 
