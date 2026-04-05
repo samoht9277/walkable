@@ -6,6 +6,8 @@ struct RouteDetailSheet: View {
     let route: Route
     let onStartWalk: () -> Void
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @State private var showEditSheet = false
 
     var body: some View {
         NavigationStack {
@@ -83,6 +85,72 @@ struct RouteDetailSheet: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button { showEditSheet = true } label: {
+                        Image(systemName: "pencil")
+                    }
+                }
+            }
+            .sheet(isPresented: $showEditSheet) {
+                EditRouteSheet(route: route)
+                    .presentationDetents([.medium])
+            }
+        }
+    }
+}
+
+struct EditRouteSheet: View {
+    let route: Route
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @State private var name: String = ""
+    @State private var tags: String = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Name") {
+                    TextField("Route name", text: $name)
+                }
+                Section("Tags") {
+                    TextField("Comma separated", text: $tags)
+                }
+                Section {
+                    HStack {
+                        Text("Waypoints")
+                        Spacer()
+                        Text("\(route.waypoints.count)")
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack {
+                        Text("Distance")
+                        Spacer()
+                        Text(String(format: "%.1f km", route.distance / 1000))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .navigationTitle("Edit Route")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        route.name = name.isEmpty ? route.name : name
+                        route.tags = tags.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+                        try? modelContext.save()
+                        SyncService.shared.syncRoute(route, operation: .update)
+                        Haptics.success()
+                        dismiss()
+                    }
+                    .bold()
+                }
+            }
+            .onAppear {
+                name = route.name
+                tags = route.tags.joined(separator: ", ")
             }
         }
     }

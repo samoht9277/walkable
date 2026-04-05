@@ -81,17 +81,19 @@ struct ContentView: View {
         .onAppear {
             LocationService.shared.requestAuthorization()
             Task { try? await HealthService.shared.requestAuthorization() }
+            // Sync routes to Watch on launch
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                SyncService.shared.syncAllRoutes(allRoutes)
+            }
         }
         .onReceive(SyncService.shared.watchBecameReachable) {
             SyncService.shared.syncAllRoutes(allRoutes)
         }
+        .onChange(of: allRoutes.count) {
+            SyncService.shared.syncAllRoutes(allRoutes)
+        }
         .onChange(of: walkViewModel.pendingWatchSession?.routeId) {
             saveWatchSession()
-        }
-        .onAppear {
-            if SyncService.shared.isReachable {
-                SyncService.shared.syncAllRoutes(allRoutes)
-            }
         }
     }
 
