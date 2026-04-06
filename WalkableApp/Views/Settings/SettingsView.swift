@@ -3,7 +3,6 @@ import WalkableKit
 
 struct SettingsView: View {
     @AppStorage("mapStyle") private var mapStyle = "standard"
-    @AppStorage("voiceEnabled") private var voiceEnabled = true
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("useMetric") private var useMetric = true
 
@@ -18,7 +17,6 @@ struct SettingsView: View {
             }
 
             Section("During Walks") {
-                Toggle("Voice Announcements", isOn: $voiceEnabled)
                 Toggle("Haptic Feedback", isOn: $hapticsEnabled)
             }
 
@@ -37,10 +35,8 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
-        .onChange(of: voiceEnabled) { VoiceService.shared.isEnabled = voiceEnabled }
         .onChange(of: hapticsEnabled) { Haptics.isEnabled = hapticsEnabled }
         .onAppear {
-            VoiceService.shared.isEnabled = voiceEnabled
             Haptics.isEnabled = hapticsEnabled
         }
     }

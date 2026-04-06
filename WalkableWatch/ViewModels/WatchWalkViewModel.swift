@@ -21,7 +21,6 @@ final class WatchWalkViewModel {
     var currentHeading: Double = 0
     var mapCameraPosition: MapCameraPosition = .automatic
     var hasZoomedIn = false
-    private var hasAnnouncedHalfway = false
 
     private var timer: Timer?
     private var startTime = Date()
@@ -217,8 +216,6 @@ final class WatchWalkViewModel {
         )
         SyncService.shared.syncWalkSession(payload)
 
-        VoiceService.shared.announceWalkComplete(distance: distanceWalked, duration: elapsedTime)
-
         isWalking = false
         showSummary = true
     }
@@ -227,18 +224,5 @@ final class WatchWalkViewModel {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
-
-        let total = route.sortedWaypoints.count
-        VoiceService.shared.announceWaypointReached(
-            index: index,
-            total: total,
-            distanceRemaining: distanceToNextWaypoint
-        )
-
-        // Halfway detection
-        if !hasAnnouncedHalfway && currentWaypointIndex >= total / 2 {
-            hasAnnouncedHalfway = true
-            VoiceService.shared.announceHalfway()
-        }
     }
 }

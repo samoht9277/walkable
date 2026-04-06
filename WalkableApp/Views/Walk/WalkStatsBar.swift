@@ -30,6 +30,8 @@ struct WalkStatsBar: View {
                 .foregroundStyle(.secondary)
             Text(value)
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .contentTransition(.numericText())
+                .animation(.smooth, value: value)
         }
         .frame(maxWidth: .infinity)
     }

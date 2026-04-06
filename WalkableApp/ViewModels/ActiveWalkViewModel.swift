@@ -28,7 +28,6 @@ final class ActiveWalkViewModel {
 
     var gpsLocations: [CLLocation] = []
     var waypointArrivalTimes: [Int: Date] = [:]
-    private var hasAnnouncedHalfway = false
 
     // Analysis data collection
     private var altitudeSamples: [(date: Date, altitude: Double)] = []
@@ -115,7 +114,6 @@ final class ActiveWalkViewModel {
         calories = 0
         gpsLocations.removeAll()
         waypointArrivalTimes.removeAll()
-        hasAnnouncedHalfway = false
         altitudeSamples.removeAll()
         paceSamples.removeAll()
         cumulativeElevationGain = 0
@@ -336,8 +334,6 @@ final class ActiveWalkViewModel {
             try? modelContext.save()
         }
 
-        VoiceService.shared.announceWalkComplete(distance: distanceWalked, duration: elapsedTime)
-
         isWalking = false
         showSummary = true
         Haptics.success()
@@ -365,19 +361,6 @@ final class ActiveWalkViewModel {
 
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
-
-        let total = route.sortedWaypoints.count
-        VoiceService.shared.announceWaypointReached(
-            index: index,
-            total: total,
-            distanceRemaining: distanceToNextWaypoint
-        )
-
-        // Halfway detection
-        if !hasAnnouncedHalfway && currentWaypointIndex >= total / 2 {
-            hasAnnouncedHalfway = true
-            VoiceService.shared.announceHalfway()
-        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
             self?.showArrivalCard = false

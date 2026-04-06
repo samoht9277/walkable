@@ -57,6 +57,8 @@ struct WatchMapView: View {
                         .foregroundStyle(.secondary)
                     Text(distanceWalked.formattedDistance)
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .contentTransition(.numericText())
+                        .animation(.smooth, value: distanceWalked)
                 }
                 Spacer()
                 VStack(spacing: 0) {
@@ -65,6 +67,8 @@ struct WatchMapView: View {
                         .foregroundStyle(.secondary)
                     Text(elapsedTime.formattedDuration)
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .contentTransition(.numericText())
+                        .animation(.smooth, value: elapsedTime)
                 }
                 Spacer()
                 VStack(spacing: 0) {
