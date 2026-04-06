@@ -3,8 +3,26 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'WalkableKit/**'
+      - 'WalkableApp/**'
+      - 'WalkableWatch/**'
+      - 'WalkableWidgets/**'
+      - 'WalkableTests/**'
+      - 'WalkableUITests/**'
+      - 'project.yml'
+      - 'Makefile'
+      - '.github/workflows/**'
   push:
     branches: [main]
+    paths:
+      - 'WalkableKit/**'
+      - 'WalkableApp/**'
+      - 'WalkableWatch/**'
+      - 'WalkableWidgets/**'
+      - 'WalkableTests/**'
+      - 'WalkableUITests/**'
+      - 'project.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
