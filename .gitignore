@@ -3,4 +3,9 @@ build/
 *.xcuserdatad/
 DerivedData/
 .superpowers/
+
+# Personal GPS and test data
 scripts/simulate_*.gpx
+screenshots/ba_*
+screenshots/walk_*
+screenshots/sim_*

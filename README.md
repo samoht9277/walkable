@@ -89,7 +89,7 @@ Waypoints snap to the nearest walkable road after route calculation. Long-press 
 | Watch Sync | WatchConnectivity (applicationContext + transferUserInfo) |
 | Live Activity | ActivityKit + WidgetKit |
 | Location | CoreLocation |
-| Voice | AVSpeechSynthesizer |
+| Import/Export | GPX (GPS Exchange Format) |
 | Testing | XCTest + XCUITest + Maestro |
 | CI | GitHub Actions |
 | Project Gen | XcodeGen |
@@ -101,18 +101,21 @@ Waypoints snap to the nearest walkable road after route calculation. Long-press 
 ### Phase 1: Polish & Stability
 - [ ] Fix Dynamic Island expanded layout ([#2](https://github.com/samoht9277/walkable/issues/2), [#3](https://github.com/samoht9277/walkable/issues/3))
 - [ ] Verify Live Activity pause/resume ([#4](https://github.com/samoht9277/walkable/issues/4))
-- [ ] Deduplicate existing Watch routes ([#5](https://github.com/samoht9277/walkable/issues/5))
+- [x] ~~Deduplicate existing Watch routes~~ ([#5](https://github.com/samoht9277/walkable/issues/5))
 - [ ] Redesign session detail like Apple Fitness recap ([#6](https://github.com/samoht9277/walkable/issues/6))
+- [ ] Fix walk auto-ending when GPS stops ([#29](https://github.com/samoht9277/walkable/issues/29))
 
 ### Phase 2: Features
-- [ ] Elevation tracking ([#7](https://github.com/samoht9277/walkable/issues/7))
+- [x] ~~Elevation tracking~~ ([#7](https://github.com/samoht9277/walkable/issues/7)) — walk analysis with interactive charts
 - [ ] Live heart rate + calories during walks ([#8](https://github.com/samoht9277/walkable/issues/8))
 - [ ] Home screen widgets ([#9](https://github.com/samoht9277/walkable/issues/9))
-- [ ] Settings tab (map style, voice, haptics, units) ([#10](https://github.com/samoht9277/walkable/issues/10))
+- [x] ~~Settings tab~~ ([#10](https://github.com/samoht9277/walkable/issues/10)) — map style, haptics, units (km/mi)
 - [ ] Walking notifications & streak reminders ([#11](https://github.com/samoht9277/walkable/issues/11))
 - [ ] Share routes via link or QR code ([#12](https://github.com/samoht9277/walkable/issues/12))
 - [ ] Route recommendations near user ([#13](https://github.com/samoht9277/walkable/issues/13))
-- [ ] Multiple map styles ([#14](https://github.com/samoht9277/walkable/issues/14))
+- [x] ~~Multiple map styles~~ ([#14](https://github.com/samoht9277/walkable/issues/14)) — via Settings tab
+- [x] ~~GPX import/export~~ ([#28](https://github.com/samoht9277/walkable/issues/28)) — routes and sessions
+- [ ] Interactive chart scrubbing with timestamps ([#32](https://github.com/samoht9277/walkable/issues/32))
 
 ### Phase 3: App Store Prep
 - [ ] App Store assets and metadata ([#15](https://github.com/samoht9277/walkable/issues/15))
