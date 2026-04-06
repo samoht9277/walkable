@@ -137,12 +137,6 @@ public final class SyncService: NSObject, ObservableObject {
             syncStatus = "Sync failed: not activated"
             return
         }
-        #if os(iOS)
-        guard WCSession.default.isWatchAppInstalled else {
-            syncStatus = "Sync failed: Watch app not installed"
-            return
-        }
-        #endif
 
         var allPayloads = [[String: Any]]()
         for route in routes {
