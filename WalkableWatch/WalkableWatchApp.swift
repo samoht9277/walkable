@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import Combine
+import WatchConnectivity
 import WalkableKit
 
 @main
@@ -63,6 +64,9 @@ private struct ContentWrapper: View {
             routeListViewModel.loadRoutes(modelContext: modelContext)
             listenForPhoneWalkRequest()
             listenForRouteSyncs()
+            listenForAllRoutes()
+            // Also check existing applicationContext (may have arrived before launch)
+            checkExistingContext()
         }
     }
 
@@ -73,6 +77,29 @@ private struct ContentWrapper: View {
                 routeListViewModel.handleSyncFromContentWrapper(payload, context: modelContext)
             }
             .store(in: &cancellables)
+    }
+
+    private func listenForAllRoutes() {
+        SyncService.shared.allRoutesSyncReceived
+            .receive(on: DispatchQueue.main)
+            .sink { payloads in
+                for payload in payloads {
+                    routeListViewModel.handleSyncFromContentWrapper(payload, context: modelContext)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    private func checkExistingContext() {
+        let context = WCSession.default.receivedApplicationContext
+        if let routeDicts = context["allRoutes"] as? [[String: Any]] {
+            for dict in routeDicts {
+                if let data = try? JSONSerialization.data(withJSONObject: dict),
+                   let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
+                    routeListViewModel.handleSyncFromContentWrapper(payload, context: modelContext)
+                }
+            }
+        }
     }
 
     private func listenForPhoneWalkRequest() {
