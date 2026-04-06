@@ -1,27 +1,45 @@
 import Foundation
 import CoreLocation
 
+private var _useMetric: Bool {
+    // Default to true (metric) when key has never been set
+    if UserDefaults.standard.object(forKey: "useMetric") == nil { return true }
+    return UserDefaults.standard.bool(forKey: "useMetric")
+}
+
 public extension Double {
-    /// Formats pace (sec/km) as "M:SS /km". Returns "--:--" for invalid values.
+    /// Formats pace (sec/km or sec/mi) as "M:SS /km" or "M:SS /mi". Returns "--:--" for invalid values.
     var formattedPace: String {
         guard self > 0 && self < 3600 else { return "--:--" }
-        let mins = Int(self) / 60
-        let secs = Int(self) % 60
-        return String(format: "%d:%02d /km", mins, secs)
+        let paceValue = _useMetric ? self : self * 1.60934
+        let mins = Int(paceValue) / 60
+        let secs = Int(paceValue) % 60
+        let unit = _useMetric ? "/km" : "/mi"
+        return String(format: "%d:%02d %@", mins, secs, unit)
     }
 
-    /// Formats pace without /km suffix (for compact displays).
+    /// Formats pace without unit suffix (for compact displays).
     var formattedPaceShort: String {
         guard self > 0 && self < 3600 else { return "--:--" }
-        let mins = Int(self) / 60
-        let secs = Int(self) % 60
+        let paceValue = _useMetric ? self : self * 1.60934
+        let mins = Int(paceValue) / 60
+        let secs = Int(paceValue) % 60
         return String(format: "%d:%02d", mins, secs)
     }
 
-    /// Formats meters as "Xm" or "X.Xkm".
+    /// Formats meters as "Xm"/"X.Xkm" or "Xft"/"X.Xmi".
     var formattedDistance: String {
-        if self < 1000 { return String(format: "%.0fm", self) }
-        return String(format: "%.1fkm", self / 1000)
+        if _useMetric {
+            if self < 1000 { return String(format: "%.0fm", self) }
+            return String(format: "%.1fkm", self / 1000)
+        } else {
+            let miles = self / 1609.34
+            if miles < 0.1 {
+                let feet = self * 3.28084
+                return String(format: "%.0fft", feet)
+            }
+            return String(format: "%.1fmi", miles)
+        }
     }
 }
 

@@ -39,9 +39,6 @@ public final class WalkSession {
     }
 
     public var formattedPace: String {
-        guard avgPace > 0 else { return "--:--" }
-        let minutes = Int(avgPace) / 60
-        let seconds = Int(avgPace) % 60
-        return String(format: "%d:%02d /km", minutes, seconds)
+        avgPace.formattedPace
     }
 }

@@ -9,6 +9,7 @@ struct CreateRouteView: View {
     @State private var drawCanvasId = UUID()
     @State private var drawingPoints: [CGPoint] = []
     @State private var mapHeading: Double = 0
+    @AppStorage("mapStyle") private var mapStylePref = "standard"
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
@@ -157,7 +158,7 @@ struct CreateRouteView: View {
                 // Keep user location dot visible when camera moves
                 UserAnnotation()
             }
-            .mapStyle(.standard(elevation: .realistic))
+            .mapStyle(mapStylePref.asMapStyle)
             .mapControls {
                 MapCompass()
                     .mapControlVisibility(.automatic)

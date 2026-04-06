@@ -73,7 +73,7 @@ struct AllSessionsView: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                Text(String(format: "%.2f km", session.totalDistance / 1000))
+                Text(session.totalDistance.formattedDistance)
                     .font(.subheadline.monospacedDigit())
                 HStack(spacing: 12) {
                     Text(session.totalDuration.formattedDuration)
