@@ -86,8 +86,18 @@ struct RouteDetailSheet: View {
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button { showEditSheet = true } label: {
-                        Image(systemName: "pencil")
+                    Menu {
+                        Button { showEditSheet = true } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        ShareLink(
+                            item: exportGPX(),
+                            preview: SharePreview(route.name, image: Image(systemName: "map"))
+                        ) {
+                            Label("Export GPX", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
@@ -96,6 +106,14 @@ struct RouteDetailSheet: View {
                     .presentationDetents([.medium])
             }
         }
+    }
+
+    private func exportGPX() -> GPXFile {
+        let gpxString = GPXService.export(route: route)
+        let safeName = route.name.replacingOccurrences(of: "/", with: "-")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(safeName).gpx")
+        try? gpxString.write(to: url, atomically: true, encoding: .utf8)
+        return GPXFile(url: url)
     }
 }
 

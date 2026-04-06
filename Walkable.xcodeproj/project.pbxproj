@@ -49,6 +49,7 @@
 		9B71571B0C080603A2CF3097 /* WalkableKit in Frameworks */ = {isa = PBXBuildFile; productRef = 64DAB2236C6F897B31E25AAD /* WalkableKit */; };
 		A039DE54EC3CF6A5646C55A7 /* WalkableWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65910331A837344A3DF7308C /* WalkableWidgetsBundle.swift */; };
 		A547BBF79642102F9C408EC3 /* RouteDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD25E2B689A23CD64502A618 /* RouteDetailSheet.swift */; };
+		A78FD7D07368940E740865B6 /* GPXServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB349395ABCD722A2D201C69 /* GPXServiceTests.swift */; };
 		B854C09C21F548C1E1FCEE2F /* WalkableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151B33648D4EBA203CF68828 /* WalkableUITests.swift */; };
 		C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1358DBC5A6ABF9406C09C11 /* DrawingCanvas.swift */; };
 		D4A93ABF11B70E3BE0C210C5 /* PinModeOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC07428EAB927C5ADA70A0E /* PinModeOverlay.swift */; };
@@ -56,6 +57,7 @@
 		D616989BE078C5766CF63C77 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E6D32D966038AD56757CC3 /* GlassCard.swift */; };
 		D88854C8D9E184DF6130F5BC /* SessionDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4396FA147406FD118CC8FB34 /* SessionDetailSheet.swift */; };
 		DFD4AD43C721552B55887680 /* CompassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44C75758EF0C7AC84CE39E7 /* CompassView.swift */; };
+		E086D9084CED6FEAD8BA6007 /* GPXFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08131679F170C969DC955433 /* GPXFile.swift */; };
 		E18CA83E688E65632699C5F5 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EDD0A140E15FF36623E578 /* NowPlayingView.swift */; };
 		EAD4E9C3BF1A7C008548127C /* AllSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6CB550C19F915950640DF4 /* AllSessionsView.swift */; };
 		ED7C3597B9433D441B5FF1B8 /* WalkStatsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8CEF479EC71EEEE1696F797 /* WalkStatsBar.swift */; };
@@ -129,6 +131,7 @@
 
 /* Begin PBXFileReference section */
 		06955A99B18F0995ED28EAA4 /* GlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButton.swift; sourceTree = "<group>"; };
+		08131679F170C969DC955433 /* GPXFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXFile.swift; sourceTree = "<group>"; };
 		0A652311E9D004C70AA4B541 /* MapStylePreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStylePreference.swift; sourceTree = "<group>"; };
 		0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateGeneratorTests.swift; sourceTree = "<group>"; };
 		0CC07428EAB927C5ADA70A0E /* PinModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinModeOverlay.swift; sourceTree = "<group>"; };
@@ -192,6 +195,7 @@
 		E9D00E57C3DC5BC436ED09A3 /* WatchMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMapView.swift; sourceTree = "<group>"; };
 		F19610F12212010842919D16 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
 		F5E6D32D966038AD56757CC3 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		FB349395ABCD722A2D201C69 /* GPXServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXServiceTests.swift; sourceTree = "<group>"; };
 		FE89E09A4281BDD8AACC4159 /* TemplateModeOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModeOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -329,6 +333,7 @@
 			children = (
 				06955A99B18F0995ED28EAA4 /* GlassButton.swift */,
 				F5E6D32D966038AD56757CC3 /* GlassCard.swift */,
+				08131679F170C969DC955433 /* GPXFile.swift */,
 				B6A51C3C02B3BA119213CAA1 /* Haptics.swift */,
 				0A652311E9D004C70AA4B541 /* MapStylePreference.swift */,
 				ADF1EB7F201E4B7BD61D4985 /* RouteMapOverlay.swift */,
@@ -340,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				A9A5ABBA0A32C3DE84D9F5BE /* FormatUtilsTests.swift */,
+				FB349395ABCD722A2D201C69 /* GPXServiceTests.swift */,
 				AB45A54BE7D39650928B01EC /* ModelTests.swift */,
 				416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */,
 				6765B12731821E706EA6FBEC /* PolylineSplitterTests.swift */,
@@ -623,6 +629,7 @@
 				6E0401483C3C5BE0369B6DB4 /* CreateRouteViewModel.swift in Sources */,
 				55AB96BC7D959B5C67430B60 /* DrawModeOverlay.swift in Sources */,
 				C8BB583820C6BC7EAC3CA291 /* DrawingCanvas.swift in Sources */,
+				E086D9084CED6FEAD8BA6007 /* GPXFile.swift in Sources */,
 				52DBB50296540319AFE3ABE6 /* GlassButton.swift in Sources */,
 				D616989BE078C5766CF63C77 /* GlassCard.swift in Sources */,
 				70EAEA4A912BD094E28BE123 /* Haptics.swift in Sources */,
@@ -681,6 +688,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				354F616FC4FAD1FDE8A1023B /* FormatUtilsTests.swift in Sources */,
+				A78FD7D07368940E740865B6 /* GPXServiceTests.swift in Sources */,
 				FBE036444564236017088B6A /* ModelTests.swift in Sources */,
 				6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */,
 				0839B8E7B7EC64506E62D166 /* PolylineSplitterTests.swift in Sources */,
