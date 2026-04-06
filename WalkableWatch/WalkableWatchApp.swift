@@ -62,7 +62,17 @@ private struct ContentWrapper: View {
             routeListViewModel.setModelContext(modelContext)
             routeListViewModel.loadRoutes(modelContext: modelContext)
             listenForPhoneWalkRequest()
+            listenForRouteSyncs()
         }
+    }
+
+    private func listenForRouteSyncs() {
+        SyncService.shared.routeSyncReceived
+            .receive(on: DispatchQueue.main)
+            .sink { payload in
+                routeListViewModel.handleSyncFromContentWrapper(payload, context: modelContext)
+            }
+            .store(in: &cancellables)
     }
 
     private func listenForPhoneWalkRequest() {
