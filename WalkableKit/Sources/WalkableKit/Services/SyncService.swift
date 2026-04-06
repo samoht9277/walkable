@@ -123,15 +123,40 @@ public final class SyncService: NSObject, ObservableObject {
 
     // MARK: - Sync All Routes to Watch
 
-    /// Push all routes to Watch. Called when Watch first connects or on demand.
+    /// Push all routes to Watch via applicationContext (persistent, always available).
     public func syncAllRoutes(_ routes: [Route]) {
+        var allPayloads = [[String: Any]]()
         for route in routes {
-            syncRoute(route, operation: .create)
+            let waypoints = route.sortedWaypoints.map {
+                SyncWaypoint(index: $0.index, latitude: $0.latitude, longitude: $0.longitude, label: $0.label)
+            }
+            var polylineCoords: [CodableCoordinate]?
+            if let data = route.polylineData {
+                polylineCoords = try? JSONDecoder().decode([CodableCoordinate].self, from: data)
+            }
+            let payload = SyncPayload(
+                operation: .create,
+                routeId: route.id.uuidString,
+                name: route.name,
+                distance: route.distance,
+                estimatedDuration: route.estimatedDuration,
+                waypoints: waypoints,
+                polylineCoordinates: polylineCoords
+            )
+            if let data = try? JSONEncoder().encode(payload),
+               let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                allPayloads.append(dict)
+            }
         }
+        // Pack all routes into applicationContext — persistent, Watch reads on launch
+        try? WCSession.default.updateApplicationContext(["allRoutes": allPayloads])
     }
 
     /// Fired when the Watch becomes reachable so the phone can push all routes.
     public let watchBecameReachable = PassthroughSubject<Void, Never>()
+
+    /// Fired on Watch when applicationContext arrives with all routes.
+    public let allRoutesSyncReceived = PassthroughSubject<[SyncPayload], Never>()
 
     // MARK: - Send Route to Watch
 
@@ -327,6 +352,21 @@ extension SyncService: @preconcurrency WCSessionDelegate {
            let status = WalkHandoffStatus(rawValue: rawStatus) {
             Task { @MainActor in
                 watchWalkStatusReceived.send((routeId: routeId, status: status))
+            }
+        }
+    }
+
+    public nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        if let routeDicts = applicationContext["allRoutes"] as? [[String: Any]] {
+            var payloads = [SyncPayload]()
+            for dict in routeDicts {
+                if let data = try? JSONSerialization.data(withJSONObject: dict),
+                   let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
+                    payloads.append(payload)
+                }
+            }
+            Task { @MainActor in
+                allRoutesSyncReceived.send(payloads)
             }
         }
     }
