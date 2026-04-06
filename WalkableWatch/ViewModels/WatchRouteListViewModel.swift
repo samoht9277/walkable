@@ -40,6 +40,12 @@ final class WatchRouteListViewModel {
         routes = (try? modelContext.fetch(descriptor)) ?? []
     }
 
+    /// Called from ContentWrapper which guarantees a valid modelContext
+    func handleSyncFromContentWrapper(_ payload: SyncPayload, context: ModelContext) {
+        self.modelContext = context
+        handleRouteSync(payload)
+    }
+
     private func handleRouteSync(_ payload: SyncPayload) {
         guard let modelContext else { return }
 
