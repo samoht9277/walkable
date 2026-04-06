@@ -50,6 +50,10 @@ maestro:
 maestro-flow:
 	./scripts/maestro-test.sh $(FLOW)
 
+# Simulate a walk on the simulator (GPS spoofing)
+simulate:
+	./scripts/simulate-walk.sh
+
 # Install on connected device (run from Xcode instead for signing)
 device:
 	@echo "Use Xcode: select your device and press Cmd+R"

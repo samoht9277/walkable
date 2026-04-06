@@ -3,3 +3,4 @@ build/
 *.xcuserdatad/
 DerivedData/
 .superpowers/
+scripts/simulate_*.gpx
