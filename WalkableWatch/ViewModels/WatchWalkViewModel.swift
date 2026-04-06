@@ -31,6 +31,11 @@ final class WatchWalkViewModel {
     private var waypointArrivalTimes: [Int: Date] = [:]
     private var cancellables = Set<AnyCancellable>()
 
+    // Analysis data collection
+    private var altitudeSamples: [(date: Date, altitude: Double)] = []
+    private var paceSamples: [(date: Date, pace: Double)] = []
+    private var cumulativeElevationGain: Double = 0
+
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
 
@@ -83,10 +88,30 @@ final class WatchWalkViewModel {
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] location in
-                self?.currentLocation = location.coordinate
-                self?.distanceWalked = self?.healthService.distanceWalked ?? 0
-                self?.gpsLocations.append(location)
-                self?.healthService.addRouteLocation(location)
+                guard let self else { return }
+                self.currentLocation = location.coordinate
+                self.distanceWalked = self.healthService.distanceWalked ?? 0
+                self.gpsLocations.append(location)
+                self.healthService.addRouteLocation(location)
+
+                // Altitude sampling
+                self.altitudeSamples.append((date: Date(), altitude: location.altitude))
+
+                // Elevation gain (positive changes > 1m to filter GPS noise)
+                if let lastAlt = self.altitudeSamples.dropLast().last?.altitude {
+                    let delta = location.altitude - lastAlt
+                    if delta > 1 { self.cumulativeElevationGain += delta }
+                }
+
+                // Pace sampling every 30 seconds
+                if let lastPaceSample = self.paceSamples.last {
+                    if Date().timeIntervalSince(lastPaceSample.date) >= 30, self.distanceWalked > 0 {
+                        let recentPace = self.elapsedTime / (self.distanceWalked / 1000)
+                        self.paceSamples.append((date: Date(), pace: recentPace / 60))
+                    }
+                } else if self.distanceWalked > 20 {
+                    self.paceSamples.append((date: Date(), pace: (self.elapsedTime / (self.distanceWalked / 1000)) / 60))
+                }
             }
             .store(in: &cancellables)
 
@@ -168,6 +193,14 @@ final class WatchWalkViewModel {
         // GPS track as codable coordinates
         let gpsTrack = gpsLocations.map { CodableCoordinate($0.coordinate) }
 
+        // Encode analysis data for post-walk charts
+        let analysis = WalkAnalysisData(
+            altitude: altitudeSamples.map { TimedSample(date: $0.date, value: $0.altitude) },
+            pace: paceSamples.map { TimedSample(date: $0.date, value: $0.pace) },
+            heartRate: []
+        )
+        let encodedAnalysis = try? JSONEncoder().encode(analysis)
+
         let payload = SessionSyncPayload(
             routeId: route.id.uuidString,
             startedAt: startTime,
@@ -175,10 +208,11 @@ final class WatchWalkViewModel {
             totalDistance: distanceWalked,
             totalDuration: elapsedTime,
             calories: healthService.activeCalories,
-            elevationGain: 0,
+            elevationGain: cumulativeElevationGain,
             avgPace: currentPace,
             legSplits: splits,
             gpsTrack: gpsTrack,
+            analysisData: encodedAnalysis,
             source: "watch"
         )
         SyncService.shared.syncWalkSession(payload)

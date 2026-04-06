@@ -33,6 +33,7 @@
 		6167C81B7128737C4BD52983 /* ActiveWalkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E35D80372841BFF77ADE9BA /* ActiveWalkViewModel.swift */; };
 		67E7CC5BE31B58EAE6DB3F9F /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785B5C345A8361B05AF07A23 /* LibraryViewModel.swift */; };
 		6822EECB273BD85FCE7BF3BB /* MapStylePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A652311E9D004C70AA4B541 /* MapStylePreference.swift */; };
+		69126BC265AB388DA540847D /* WalkAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B03A20AF179BA2180FC8B35 /* WalkAnalysisView.swift */; };
 		6C0D38EBBAD1D1E14D3CD667 /* TemplateGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C02D137ACE6ED0D2CF2BC24 /* TemplateGeneratorTests.swift */; };
 		6C894D64C962FB2CE8ADB87B /* PathSimplifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416C78792D66DFAECF79F7AE /* PathSimplifierTests.swift */; };
 		6E0401483C3C5BE0369B6DB4 /* CreateRouteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */; };
@@ -135,6 +136,7 @@
 		151B33648D4EBA203CF68828 /* WalkableUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableUITests.swift; sourceTree = "<group>"; };
 		169965F5AD3679689FD9268B /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		16FE9645613CC23B11F2232C /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		1B03A20AF179BA2180FC8B35 /* WalkAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkAnalysisView.swift; sourceTree = "<group>"; };
 		2473363F5C159BB97A60F8BE /* WaypointArrivalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaypointArrivalCard.swift; sourceTree = "<group>"; };
 		2648CDD8B7FCC2AEE85A5D0A /* CreateTabUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTabUITests.swift; sourceTree = "<group>"; };
 		2987AC77B66DB1195F140EA5 /* StatCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatCardView.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 			isa = PBXGroup;
 			children = (
 				3DE952FDFB9CA2FC0DBA3903 /* ActiveWalkView.swift */,
+				1B03A20AF179BA2180FC8B35 /* WalkAnalysisView.swift */,
 				C8CEF479EC71EEEE1696F797 /* WalkStatsBar.swift */,
 				F19610F12212010842919D16 /* WalkSummaryView.swift */,
 				2473363F5C159BB97A60F8BE /* WaypointArrivalCard.swift */,
@@ -642,6 +645,7 @@
 				EF4F3E21943AF22940BB8D7C /* StatsView.swift in Sources */,
 				011791246714E964BB8E66C0 /* StatsViewModel.swift in Sources */,
 				09541AEE08342CF4928ADE53 /* TemplateModeOverlay.swift in Sources */,
+				69126BC265AB388DA540847D /* WalkAnalysisView.swift in Sources */,
 				ED7C3597B9433D441B5FF1B8 /* WalkStatsBar.swift in Sources */,
 				170ABD1DACA88670BD6C90EE /* WalkSummaryView.swift in Sources */,
 				9911EB08CC790DFD9330FE0E /* WalkableApp.swift in Sources */,

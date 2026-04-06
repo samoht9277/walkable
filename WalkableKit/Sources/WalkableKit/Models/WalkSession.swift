@@ -14,6 +14,7 @@ public final class WalkSession {
     public var avgPace: Double
     public var healthKitWorkoutID: UUID?
     public var gpsTrackData: Data?
+    public var analysisData: Data?  // Encoded WalkAnalysisData
     public var source: String?
     @Relationship(deleteRule: .cascade, inverse: \LegSplit.session)
     public var legSplits: [LegSplit]
@@ -30,6 +31,7 @@ public final class WalkSession {
         self.avgPace = 0
         self.healthKitWorkoutID = nil
         self.gpsTrackData = nil
+        self.analysisData = nil
         self.source = nil
         self.legSplits = []
     }
