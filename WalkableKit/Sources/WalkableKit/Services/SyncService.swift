@@ -113,11 +113,19 @@ public final class SyncService: NSObject, ObservableObject {
     /// Called on the phone when a walk session arrives from the watch.
     public let sessionSyncReceived = PassthroughSubject<SessionSyncPayload, Never>()
 
+    @Published public var activationState: WCSessionActivationState = .notActivated
+    @Published public var isPaired = false
+    @Published public var isWatchAppInstalled = false
+    @Published public var syncStatus: String = "Initializing..."
+
     private override init() {
         super.init()
         if WCSession.isSupported() {
             WCSession.default.delegate = self
             WCSession.default.activate()
+            syncStatus = "Activating session..."
+        } else {
+            syncStatus = "WCSession not supported"
         }
     }
 
@@ -125,6 +133,17 @@ public final class SyncService: NSObject, ObservableObject {
 
     /// Push all routes to Watch via applicationContext (persistent, always available).
     public func syncAllRoutes(_ routes: [Route]) {
+        guard WCSession.default.activationState == .activated else {
+            syncStatus = "Sync failed: not activated"
+            return
+        }
+        #if os(iOS)
+        guard WCSession.default.isWatchAppInstalled else {
+            syncStatus = "Sync failed: Watch app not installed"
+            return
+        }
+        #endif
+
         var allPayloads = [[String: Any]]()
         for route in routes {
             let waypoints = route.sortedWaypoints.map {
@@ -149,7 +168,17 @@ public final class SyncService: NSObject, ObservableObject {
             }
         }
         // Pack all routes into applicationContext — persistent, Watch reads on launch
-        try? WCSession.default.updateApplicationContext(["allRoutes": allPayloads])
+        do {
+            try WCSession.default.updateApplicationContext(["allRoutes": allPayloads])
+            syncStatus = "Sent \(routes.count) routes via context"
+        } catch {
+            syncStatus = "Context error: \(error.localizedDescription)"
+        }
+        // Also send via transferUserInfo as backup
+        for dict in allPayloads {
+            WCSession.default.transferUserInfo(["routeSync": dict])
+        }
+        syncStatus += " + queued \(allPayloads.count) transfers"
     }
 
     /// Fired when the Watch becomes reachable so the phone can push all routes.
@@ -280,9 +309,20 @@ public enum WalkHandoffStatus: String, Codable, Sendable {
 }
 
 extension SyncService: @preconcurrency WCSessionDelegate {
-    public nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+    public nonisolated func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {
         Task { @MainActor in
-            isReachable = session.isReachable
+            self.activationState = state
+            self.isReachable = session.isReachable
+            #if os(iOS)
+            self.isPaired = session.isPaired
+            self.isWatchAppInstalled = session.isWatchAppInstalled
+            self.syncStatus = "Active: paired=\(session.isPaired) installed=\(session.isWatchAppInstalled) reachable=\(session.isReachable)"
+            #else
+            self.syncStatus = "Active: reachable=\(session.isReachable)"
+            #endif
+            if let error {
+                self.syncStatus = "Error: \(error.localizedDescription)"
+            }
         }
     }
 
