@@ -7,6 +7,7 @@ struct RouteMapOverlay: View {
     var walkedDistance: Double? = nil
     var currentLocation: CLLocationCoordinate2D? = nil
     var nextWaypointIndex: Int? = nil
+    @AppStorage("mapStyle") private var mapStylePref = "standard"
 
     var body: some View {
         Map {
@@ -44,7 +45,7 @@ struct RouteMapOverlay: View {
                 }
             }
         }
-        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+        .mapStyle(mapStylePref.asMapStyleExcludingPOI)
     }
 
     @ViewBuilder

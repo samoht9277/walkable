@@ -41,7 +41,7 @@ struct StatsView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCardView(
                             title: "Total Distance",
-                            value: String(format: "%.1f km", viewModel.totalDistance / 1000),
+                            value: viewModel.totalDistance.formattedDistance,
                             icon: "ruler",
                             color: .blue
                         )
@@ -81,6 +81,15 @@ struct StatsView: View {
                 .padding(.vertical)
             }
             .navigationTitle("Stats")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+            }
             .task { await viewModel.loadStats(sessions: sessions) }
             .onChange(of: viewModel.period) {
                 Task { await viewModel.loadStats(sessions: sessions) }
@@ -162,7 +171,7 @@ struct StatsView: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                Text(String(format: "%.2f km", session.totalDistance / 1000))
+                Text(session.totalDistance.formattedDistance)
                     .font(.subheadline.monospacedDigit())
                 HStack(spacing: 12) {
                     Text(session.totalDuration.formattedDuration)

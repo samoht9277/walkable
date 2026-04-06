@@ -5,6 +5,7 @@ import WalkableKit
 struct SessionDetailSheet: View {
     let session: WalkSession
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("mapStyle") private var mapStylePref = "standard"
 
     var body: some View {
         NavigationStack {
@@ -49,7 +50,7 @@ struct SessionDetailSheet: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCardView(
                             title: "Distance",
-                            value: String(format: "%.2f km", session.totalDistance / 1000),
+                            value: session.totalDistance.formattedDistance,
                             icon: "ruler",
                             color: .blue
                         )
@@ -133,6 +134,6 @@ struct SessionDetailSheet: View {
                     .stroke(.green, lineWidth: 4)
             }
         }
-        .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+        .mapStyle(mapStylePref.asMapStyleExcludingPOI)
     }
 }

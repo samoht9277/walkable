@@ -29,9 +29,6 @@ public final class LegSplit {
     }
 
     public var formattedPace: String {
-        guard pace > 0 else { return "--:--" }
-        let minutes = Int(pace) / 60
-        let seconds = Int(pace) % 60
-        return String(format: "%d:%02d /km", minutes, seconds)
+        pace.formattedPace
     }
 }
