@@ -147,8 +147,15 @@ struct StatsView: View {
     private func sessionRow(_ session: WalkSession) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(session.route?.name ?? "Free Walk")
-                    .font(.subheadline.weight(.medium))
+                HStack(spacing: 4) {
+                    Text(session.route?.name ?? "Free Walk")
+                        .font(.subheadline.weight(.medium))
+                    if session.source == "watch" {
+                        Image(systemName: "applewatch")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 Text(session.startedAt, style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)

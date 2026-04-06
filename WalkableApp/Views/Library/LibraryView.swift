@@ -11,16 +11,8 @@ struct LibraryView: View {
     // Callback when user starts a walk from library
     var onStartWalk: ((Route) -> Void)?
 
-    @ObservedObject private var syncService = SyncService.shared
-
     var body: some View {
         NavigationStack {
-            // Debug sync status — remove after testing
-            Text(syncService.syncStatus)
-                .font(.caption2)
-                .foregroundStyle(.orange)
-                .padding(.horizontal)
-
             VStack(spacing: 0) {
                 // Tag filter chips
                 if !viewModel.allTags(routes).isEmpty {

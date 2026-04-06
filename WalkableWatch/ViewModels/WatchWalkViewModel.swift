@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 import Combine
 import CoreLocation
 import WatchKit
@@ -18,6 +19,9 @@ final class WatchWalkViewModel {
 
     var currentLocation: CLLocationCoordinate2D?
     var currentHeading: Double = 0
+    var mapCameraPosition: MapCameraPosition = .automatic
+    var hasZoomedIn = false
+    private var hasAnnouncedHalfway = false
 
     private var timer: Timer?
     private var startTime = Date()
@@ -96,6 +100,18 @@ final class WatchWalkViewModel {
 
         try? await healthService.startWalkingWorkout()
 
+        // Start with route overview, zoom to user after 3s
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            guard let self, let loc = self.currentLocation else { return }
+            withAnimation(.smooth(duration: 1.5)) {
+                self.mapCameraPosition = .camera(MapCamera(
+                    centerCoordinate: loc,
+                    distance: 800
+                ))
+                self.hasZoomedIn = true
+            }
+        }
+
         let walkStart = startTime
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor in
@@ -162,9 +178,12 @@ final class WatchWalkViewModel {
             elevationGain: 0,
             avgPace: currentPace,
             legSplits: splits,
-            gpsTrack: gpsTrack
+            gpsTrack: gpsTrack,
+            source: "watch"
         )
         SyncService.shared.syncWalkSession(payload)
+
+        VoiceService.shared.announceWalkComplete(distance: distanceWalked, duration: elapsedTime)
 
         isWalking = false
         showSummary = true
@@ -174,5 +193,18 @@ final class WatchWalkViewModel {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
+
+        let total = route.sortedWaypoints.count
+        VoiceService.shared.announceWaypointReached(
+            index: index,
+            total: total,
+            distanceRemaining: distanceToNextWaypoint
+        )
+
+        // Halfway detection
+        if !hasAnnouncedHalfway && currentWaypointIndex >= total / 2 {
+            hasAnnouncedHalfway = true
+            VoiceService.shared.announceHalfway()
+        }
     }
 }

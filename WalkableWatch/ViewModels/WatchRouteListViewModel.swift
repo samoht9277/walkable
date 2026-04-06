@@ -63,6 +63,12 @@ final class WatchRouteListViewModel {
     }
 
     private func createRoute(from payload: SyncPayload, in context: ModelContext) {
+        // Dedup: check if route already exists
+        if let _ = fetchRoute(id: payload.routeId, in: context) {
+            updateRoute(from: payload, in: context)
+            return
+        }
+
         let route = Route(
             name: payload.name ?? "Synced Route",
             distance: payload.distance ?? 0,

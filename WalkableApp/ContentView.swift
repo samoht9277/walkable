@@ -132,6 +132,8 @@ struct ContentView: View {
             session.legSplits.append(legSplit)
         }
 
+        session.source = payload.source ?? "watch"
+
         modelContext.insert(session)
         try? modelContext.save()
     }

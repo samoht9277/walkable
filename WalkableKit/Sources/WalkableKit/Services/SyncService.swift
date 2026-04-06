@@ -59,6 +59,7 @@ public struct SessionSyncPayload: Codable, Sendable {
     public let avgPace: Double
     public let legSplits: [SyncLegSplit]
     public let gpsTrack: [CodableCoordinate]?
+    public let source: String?
 
     public init(
         routeId: String,
@@ -70,7 +71,8 @@ public struct SessionSyncPayload: Codable, Sendable {
         elevationGain: Double,
         avgPace: Double,
         legSplits: [SyncLegSplit],
-        gpsTrack: [CodableCoordinate]? = nil
+        gpsTrack: [CodableCoordinate]? = nil,
+        source: String? = nil
     ) {
         self.routeId = routeId
         self.startedAt = startedAt
@@ -82,6 +84,7 @@ public struct SessionSyncPayload: Codable, Sendable {
         self.avgPace = avgPace
         self.gpsTrack = gpsTrack
         self.legSplits = legSplits
+        self.source = source
     }
 }
 
