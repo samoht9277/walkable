@@ -7,15 +7,32 @@ public final class VoiceService {
     private let synthesizer = AVSpeechSynthesizer()
     public var isEnabled = true
 
-    /// Cached premium voice (downloaded on first use)
+    /// Cached premium voice
     private lazy var preferredVoice: AVSpeechSynthesisVoice? = {
-        // Prefer premium quality voices for natural sound
-        let voices = AVSpeechSynthesisVoice.speechVoices()
-            .filter { $0.language.hasPrefix("en") }
-            .sorted { $0.quality.rawValue > $1.quality.rawValue }
+        let allVoices = AVSpeechSynthesisVoice.speechVoices()
+        let englishVoices = allVoices.filter { $0.language.hasPrefix("en") }
 
-        // Best available: premium > enhanced > default
-        return voices.first
+        // Log available voices for debugging (remove later)
+        for v in englishVoices {
+            print("[Voice] \(v.name) — quality: \(v.quality.rawValue) — lang: \(v.language)")
+        }
+
+        // Try premium first (quality == 3)
+        if let premium = englishVoices.first(where: { $0.quality == .premium }) {
+            print("[Voice] Selected premium: \(premium.name)")
+            return premium
+        }
+
+        // Then enhanced (quality == 2)
+        if let enhanced = englishVoices.first(where: { $0.quality == .enhanced }) {
+            print("[Voice] Selected enhanced: \(enhanced.name)")
+            return enhanced
+        }
+
+        // Fallback to best available
+        let best = englishVoices.sorted { $0.quality.rawValue > $1.quality.rawValue }.first
+        print("[Voice] Selected fallback: \(best?.name ?? "none")")
+        return best
     }()
 
     private init() {}
