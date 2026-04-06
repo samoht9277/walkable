@@ -117,8 +117,28 @@ struct SessionDetailSheet: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    if session.gpsTrackData != nil {
+                        ShareLink(
+                            item: exportSessionGPX(),
+                            preview: SharePreview(session.route?.name ?? "Walk", image: Image(systemName: "figure.walk"))
+                        ) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private func exportSessionGPX() -> GPXFile {
+        let gpxString = GPXService.exportSession(session: session, route: session.route)
+        let name = session.route?.name ?? "Walk"
+        let safeName = name.replacingOccurrences(of: "/", with: "-")
+        let dateStr = session.startedAt.formatted(.dateTime.year().month().day())
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(safeName) \(dateStr).gpx")
+        try? gpxString.write(to: url, atomically: true, encoding: .utf8)
+        return GPXFile(url: url)
     }
 
     @ViewBuilder
