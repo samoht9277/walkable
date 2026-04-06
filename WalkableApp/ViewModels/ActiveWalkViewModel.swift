@@ -29,6 +29,11 @@ final class ActiveWalkViewModel {
     var gpsLocations: [CLLocation] = []
     var waypointArrivalTimes: [Int: Date] = [:]
 
+    // Analysis data collection
+    private var altitudeSamples: [(date: Date, altitude: Double)] = []
+    private var paceSamples: [(date: Date, pace: Double)] = []
+    private var cumulativeElevationGain: Double = 0
+
     private var timer: Timer?
     private var startTime: Date?
     private var pausedDuration: TimeInterval = 0
@@ -109,6 +114,9 @@ final class ActiveWalkViewModel {
         calories = 0
         gpsLocations.removeAll()
         waypointArrivalTimes.removeAll()
+        altitudeSamples.removeAll()
+        paceSamples.removeAll()
+        cumulativeElevationGain = 0
         pausedDuration = 0
         pauseStartTime = nil
         startTime = Date()
@@ -144,6 +152,25 @@ final class ActiveWalkViewModel {
                 }
                 self.gpsLocations.append(location)
                 #endif
+
+                // Altitude sampling
+                self.altitudeSamples.append((date: Date(), altitude: location.altitude))
+
+                // Elevation gain (positive changes > 1m to filter GPS noise)
+                if let lastAlt = self.altitudeSamples.dropLast().last?.altitude {
+                    let delta = location.altitude - lastAlt
+                    if delta > 1 { self.cumulativeElevationGain += delta }
+                }
+
+                // Pace sampling every 30 seconds
+                if let lastPaceSample = self.paceSamples.last {
+                    if Date().timeIntervalSince(lastPaceSample.date) >= 30, self.distanceWalked > 0 {
+                        let recentPace = self.elapsedTime / (self.distanceWalked / 1000) // sec/km
+                        self.paceSamples.append((date: Date(), pace: recentPace / 60)) // min/km
+                    }
+                } else if self.distanceWalked > 20 {
+                    self.paceSamples.append((date: Date(), pace: (self.elapsedTime / (self.distanceWalked / 1000)) / 60))
+                }
                 self.healthService.addRouteLocation(location)
             }
             .store(in: &walkCancellables)
@@ -266,6 +293,15 @@ final class ActiveWalkViewModel {
             session.totalDuration = elapsedTime
             session.calories = calories
             session.avgPace = distanceWalked > 0 ? elapsedTime / (distanceWalked / 1000) : 0
+            session.elevationGain = cumulativeElevationGain
+
+            // Encode analysis data for post-walk charts
+            let analysis = WalkAnalysisData(
+                altitude: altitudeSamples.map { TimedSample(date: $0.date, value: $0.altitude) },
+                pace: paceSamples.map { TimedSample(date: $0.date, value: $0.pace) },
+                heartRate: []
+            )
+            session.analysisData = try? JSONEncoder().encode(analysis)
 
             let coords = gpsLocations.map { CodableCoordinate($0.coordinate) }
             session.gpsTrackData = try? JSONEncoder().encode(coords)

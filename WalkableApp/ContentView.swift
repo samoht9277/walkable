@@ -119,6 +119,9 @@ struct ContentView: View {
             session.gpsTrackData = try? JSONEncoder().encode(gpsTrack)
         }
 
+        // Store analysis data from Watch
+        session.analysisData = payload.analysisData
+
         // Store leg splits
         for split in payload.legSplits {
             let legSplit = LegSplit(

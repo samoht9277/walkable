@@ -6,6 +6,7 @@ struct SessionDetailSheet: View {
     let session: WalkSession
     @Environment(\.dismiss) private var dismiss
     @AppStorage("mapStyle") private var mapStylePref = "standard"
+    @State private var showAnalysis = false
 
     var body: some View {
         NavigationStack {
@@ -102,6 +103,21 @@ struct SessionDetailSheet: View {
                         .padding()
                         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
                         .padding(.horizontal)
+                    }
+                    // View Analysis button
+                    Button {
+                        showAnalysis = true
+                    } label: {
+                        Label("View Analysis", systemImage: "chart.xyaxis.line")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(.blue, in: RoundedRectangle(cornerRadius: 16))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal)
+                    .sheet(isPresented: $showAnalysis) {
+                        WalkAnalysisView(session: session)
                     }
                 }
                 .padding(.vertical)
