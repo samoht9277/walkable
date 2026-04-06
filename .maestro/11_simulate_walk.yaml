@@ -1,0 +1,71 @@
+appId: com.walkable.WalkableApp
+---
+# Full simulated walk test:
+# 1. Import GPX route
+# 2. Go to Library
+# 3. Start the walk
+# NOTE: Run `make simulate` in a separate terminal AFTER this flow starts the walk
+
+- launchApp
+
+# Go to Library and import the GPX
+- tapOn: "Library"
+- tapOn:
+    id: "import-button"
+    optional: true
+# If no import button by ID, try the download icon
+- tapOn:
+    text: "square.and.arrow.down"
+    optional: true
+
+# The file picker should show - we need to navigate to Main.gpx
+# This is tricky in Maestro, so let's skip import and just use pin mode instead
+
+# Alternative: create a quick route via pins and start walking
+- tapOn: "Create"
+- tapOn: "Pin"
+- tapOn:
+    point: "30%,30%"
+- tapOn:
+    point: "70%,30%"
+- tapOn:
+    point: "70%,60%"
+- tapOn:
+    point: "30%,60%"
+
+# Calculate
+- tapOn: "Calculate"
+- extendedWaitUntil:
+    visible: "Save"
+    timeout: 30000
+
+# Save the route
+- tapOn: "Save"
+- extendedWaitUntil:
+    visible: "Route name"
+    timeout: 5000
+- tapOn: "Route name"
+- inputText: "Sim Test"
+- tapOn:
+    text: "Save"
+    index: 0
+
+# Go to Library and start the walk
+- tapOn: "Library"
+- extendedWaitUntil:
+    visible: "Sim Test"
+    timeout: 5000
+- tapOn: "Sim Test"
+- extendedWaitUntil:
+    visible: "Start Walk"
+    timeout: 5000
+- tapOn: "Start Walk"
+
+# Walk tab should now be active
+- assertVisible: "Pause"
+- takeScreenshot: screenshots/walk_started
+
+# Now the GPS simulation should be running externally
+# Wait and take periodic screenshots
+- scroll
+- takeScreenshot: screenshots/walk_in_progress

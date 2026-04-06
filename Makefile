@@ -50,6 +50,11 @@ maestro:
 maestro-flow:
 	./scripts/maestro-test.sh $(FLOW)
 
+# Simulate a walk on the simulator
+# Usage: make simulate [SPEED=10] [GPX=path/to/file.gpx]
+simulate:
+	./scripts/simulate-walk.sh $(or $(GPX),scripts/simulate_main_route.gpx) $(or $(SPEED),5)
+
 # Install on connected device (run from Xcode instead for signing)
 device:
 	@echo "Use Xcode: select your device and press Cmd+R"

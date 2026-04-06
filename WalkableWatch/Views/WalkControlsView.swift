@@ -15,11 +15,15 @@ struct WalkControlsView: View {
             Text(elapsedTime.formattedDuration)
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .monospacedDigit()
+                .contentTransition(.numericText())
+                .animation(.smooth, value: elapsedTime)
 
             HStack(spacing: 16) {
                 VStack {
                     Text(String(format: "%.2f", distance / 1000))
                         .font(.headline.monospacedDigit())
+                        .contentTransition(.numericText())
+                        .animation(.smooth, value: distance)
                     Text("km")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
@@ -27,6 +31,8 @@ struct WalkControlsView: View {
                 VStack {
                     Text(pace.formattedPaceShort)
                         .font(.headline.monospacedDigit())
+                        .contentTransition(.numericText())
+                        .animation(.smooth, value: pace)
                     Text("pace")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
