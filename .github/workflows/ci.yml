@@ -11,8 +11,6 @@ on:
       - 'WalkableTests/**'
       - 'WalkableUITests/**'
       - 'project.yml'
-      - 'Makefile'
-      - '.github/workflows/**'
   push:
     branches: [main]
     paths:
