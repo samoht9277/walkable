@@ -167,6 +167,26 @@ public final class HealthService: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Heart Rate Samples
+
+    public func heartRateSamples(from startDate: Date, to endDate: Date) async throws -> [TimedSample] {
+        let type = HKQuantityType(.heartRate)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+        let sortDescriptor = SortDescriptor(\HKQuantitySample.startDate)
+
+        let query = HKSampleQueryDescriptor(
+            predicates: [.quantitySample(type: type, predicate: predicate)],
+            sortDescriptors: [sortDescriptor]
+        )
+        let samples = try await query.result(for: store)
+        return samples.map { sample in
+            TimedSample(
+                date: sample.startDate,
+                value: sample.quantity.doubleValue(for: .count().unitDivided(by: .minute()))
+            )
+        }
+    }
+
     // MARK: - Stats Queries
 
     /// Get total walking distance for a date range.
