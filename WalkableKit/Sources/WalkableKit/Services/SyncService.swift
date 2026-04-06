@@ -161,18 +161,19 @@ public final class SyncService: NSObject, ObservableObject {
                 allPayloads.append(dict)
             }
         }
-        // Pack all routes into applicationContext — persistent, Watch reads on launch
+        let count = allPayloads.count
+        // Send via applicationContext (persistent)
         do {
             try WCSession.default.updateApplicationContext(["allRoutes": allPayloads])
-            syncStatus = "Sent \(routes.count) routes via context"
         } catch {
             syncStatus = "Context error: \(error.localizedDescription)"
+            return
         }
         // Also send via transferUserInfo as backup
         for dict in allPayloads {
             WCSession.default.transferUserInfo(["routeSync": dict])
         }
-        syncStatus += " + queued \(allPayloads.count) transfers"
+        syncStatus = "Synced \(count) route\(count == 1 ? "" : "s") (context + transfer)"
     }
 
     /// Fired when the Watch becomes reachable so the phone can push all routes.
