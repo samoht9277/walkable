@@ -19,7 +19,7 @@ struct WalkSummaryView: View {
                     .font(.title.weight(.bold))
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    summaryCard("Distance", value: String(format: "%.2f km", distance / 1000), icon: "ruler")
+                    summaryCard("Distance", value: distance.formattedDistance, icon: "ruler")
                     summaryCard("Duration", value: duration.formattedDuration, icon: "clock")
                     summaryCard("Avg Pace", value: pace.formattedPace, icon: "speedometer")
                     summaryCard("Calories", value: String(format: "%.0f kcal", calories), icon: "flame")
