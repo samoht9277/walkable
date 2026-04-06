@@ -28,7 +28,9 @@ struct WalkAnalysisView: View {
                                 samples: data.altitudeSamples,
                                 color: .green,
                                 unit: "m",
-                                icon: "mountain.2"
+                                icon: "mountain.2",
+                                startTime: session.startedAt,
+                                endTime: session.completedAt
                             )
                         }
 
@@ -39,7 +41,9 @@ struct WalkAnalysisView: View {
                                 samples: heartRateData,
                                 color: .red,
                                 unit: "BPM",
-                                icon: "heart"
+                                icon: "heart",
+                                startTime: session.startedAt,
+                                endTime: session.completedAt
                             )
                         } else {
                             unavailableCard(title: "Heart Rate", icon: "heart", reason: "No heart rate data available for this walk")
@@ -53,7 +57,9 @@ struct WalkAnalysisView: View {
                                 color: .purple,
                                 unit: "min/km",
                                 icon: "speedometer",
-                                invertY: true
+                                invertY: true,
+                                startTime: session.startedAt,
+                                endTime: session.completedAt
                             )
                         }
                     } else {
@@ -158,6 +164,8 @@ struct AnalysisChart: View {
     let unit: String
     let icon: String
     var invertY: Bool = false
+    var startTime: Date?
+    var endTime: Date?
 
     @State private var scrubValue: TimedSample?
 
@@ -197,10 +205,11 @@ struct AnalysisChart: View {
                 .lineStyle(StrokeStyle(lineWidth: 2))
             }
             .chartYScale(domain: .automatic(includesZero: false))
+            .chartXScale(domain: (startTime ?? samples.first?.date ?? .now)...(endTime ?? samples.last?.date ?? .now))
             .chartXAxis {
-                AxisMarks(values: .stride(by: .minute, count: 5)) { _ in
+                AxisMarks(values: .automatic(desiredCount: 4)) { value in
                     AxisGridLine()
-                    AxisValueLabel(format: .dateTime.minute())
+                    AxisValueLabel(format: .dateTime.hour().minute())
                 }
             }
             .chartYAxis {
