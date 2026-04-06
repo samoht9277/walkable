@@ -133,6 +133,17 @@ struct WalkAnalysisView: View {
                 }
             }
             .frame(height: 20)
+
+            // Start and end timestamps
+            HStack {
+                Text(session.startedAt, format: .dateTime.hour().minute())
+                Spacer()
+                if let end = session.completedAt {
+                    Text(end, format: .dateTime.hour().minute())
+                }
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
         }
         .padding()
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
