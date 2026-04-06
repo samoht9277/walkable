@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        run: xcodegen generate
+
+      - name: Build iOS
+        run: |
+          xcodebuild -project Walkable.xcodeproj \
+            -scheme WalkableApp \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -skipPackagePluginValidation \
+            build | tail -5
+
+      - name: Run Unit Tests
+        run: |
+          xcodebuild test -project Walkable.xcodeproj \
+            -scheme WalkableApp \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -skipPackagePluginValidation \
+            -only-testing:WalkableTests | tail -20
+
+      - name: Build watchOS
+        run: |
+          xcodebuild -project Walkable.xcodeproj \
+            -scheme WalkableWatch \
+            -destination 'platform=watchOS Simulator,name=Apple Watch Ultra 3 (49mm)' \
+            -skipPackagePluginValidation \
+            build | tail -5
