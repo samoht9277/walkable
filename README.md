@@ -14,13 +14,15 @@
   <img src="https://img.shields.io/badge/watchOS-26.0+-007AFF?logo=apple" alt="watchOS 26+">
   <img src="https://img.shields.io/badge/Swift-6.0-F05138?logo=swift" alt="Swift 6">
   <img src="https://img.shields.io/badge/Dependencies-0-30D158" alt="Zero dependencies">
+  <img src="https://img.shields.io/github/actions/workflow/status/samoht9277/walkable/ci.yml?label=CI" alt="CI">
+  <img src="https://img.shields.io/github/license/samoht9277/walkable" alt="License">
 </p>
 
 <p align="center">
-  <img src="assets/screenshot_route.png" alt="Walkable - iPhone route creation" width="300">
+  <img src="assets/screenshot_route.png" alt="Walkable — route creation with waypoints" width="300">
 </p>
 
-> **Note:** This app is under active development. Features may change, break, or disappear. Contributions and feedback welcome!
+> **Note:** This app is under active development. Features may change, break, or disappear. [Contributions](CONTRIBUTING.md) and feedback welcome!
 
 ## Features
 
@@ -28,27 +30,28 @@
 
 Three ways to design your route:
 
-- **Pin Mode** - Tap the map to place waypoints. The app calculates a walkable route between them using Apple Maps directions, automatically closing the loop.
-- **Draw Mode** - Freehand draw a loop on the map. The app snaps your drawing to walkable roads and generates waypoints along the path.
-- **Templates** - Pick a shape (Loop, Out & Back, Figure-8), set a target distance, and generate a route from your current location.
+- **Pin Mode** — Tap the map to place waypoints. The app calculates a walkable route between them using Apple Maps directions, automatically closing the loop.
+- **Draw Mode** — Hold and drag to freehand draw a loop. The app snaps your drawing to walkable roads and generates waypoints. Toggle between pen (draw) and hand (pan) with the floating button.
+- **Templates** — Pick a shape (Loop, Out & Back, Figure-8), set a target distance, and generate a route. Out & Back follows the map's current heading direction.
 
-Routes snap to walkable roads via MKDirections. Waypoints can be edited after placement (long-press to move or delete).
+Waypoints snap to the nearest walkable road after route calculation. Long-press any waypoint to move or delete it.
 
 ### Walk with Live Guidance
 
 - Real-time GPS tracking with walked (gray) vs remaining (blue) polyline
-- Two camera modes: top-down overview and GPS follow (tilted 3D, heading-aligned)
-- Haptic feedback at each waypoint arrival
-- Dynamic Island and Lock Screen Live Activity showing distance, time, and pace
-- Walk banner appears on other tabs when a walk is in progress
+- Haptic feedback and voice announcements at each waypoint
+- Dynamic Island and Lock Screen Live Activity showing distance and time
+- Walk banner on other tabs when a walk is in progress
+- Pause/resume with correct time accounting
+- Walks under 10m / 30s are automatically discarded (testing protection)
 
-### Apple Watch (Standalone)
+### Apple Watch
 
-- Create routes directly on the Watch by placing pins on a map
-- Walk synced routes from iPhone or locally-created ones
-- Three swipeable views during a walk: Route Map, Compass (arrow to next waypoint), Now Playing
-- Walk results sync back to iPhone automatically
-- Phone-to-Watch handoff: start a walk on iPhone, Watch takes over
+- Walk synced routes from iPhone — routes sync automatically via WatchConnectivity
+- Four swipeable views during a walk: **Controls** (pause/resume/end), **Map** (route + position), **Compass** (arrow to next waypoint), **Now Playing** (native system controls)
+- Walk results (GPS track, leg splits, stats) sync back to iPhone
+- Sessions done on Watch are tagged with ⌚ on the phone
+- Voice announcements on waypoint arrival and walk completion
 
 ### Stats & Health
 
@@ -56,29 +59,65 @@ Routes snap to walkable roads via MKDirections. Waypoints can be edited after pl
 - Weekly/monthly dashboard with distance, walks, pace trends, streaks
 - Per-route leaderboard with best times
 - Per-waypoint leg splits
+- Session detail with planned route (blue) + actual GPS track (green) overlay
 - Deletable sessions (removes from both app and HealthKit)
+- "View All" for complete walk history
 
 ### Library
 
 - Save, search, tag, and favorite your routes
 - Sort by date, distance, times walked, or nearest
-- Route detail view with map preview and stats
+- Route detail with map preview, stats, and "Start Walk" button
+- Edit route name and tags (pencil icon in detail view)
 - Swipe to favorite or delete
+
+### Design
+
+- iOS 26 Liquid Glass (`.glassEffect`) on all floating controls
+- Haptics throughout: light (pin place), medium (calculate), heavy (clear/delete), success (save/complete)
+- Shared formatters for consistent distance, pace, and time display
+- SF Symbols everywhere, no custom icon assets
 
 ## Tech Stack
 
 | Component | Technology |
 |-----------|-----------|
 | UI | SwiftUI + Liquid Glass (iOS 26) |
-| Maps | MapKit (MKDirections, MapPolyline) |
+| Maps | MapKit (MKDirections, MapPolyline, MapCompass) |
 | Persistence | SwiftData |
 | Health | HealthKit (HKWorkoutSession, HKWorkoutBuilder) |
-| Watch Sync | WatchConnectivity |
+| Watch Sync | WatchConnectivity (applicationContext + transferUserInfo) |
 | Live Activity | ActivityKit + WidgetKit |
 | Location | CoreLocation |
+| Voice | AVSpeechSynthesizer |
+| Testing | XCTest + XCUITest + Maestro |
+| CI | GitHub Actions |
 | Project Gen | XcodeGen |
 
 **Zero external dependencies.** Everything is built on Apple frameworks.
+
+## Roadmap
+
+### Phase 1: Polish & Stability
+- [ ] Fix Dynamic Island expanded layout ([#2](https://github.com/samoht9277/walkable/issues/2), [#3](https://github.com/samoht9277/walkable/issues/3))
+- [ ] Verify Live Activity pause/resume ([#4](https://github.com/samoht9277/walkable/issues/4))
+- [ ] Deduplicate existing Watch routes ([#5](https://github.com/samoht9277/walkable/issues/5))
+- [ ] Redesign session detail like Apple Fitness recap ([#6](https://github.com/samoht9277/walkable/issues/6))
+
+### Phase 2: Features
+- [ ] Elevation tracking ([#7](https://github.com/samoht9277/walkable/issues/7))
+- [ ] Live heart rate + calories during walks ([#8](https://github.com/samoht9277/walkable/issues/8))
+- [ ] Home screen widgets ([#9](https://github.com/samoht9277/walkable/issues/9))
+- [ ] Settings tab (map style, voice, haptics, units) ([#10](https://github.com/samoht9277/walkable/issues/10))
+- [ ] Walking notifications & streak reminders ([#11](https://github.com/samoht9277/walkable/issues/11))
+- [ ] Share routes via link or QR code ([#12](https://github.com/samoht9277/walkable/issues/12))
+- [ ] Route recommendations near user ([#13](https://github.com/samoht9277/walkable/issues/13))
+- [ ] Multiple map styles ([#14](https://github.com/samoht9277/walkable/issues/14))
+
+### Phase 3: App Store Prep
+- [ ] App Store assets and metadata ([#15](https://github.com/samoht9277/walkable/issues/15))
+- [ ] First-launch onboarding flow ([#16](https://github.com/samoht9277/walkable/issues/16))
+- [ ] TestFlight beta distribution ([#17](https://github.com/samoht9277/walkable/issues/17))
 
 ## Requirements
 
@@ -89,35 +128,28 @@ Routes snap to walkable roads via MKDirections. Waypoints can be edited after pl
 ## Getting Started
 
 ```bash
-# Clone
 git clone https://github.com/samoht9277/walkable.git
 cd walkable
-
-# Generate Xcode project
-make generate
-
-# Build
-make build
-
-# Run tests
-make test-all
-
-# Open in Xcode (for device deployment)
-make open
+make generate    # Generate Xcode project from project.yml
+make build       # Build iOS app
+make test-all    # Run all tests
+make open        # Open in Xcode
 ```
 
-To install on your phone: open in Xcode, select your team in Signing & Capabilities for both `WalkableApp` and `WalkableWatch` targets, then Cmd+R.
+To install on your devices: open in Xcode, select your team in Signing & Capabilities, then Cmd+R. The Watch app deploys automatically with the iOS app.
 
 ## Project Structure
 
 ```
 Walkable/
-  WalkableKit/          Shared Swift package (models, services, formatters)
+  WalkableKit/          Shared Swift package (models, services, formatters, voice)
   WalkableApp/          iOS app (views, view models, haptics)
-  WalkableWatch/        watchOS app (standalone route creation + walking)
+  WalkableWatch/        watchOS app (synced routes + walking)
   WalkableWidgets/      Dynamic Island + Lock Screen Live Activity
   WalkableTests/        48 unit tests
   WalkableUITests/      17 UI automation tests
+  .maestro/             10 Maestro visual test flows
+  .github/              CI, PR template, issue templates
   project.yml           XcodeGen project definition
 ```
 
@@ -127,7 +159,12 @@ Walkable/
 make test        # 48 unit tests (models, routing, path simplifier, templates, formatters)
 make test-ui     # 17 UI tests (tab navigation, create modes, library, stats)
 make test-all    # Everything
+make maestro     # 10 Maestro visual test flows (requires maestro CLI)
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, development workflow, and code style guidelines.
 
 ## License
 
