@@ -152,9 +152,9 @@
 		44DBE628CD2816AF0CC6C0E3 /* RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteListView.swift; sourceTree = "<group>"; };
 		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
 		4A200AD9B414882AC6C7C572 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5515782EF765667BB5836D12 /* WalkableWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WalkableWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WalkableKit; path = WalkableKit; sourceTree = SOURCE_ROOT; };
+		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5515782EF765667BB5836D12 /* WalkableWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WalkableWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		57F061AAADC8839C2E49EE10 /* WalkTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkTabView.swift; sourceTree = "<group>"; };
 		5DB7618EACDEED770EA1628E /* WalkableLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableLiveActivity.swift; sourceTree = "<group>"; };
 		65910331A837344A3DF7308C /* WalkableWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableWidgetsBundle.swift; sourceTree = "<group>"; };
@@ -740,6 +740,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableWatch/WalkableWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads health data during walks.";
@@ -758,6 +759,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				INFOPLIST_FILE = WalkableWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -812,6 +814,7 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";
@@ -838,6 +841,7 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads your health data to show fitness stats.";
@@ -861,6 +865,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				INFOPLIST_FILE = WalkableWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -936,6 +941,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WalkableWatch/WalkableWatch.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Walkable reads health data during walks.";
