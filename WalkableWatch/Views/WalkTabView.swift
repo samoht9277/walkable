@@ -1,4 +1,5 @@
 import SwiftUI
+import MapKit
 import WalkableKit
 
 struct WalkTabView: View {
@@ -43,7 +44,11 @@ struct WalkTabView: View {
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     distanceWalked: viewModel.distanceWalked,
                     elapsedTime: viewModel.elapsedTime,
-                    distanceToNext: viewModel.distanceToNextWaypoint
+                    distanceToNext: viewModel.distanceToNextWaypoint,
+                    cameraPosition: Binding(
+                        get: { viewModel.mapCameraPosition },
+                        set: { viewModel.mapCameraPosition = $0 }
+                    )
                 )
                 .tag(1)
 

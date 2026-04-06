@@ -9,10 +9,11 @@ struct WatchMapView: View {
     let distanceWalked: Double
     let elapsedTime: TimeInterval
     let distanceToNext: Double?
+    @Binding var cameraPosition: MapCameraPosition
 
     var body: some View {
-        ZStack {
-            Map {
+        VStack(spacing: 0) {
+            Map(position: $cameraPosition) {
                 if let coords = route.decodedPolylineCoordinates {
                     if let currentLoc = currentLocation {
                         let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
@@ -48,38 +49,36 @@ struct WatchMapView: View {
             }
             .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
 
-            VStack {
-                Spacer()
-                HStack {
-                    VStack(spacing: 0) {
-                        Text("DIST")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                        Text(distanceWalked.formattedDistance)
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    }
-                    Spacer()
-                    VStack(spacing: 0) {
-                        Text("TIME")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                        Text(elapsedTime.formattedDuration)
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    }
-                    Spacer()
-                    VStack(spacing: 0) {
-                        Text("NEXT")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
-                        Text(distanceToNext?.formattedDistance ?? "--")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.orange)
-                    }
+            // Stats bar - outside the map so swiping here switches pages
+            HStack {
+                VStack(spacing: 0) {
+                    Text("DIST")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                    Text(distanceWalked.formattedDistance)
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial)
+                Spacer()
+                VStack(spacing: 0) {
+                    Text("TIME")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                    Text(elapsedTime.formattedDuration)
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                }
+                Spacer()
+                VStack(spacing: 0) {
+                    Text("NEXT")
+                        .font(.system(size: 8))
+                        .foregroundStyle(.secondary)
+                    Text(distanceToNext?.formattedDistance ?? "--")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.orange)
+                }
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(.black)
         }
     }
 }

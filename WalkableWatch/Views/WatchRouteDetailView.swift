@@ -9,9 +9,19 @@ struct WatchRouteDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
-                // Mini map
-                if let coords = route.decodedPolylineCoordinates {
-                    Map {
+                // Mini map - zoom to fit route
+                if let coords = route.decodedPolylineCoordinates, !coords.isEmpty {
+                    let lats = coords.map { $0.latitude }
+                    let lngs = coords.map { $0.longitude }
+                    let center = CLLocationCoordinate2D(
+                        latitude: (lats.min()! + lats.max()!) / 2,
+                        longitude: (lngs.min()! + lngs.max()!) / 2
+                    )
+                    let span = MKCoordinateSpan(
+                        latitudeDelta: (lats.max()! - lats.min()!) * 1.3,
+                        longitudeDelta: (lngs.max()! - lngs.min()!) * 1.3
+                    )
+                    Map(initialPosition: .region(MKCoordinateRegion(center: center, span: span))) {
                         MapPolyline(coordinates: coords).stroke(.blue, lineWidth: 3)
                     }
                     .frame(height: 120)
