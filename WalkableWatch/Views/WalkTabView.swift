@@ -31,6 +31,7 @@ struct WalkTabView: View {
                     distance: viewModel.distanceWalked,
                     pace: viewModel.currentPace,
                     isPaused: viewModel.isPaused,
+                    loopCompleted: viewModel.loopCompleted,
                     onPause: { viewModel.pauseWalk() },
                     onResume: { viewModel.resumeWalk() },
                     onEnd: { Task { await viewModel.endWalk() } }
@@ -42,6 +43,8 @@ struct WalkTabView: View {
                     route: route,
                     currentLocation: viewModel.currentLocation,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
+                    visitedWaypointIndices: viewModel.visitedWaypointIndices,
+                    polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
                     distanceWalked: viewModel.distanceWalked,
                     elapsedTime: viewModel.elapsedTime,
                     distanceToNext: viewModel.distanceToNextWaypoint,

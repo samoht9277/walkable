@@ -160,6 +160,8 @@ struct LibraryView: View {
                 totalDistance += a.distance(from: b)
             }
             route.distance = totalDistance
+            // Estimate walking time at 5 km/h
+            route.estimatedDuration = totalDistance / (5000.0 / 3600.0)
         }
 
         let allLats = gpxData.waypoints.map(\.latitude) + gpxData.trackPoints.map(\.latitude)

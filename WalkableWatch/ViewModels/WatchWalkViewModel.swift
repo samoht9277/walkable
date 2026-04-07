@@ -16,6 +16,8 @@ final class WatchWalkViewModel {
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
     var currentWaypointIndex = 0
+    var visitedWaypointIndices: Set<Int> = []
+    var loopCompleted = false
 
     var currentLocation: CLLocationCoordinate2D?
     var currentHeading: Double = 0
@@ -26,6 +28,7 @@ final class WatchWalkViewModel {
     private var startTime = Date()
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
+    var lastPolylineSegmentIndex = 0
     private var gpsLocations: [CLLocation] = []
     private var waypointArrivalTimes: [Int: Date] = [:]
     private var cancellables = Set<AnyCancellable>()
@@ -71,7 +74,8 @@ final class WatchWalkViewModel {
 
     func startWalk() async {
         startTime = Date()
-        let coords = route.sortedWaypoints.map { $0.coordinate }
+        var coords = route.sortedWaypoints.map { $0.coordinate }
+        if let first = coords.first { coords.append(first) }
         locationService.monitorWaypoints(coords)
         locationService.startTracking()
         locationService.startHeadingUpdates()
@@ -92,6 +96,16 @@ final class WatchWalkViewModel {
                 self.distanceWalked = self.healthService.distanceWalked ?? 0
                 self.gpsLocations.append(location)
                 self.healthService.addRouteLocation(location)
+
+                // Track polyline progress for correct split on shared streets.
+                // Cap advancement to 5 segments per update to avoid jumping ahead
+                // when outbound and return legs share a street.
+                if let coords = self.route.decodedPolylineCoordinates, coords.count >= 2 {
+                    let split = PolylineSplitter.split(polyline: coords, at: location.coordinate, searchFromIndex: self.lastPolylineSegmentIndex, searchWindow: 10)
+                    let newIndex = split.walked.count - 2
+                    let maxJump = self.lastPolylineSegmentIndex + 5
+                    self.lastPolylineSegmentIndex = max(self.lastPolylineSegmentIndex, min(newIndex, maxJump))
+                }
 
                 // Altitude sampling
                 self.altitudeSamples.append((date: Date(), altitude: location.altitude))
@@ -223,6 +237,17 @@ final class WatchWalkViewModel {
     private func handleWaypointArrival(_ index: Int) {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
+
+        for i in 0...index {
+            visitedWaypointIndices.insert(i)
+        }
+
+        if index >= route.waypoints.count {
+            loopCompleted = true
+            WKInterfaceDevice.current().play(.notification)
+            return
+        }
+
         WKInterfaceDevice.current().play(.success)
     }
 }

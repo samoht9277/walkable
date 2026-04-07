@@ -3,18 +3,28 @@ import CoreLocation
 public enum PolylineSplitter {
     /// Split a polyline at the closest point to a given location.
     /// Returns (walked, remaining) coordinate arrays.
+    /// - Parameter searchFromIndex: Only search segments at or after this index.
+    /// - Parameter searchWindow: Max number of segments to search from `searchFromIndex`.
+    ///   Prevents snapping to a return-leg segment on shared streets.
+    ///   Pass 0 (default) to search all remaining segments.
     public static func split(
         polyline: [CLLocationCoordinate2D],
-        at currentLocation: CLLocationCoordinate2D
+        at currentLocation: CLLocationCoordinate2D,
+        searchFromIndex: Int = 0,
+        searchWindow: Int = 0
     ) -> (walked: [CLLocationCoordinate2D], remaining: [CLLocationCoordinate2D]) {
         guard polyline.count >= 2 else { return (polyline, []) }
 
-        var closestIndex = 0
+        let startSearch = max(0, min(searchFromIndex, polyline.count - 2))
+        let endSearch = searchWindow > 0
+            ? min(startSearch + searchWindow, polyline.count - 1)
+            : polyline.count - 1
+        var closestIndex = startSearch
         var closestDistance = Double.greatestFiniteMagnitude
         var closestProjection: CLLocationCoordinate2D?
 
-        // Find the closest segment and project the current location onto it
-        for i in 0..<(polyline.count - 1) {
+        // Only search segments within the window
+        for i in startSearch..<endSearch {
             let a = polyline[i]
             let b = polyline[i + 1]
             let (projection, distance) = projectPointOntoSegment(point: currentLocation, segStart: a, segEnd: b)

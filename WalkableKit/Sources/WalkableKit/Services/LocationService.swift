@@ -65,12 +65,39 @@ public final class LocationService: NSObject, ObservableObject {
         arrivedWaypoints.removeAll()
     }
 
-    /// Check if current location is within arrival radius of any unvisited waypoint.
+    /// Check if current location is within arrival radius of the next expected waypoint.
+    /// Only checks sequentially: the next unvisited waypoint, plus one ahead to handle
+    /// GPS jumps at high speed. This prevents false triggers on shared streets where
+    /// a later waypoint (e.g. 10) is near an earlier one (e.g. 4).
+    /// The closing waypoint (last) is only checked after all others are visited.
     private func checkWaypointProximity(_ location: CLLocation) {
-        for (index, coord) in waypointCoordinates.enumerated() {
+        let lastIndex = waypointCoordinates.count - 1
+        guard lastIndex >= 0 else { return }
+
+        // Find the next expected waypoint index
+        var nextExpected = 0
+        while nextExpected <= lastIndex && arrivedWaypoints.contains(nextExpected) {
+            nextExpected += 1
+        }
+        guard nextExpected <= lastIndex else { return }
+
+        // Check a small window: next expected + 1 ahead (for GPS jumps skipping one)
+        let checkLimit = min(nextExpected + 2, lastIndex + 1)
+        for index in nextExpected..<checkLimit {
             guard !arrivedWaypoints.contains(index) else { continue }
+            // Don't check the closing waypoint until all others are visited
+            if index == lastIndex && arrivedWaypoints.count < lastIndex { continue }
+
+            let coord = waypointCoordinates[index]
             let waypointLocation = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
             if location.distance(from: waypointLocation) <= arrivalRadiusMeters {
+                // Mark any skipped waypoint between nextExpected and index
+                for skipped in nextExpected..<index {
+                    if !arrivedWaypoints.contains(skipped) {
+                        arrivedWaypoints.insert(skipped)
+                        waypointArrival.send(skipped)
+                    }
+                }
                 arrivedWaypoints.insert(index)
                 waypointArrival.send(index)
             }

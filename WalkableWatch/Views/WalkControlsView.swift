@@ -6,6 +6,7 @@ struct WalkControlsView: View {
     let distance: Double
     let pace: Double
     let isPaused: Bool
+    let loopCompleted: Bool
     let onPause: () -> Void
     let onResume: () -> Void
     let onEnd: () -> Void
@@ -39,20 +40,28 @@ struct WalkControlsView: View {
                 }
             }
 
+            if loopCompleted {
+                Text("🏁 Route Complete!")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.green)
+            }
+
             HStack(spacing: 12) {
-                Button(action: isPaused ? onResume : onPause) {
-                    Image(systemName: isPaused ? "play.fill" : "pause.fill")
-                        .font(.title3)
-                        .frame(width: 50, height: 50)
+                if !loopCompleted {
+                    Button(action: isPaused ? onResume : onPause) {
+                        Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                            .font(.title3)
+                            .frame(width: 50, height: 50)
+                    }
+                    .tint(isPaused ? .green : .yellow)
                 }
-                .tint(isPaused ? .green : .yellow)
 
                 Button(action: onEnd) {
-                    Image(systemName: "stop.fill")
+                    Image(systemName: loopCompleted ? "checkmark" : "stop.fill")
                         .font(.title3)
                         .frame(width: 50, height: 50)
                 }
-                .tint(.red)
+                .tint(loopCompleted ? .green : .red)
             }
         }
     }

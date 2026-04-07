@@ -7,13 +7,15 @@ struct RouteMapOverlay: View {
     var walkedDistance: Double? = nil
     var currentLocation: CLLocationCoordinate2D? = nil
     var nextWaypointIndex: Int? = nil
+    var visitedWaypointIndices: Set<Int> = []
+    var polylineSearchFromIndex: Int = 0
     @AppStorage("mapStyle") private var mapStylePref = "standard"
 
     var body: some View {
         Map {
             if let coords = route.decodedPolylineCoordinates {
                 if let currentLoc = currentLocation {
-                    let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
+                    let split = PolylineSplitter.split(polyline: coords, at: currentLoc, searchFromIndex: polylineSearchFromIndex, searchWindow: 10)
                     MapPolyline(coordinates: split.walked)
                         .stroke(.gray, lineWidth: 4)
                     MapPolyline(coordinates: split.remaining)
@@ -51,14 +53,21 @@ struct RouteMapOverlay: View {
     @ViewBuilder
     private func waypointMarker(for waypoint: Waypoint) -> some View {
         let isNext = waypoint.index == nextWaypointIndex
+        let isVisited = visitedWaypointIndices.contains(waypoint.index)
+        let size: CGFloat = isNext ? 20 : 14
+        let color: Color = isVisited ? .green : (isNext ? .orange : .blue)
         ZStack {
             Circle()
-                .fill(isNext ? Color.orange : Color.blue)
-                .frame(width: isNext ? 20 : 14, height: isNext ? 20 : 14)
+                .fill(color)
+                .frame(width: size, height: size)
             Circle()
                 .stroke(.white, lineWidth: 2)
-                .frame(width: isNext ? 20 : 14, height: isNext ? 20 : 14)
-            if isNext {
+                .frame(width: size, height: size)
+            if isVisited {
+                Image(systemName: "checkmark")
+                    .font(.system(size: size * 0.5, weight: .bold))
+                    .foregroundStyle(.white)
+            } else if isNext {
                 Text("\(waypoint.index + 1)")
                     .font(.caption2.bold())
                     .foregroundStyle(.white)

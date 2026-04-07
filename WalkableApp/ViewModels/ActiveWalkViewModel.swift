@@ -20,14 +20,17 @@ final class ActiveWalkViewModel {
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
     var currentPace: Double = 0
+    var loopCompleted = false
     var calories: Double = 0
 
     var currentWaypointIndex = 0
+    var visitedWaypointIndices: Set<Int> = []
     var arrivedWaypointMessage: String?
     var showArrivalCard = false
 
     var gpsLocations: [CLLocation] = []
     var waypointArrivalTimes: [Int: Date] = [:]
+    var lastPolylineSegmentIndex = 0
 
     // Analysis data collection
     private var altitudeSamples: [(date: Date, altitude: Double)] = []
@@ -109,11 +112,14 @@ final class ActiveWalkViewModel {
         isPaused = false
         isWalkingOnWatch = false
         currentWaypointIndex = 0
+        visitedWaypointIndices.removeAll()
         elapsedTime = 0
         distanceWalked = 0
         calories = 0
         gpsLocations.removeAll()
         waypointArrivalTimes.removeAll()
+        lastPolylineSegmentIndex = 0
+        loopCompleted = false
         altitudeSamples.removeAll()
         paceSamples.removeAll()
         cumulativeElevationGain = 0
@@ -121,7 +127,11 @@ final class ActiveWalkViewModel {
         pauseStartTime = nil
         startTime = Date()
 
-        let coords = route.sortedWaypoints.map { $0.coordinate }
+        var coords = route.sortedWaypoints.map { $0.coordinate }
+        // Append start point as the closing waypoint for loop detection
+        if let first = coords.first {
+            coords.append(first)
+        }
         locationService.monitorWaypoints(coords)
         locationService.startTracking()
 
@@ -152,6 +162,16 @@ final class ActiveWalkViewModel {
                 }
                 self.gpsLocations.append(location)
                 #endif
+
+                // Track polyline progress for correct split on shared streets.
+                // Cap advancement to 5 segments per update to avoid jumping ahead
+                // when outbound and return legs share a street.
+                if let coords = self.route?.decodedPolylineCoordinates, coords.count >= 2 {
+                    let split = PolylineSplitter.split(polyline: coords, at: location.coordinate, searchFromIndex: self.lastPolylineSegmentIndex, searchWindow: 10)
+                    let newIndex = split.walked.count - 2
+                    let maxJump = self.lastPolylineSegmentIndex + 5
+                    self.lastPolylineSegmentIndex = max(self.lastPolylineSegmentIndex, min(newIndex, maxJump))
+                }
 
                 // Altitude sampling
                 self.altitudeSamples.append((date: Date(), altitude: location.altitude))
@@ -354,8 +374,27 @@ final class ActiveWalkViewModel {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
 
+        // Mark this and all earlier waypoints as visited
+        for i in 0...index {
+            visitedWaypointIndices.insert(i)
+        }
+
         guard let route else { return }
-        let wp = route.sortedWaypoints[index]
+        let waypoints = route.sortedWaypoints
+
+        // The closing waypoint (index == waypoints.count) is the return to start
+        if index >= waypoints.count {
+            loopCompleted = true
+            arrivedWaypointMessage = "Route Complete!"
+            showArrivalCard = true
+            Haptics.success()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                self?.showArrivalCard = false
+            }
+            return
+        }
+
+        let wp = waypoints[index]
         arrivedWaypointMessage = wp.label ?? "Waypoint \(index + 1)"
         showArrivalCard = true
 
