@@ -95,6 +95,11 @@ struct ContentView: View {
         .onChange(of: walkViewModel.pendingWatchSession?.routeId) {
             saveWatchSession()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .endWalkFromDI)) { _ in
+            Task {
+                await walkViewModel.endWalk(modelContext: modelContext)
+            }
+        }
     }
 
     private func saveWatchSession() {

@@ -44,6 +44,9 @@ targets:
       INFOPLIST_KEY_UILaunchScreen_Generation: true
       INFOPLIST_KEY_CFBundleDisplayName: Walkable
       INFOPLIST_KEY_UIBackgroundModes: location
+      CFBundleURLTypes:
+        - CFBundleURLSchemes:
+            - walkable
       INFOPLIST_KEY_NSSupportsLiveActivities: true
       INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Walkable needs your location to track walks and show your position on the map."
       INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription: "Walkable needs background location access to track your walks."

@@ -5,6 +5,10 @@ import SwiftData
 import ActivityKit
 import WalkableKit
 
+extension Notification.Name {
+    static let endWalkFromDI = Notification.Name("endWalkFromDI")
+}
+
 @MainActor
 @Observable
 final class ActiveWalkViewModel {
@@ -44,12 +48,40 @@ final class ActiveWalkViewModel {
     private var cancellables = Set<AnyCancellable>()
     private var walkCancellables = Set<AnyCancellable>()
     private var liveActivity: Activity<WalkActivityAttributes>?
+    private var liveActivityUpdateTask: Task<Void, Never>?
 
     private let locationService = LocationService.shared
     private let healthService = HealthService.shared
 
     init() {
         listenForWatchWalkStatus()
+        listenForTogglePause()
+    }
+
+    private func listenForTogglePause() {
+        let center = CFNotificationCenterGetDarwinNotifyCenter()
+        let observer = Unmanaged.passUnretained(self).toOpaque()
+        CFNotificationCenterAddObserver(center, observer, { _, observer, _, _, _ in
+            guard let observer else { return }
+            let vm = Unmanaged<ActiveWalkViewModel>.fromOpaque(observer).takeUnretainedValue()
+            Task { @MainActor in
+                if vm.isPaused {
+                    vm.resumeWalk()
+                } else {
+                    vm.pauseWalk()
+                }
+            }
+        }, "com.walkable.togglePause" as CFString, nil, .deliverImmediately)
+
+        CFNotificationCenterAddObserver(center, observer, { _, observer, _, _, _ in
+            guard let observer else { return }
+            let vm = Unmanaged<ActiveWalkViewModel>.fromOpaque(observer).takeUnretainedValue()
+            Task { @MainActor in
+                guard vm.isWalking else { return }
+                // Need modelContext — post a notification the ContentView can handle
+                NotificationCenter.default.post(name: .endWalkFromDI, object: nil)
+            }
+        }, "com.walkable.endWalk" as CFString, nil, .deliverImmediately)
     }
 
     private func listenForWatchWalkStatus() {
@@ -192,6 +224,16 @@ final class ActiveWalkViewModel {
                     self.paceSamples.append((date: Date(), pace: (self.elapsedTime / (self.distanceWalked / 1000)) / 60))
                 }
                 self.healthService.addRouteLocation(location)
+
+                // Update elapsed time + Live Activity from location callback
+                // (Timer stops in background, but location updates keep firing)
+                if let start = self.startTime, !self.isPaused {
+                    self.elapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
+                    if self.distanceWalked > 20 {
+                        self.currentPace = self.elapsedTime / (self.distanceWalked / 1000)
+                    }
+                }
+                self.updateLiveActivity()
             }
             .store(in: &walkCancellables)
 
@@ -200,9 +242,10 @@ final class ActiveWalkViewModel {
                 guard let self, !self.isPaused, let start = self.startTime else { return }
                 self.elapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
                 if self.distanceWalked > 20 {
-                    self.currentPace = self.elapsedTime / (self.distanceWalked / 1000) // sec/km
+                    self.currentPace = self.elapsedTime / (self.distanceWalked / 1000)
                 }
-                self.updateLiveActivity()
+                // Don't update Live Activity here — .timer style auto-ticks.
+                // Location callback handles distance/waypoint updates.
             }
         }
 
@@ -247,7 +290,8 @@ final class ActiveWalkViewModel {
             isPaused: isPaused,
             timerStart: isPaused ? Date.distantFuture : timerStart
         )
-        Task { await liveActivity?.update(.init(state: state, staleDate: nil)) }
+        liveActivityUpdateTask?.cancel()
+        liveActivityUpdateTask = Task { await liveActivity?.update(.init(state: state, staleDate: nil)) }
     }
 
     private func endLiveActivity() {

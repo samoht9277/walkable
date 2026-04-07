@@ -49,6 +49,7 @@ struct PinModeOverlay: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .glassEffect(.regular, in: .capsule)
+                    .allowsHitTesting(false)
             }
         }
         .padding(.bottom, 2)
