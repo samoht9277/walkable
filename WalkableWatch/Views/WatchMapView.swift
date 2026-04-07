@@ -6,6 +6,8 @@ struct WatchMapView: View {
     let route: Route
     let currentLocation: CLLocationCoordinate2D?
     let currentWaypointIndex: Int
+    let visitedWaypointIndices: Set<Int>
+    let polylineSearchFromIndex: Int
     let distanceWalked: Double
     let elapsedTime: TimeInterval
     let distanceToNext: Double?
@@ -16,7 +18,7 @@ struct WatchMapView: View {
             Map(position: $cameraPosition) {
                 if let coords = route.decodedPolylineCoordinates {
                     if let currentLoc = currentLocation {
-                        let split = PolylineSplitter.split(polyline: coords, at: currentLoc)
+                        let split = PolylineSplitter.split(polyline: coords, at: currentLoc, searchFromIndex: polylineSearchFromIndex, searchWindow: 10)
                         MapPolyline(coordinates: split.walked)
                             .stroke(.gray, lineWidth: 3)
                         MapPolyline(coordinates: split.remaining)
@@ -29,9 +31,11 @@ struct WatchMapView: View {
 
                 ForEach(route.sortedWaypoints, id: \.id) { wp in
                     Annotation("", coordinate: wp.coordinate) {
+                        let isVisited = visitedWaypointIndices.contains(wp.index)
+                        let isNext = wp.index == currentWaypointIndex
                         Circle()
-                            .fill(wp.index == currentWaypointIndex ? Color.orange : Color.blue.opacity(0.5))
-                            .frame(width: wp.index == currentWaypointIndex ? 10 : 6)
+                            .fill(isVisited ? Color.green : (isNext ? Color.orange : Color.blue.opacity(0.5)))
+                            .frame(width: (isNext || isVisited) ? 10 : 6)
                             .overlay(
                                 Circle().stroke(.white, lineWidth: 1)
                             )

@@ -112,6 +112,30 @@ struct PolylineSplitterTests {
         #expect(abs(remaining.last!.longitude - 0.01) < 0.0001)
     }
 
+    @Test("split with searchFromIndex skips earlier segments on shared streets")
+    func splitWithSearchFromIndex() {
+        // Out-and-back route: A -> B -> C -> B -> A (shares segment A-B)
+        let polyline = [
+            CLLocationCoordinate2D(latitude: 0, longitude: 0),       // A
+            CLLocationCoordinate2D(latitude: 0, longitude: 0.01),    // B (outbound)
+            CLLocationCoordinate2D(latitude: 0, longitude: 0.02),    // C (turnaround)
+            CLLocationCoordinate2D(latitude: 0, longitude: 0.01),    // B (return)
+            CLLocationCoordinate2D(latitude: 0, longitude: 0)        // A (finish)
+        ]
+
+        // User is near B on the return leg (segment index 3: B->A)
+        let nearB = CLLocationCoordinate2D(latitude: 0, longitude: 0.01)
+
+        // Without searchFromIndex, it snaps to segment 0 (outbound A->B)
+        let (walkedDefault, _) = PolylineSplitter.split(polyline: polyline, at: nearB)
+        #expect(walkedDefault.count <= 3) // snaps to early segment
+
+        // With searchFromIndex=2, it skips outbound and finds segment 2 (C->B) or 3 (B->A)
+        let (walkedForward, remaining) = PolylineSplitter.split(polyline: polyline, at: nearB, searchFromIndex: 2)
+        #expect(walkedForward.count >= 4) // includes outbound + turnaround
+        #expect(remaining.count >= 2)     // still has return leg
+    }
+
     @Test("split with 1-point polyline returns it as walked")
     func splitSinglePoint() {
         let polyline = [CLLocationCoordinate2D(latitude: 1, longitude: 1)]

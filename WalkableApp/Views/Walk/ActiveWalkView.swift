@@ -17,7 +17,9 @@ struct ActiveWalkView: View {
                     route: route,
                     walkedDistance: viewModel.distanceWalked,
                     currentLocation: locationService.currentLocation?.coordinate,
-                    nextWaypointIndex: viewModel.currentWaypointIndex
+                    nextWaypointIndex: viewModel.currentWaypointIndex,
+                    visitedWaypointIndices: viewModel.visitedWaypointIndices,
+                    polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex
                 )
                 .ignoresSafeArea()
 

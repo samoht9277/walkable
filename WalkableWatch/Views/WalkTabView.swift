@@ -43,6 +43,8 @@ struct WalkTabView: View {
                     route: route,
                     currentLocation: viewModel.currentLocation,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
+                    visitedWaypointIndices: viewModel.visitedWaypointIndices,
+                    polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
                     distanceWalked: viewModel.distanceWalked,
                     elapsedTime: viewModel.elapsedTime,
                     distanceToNext: viewModel.distanceToNextWaypoint,
