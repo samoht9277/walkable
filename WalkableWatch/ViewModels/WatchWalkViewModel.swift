@@ -225,11 +225,13 @@ final class WatchWalkViewModel {
     private func handleWaypointArrival(_ index: Int) {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
-        WKInterfaceDevice.current().play(.success)
 
-        if currentWaypointIndex > route.waypoints.count {
+        if index >= route.waypoints.count {
             loopCompleted = true
             WKInterfaceDevice.current().play(.notification)
+            return
         }
+
+        WKInterfaceDevice.current().play(.success)
     }
 }

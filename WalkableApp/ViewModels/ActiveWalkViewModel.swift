@@ -361,7 +361,21 @@ final class ActiveWalkViewModel {
         waypointArrivalTimes[index] = Date()
 
         guard let route else { return }
-        let wp = route.sortedWaypoints[index]
+        let waypoints = route.sortedWaypoints
+
+        // The closing waypoint (index == waypoints.count) is the return to start
+        if index >= waypoints.count {
+            loopCompleted = true
+            arrivedWaypointMessage = "Route Complete!"
+            showArrivalCard = true
+            Haptics.success()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                self?.showArrivalCard = false
+            }
+            return
+        }
+
+        let wp = waypoints[index]
         arrivedWaypointMessage = wp.label ?? "Waypoint \(index + 1)"
         showArrivalCard = true
 
@@ -370,12 +384,6 @@ final class ActiveWalkViewModel {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
             self?.showArrivalCard = false
-        }
-
-        // Check if loop is complete (returned to start — the appended closing waypoint)
-        if currentWaypointIndex > route.waypoints.count {
-            loopCompleted = true
-            Haptics.success()
         }
     }
 }
