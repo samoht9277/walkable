@@ -21,13 +21,10 @@ disabled_rules:
   - large_tuple
   - nesting
   - identifier_name
-
-opt_in_rules:
-  - empty_count
-  - closure_spacing
-  - force_unwrapping
-  - implicitly_unwrapped_optional
+  - implicit_optional_initialization
+  - unused_optional_binding
 
 force_cast: warning
 force_try: warning
 force_unwrapping: warning
+unused_closure_parameter: warning
