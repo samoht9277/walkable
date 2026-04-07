@@ -8,7 +8,7 @@ struct DrawingCanvas: View {
     @State private var globalPoints: [CGPoint] = []
     var body: some View {
         GeometryReader { geo in
-            Canvas { context, size in
+            Canvas { context, _ in
                 guard localPoints.count >= 2 else { return }
                 var path = Path()
                 path.move(to: localPoints[0])

@@ -1,0 +1,30 @@
+included:
+  - WalkableApp
+  - WalkableWatch
+  - WalkableWidgets
+  - WalkableKit/Sources
+  - WalkableTests
+  - WalkableUITests
+
+excluded:
+  - WalkableKit/.build
+  - DerivedData
+
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - function_body_length
+  - type_body_length
+  - file_length
+  - cyclomatic_complexity
+  - function_parameter_count
+  - large_tuple
+  - nesting
+  - identifier_name
+  - implicit_optional_initialization
+  - unused_optional_binding
+
+force_cast: warning
+force_try: warning
+force_unwrapping: warning
+unused_closure_parameter: warning

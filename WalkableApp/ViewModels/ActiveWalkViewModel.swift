@@ -52,7 +52,7 @@ final class ActiveWalkViewModel {
     private func listenForWatchWalkStatus() {
         SyncService.shared.watchWalkStatusReceived
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] routeId, status in
+            .sink { [weak self] _, status in
                 guard let self else { return }
                 switch status {
                 case .started:
