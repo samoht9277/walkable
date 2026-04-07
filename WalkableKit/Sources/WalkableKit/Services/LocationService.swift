@@ -66,11 +66,27 @@ public final class LocationService: NSObject, ObservableObject {
     }
 
     /// Check if current location is within arrival radius of any unvisited waypoint.
+    /// Waypoints are checked in order. If a later waypoint is reached, earlier skipped ones
+    /// are automatically marked as visited (prevents blocking from GPS jumps at high speed).
+    /// The closing waypoint (last) is only checked after all others are visited.
     private func checkWaypointProximity(_ location: CLLocation) {
+        let lastIndex = waypointCoordinates.count - 1
+        guard lastIndex >= 0 else { return }
+
         for (index, coord) in waypointCoordinates.enumerated() {
             guard !arrivedWaypoints.contains(index) else { continue }
+            // Don't check the closing waypoint until all others are visited
+            if index == lastIndex && arrivedWaypoints.count < lastIndex { continue }
+
             let waypointLocation = CLLocation(latitude: coord.latitude, longitude: coord.longitude)
             if location.distance(from: waypointLocation) <= arrivalRadiusMeters {
+                // Mark all earlier unvisited waypoints as arrived (they were skipped)
+                for skipped in 0..<index {
+                    if !arrivedWaypoints.contains(skipped) {
+                        arrivedWaypoints.insert(skipped)
+                        waypointArrival.send(skipped)
+                    }
+                }
                 arrivedWaypoints.insert(index)
                 waypointArrival.send(index)
             }

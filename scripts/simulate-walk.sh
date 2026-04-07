@@ -43,13 +43,16 @@ for ns in ns_options:
     if pts:
         break
 seen = set()
-for pt in pts:
+last_key = None
+for i, pt in enumerate(pts):
     lat = pt.get('lat')
     lon = pt.get('lon')
     key = f'{lat},{lon}'
-    if key not in seen:
+    is_last = (i == len(pts) - 1)
+    if key not in seen or is_last:
         seen.add(key)
         print(key)
+        last_key = key
 ")
 
 POINT_COUNT=$(echo "$WAYPOINTS" | wc -l | tr -d ' ')
