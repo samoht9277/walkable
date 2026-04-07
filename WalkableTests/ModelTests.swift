@@ -76,14 +76,14 @@ struct ModelTests {
     }
 
     @Test("CodableCoordinate encoding roundtrip")
-    func polylineEncoding() {
+    func polylineEncoding() throws {
         let coords = [
             CodableCoordinate(latitude: 40.7128, longitude: -74.0060),
             CodableCoordinate(latitude: 40.7138, longitude: -74.0070),
             CodableCoordinate(latitude: 40.7148, longitude: -74.0080)
         ]
-        let data = try! JSONEncoder().encode(coords)
-        let decoded = try! JSONDecoder().decode([CodableCoordinate].self, from: data)
+        let data = try #require(try? JSONEncoder().encode(coords))
+        let decoded = try #require(try? JSONDecoder().decode([CodableCoordinate].self, from: data))
         #expect(decoded.count == 3)
         #expect(abs(decoded[0].latitude - 40.7128) < 0.0001)
     }

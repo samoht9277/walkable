@@ -24,7 +24,7 @@ struct PathSimplifierTests {
             CLLocationCoordinate2D(latitude: 0.001, longitude: 0),
             CLLocationCoordinate2D(latitude: 0.002, longitude: 0),
             CLLocationCoordinate2D(latitude: 0.002, longitude: 0.001),
-            CLLocationCoordinate2D(latitude: 0.002, longitude: 0.002),
+            CLLocationCoordinate2D(latitude: 0.002, longitude: 0.002)
         ]
         let simplified = PathSimplifier.simplify(points, tolerance: 0.00005)
         #expect(simplified.count >= 3) // at least start, corner, end
@@ -37,7 +37,7 @@ struct PathSimplifierTests {
         let points = [
             CLLocationCoordinate2D(latitude: 0, longitude: 0),
             CLLocationCoordinate2D(latitude: 0.005, longitude: 0),
-            CLLocationCoordinate2D(latitude: 0.01, longitude: 0),
+            CLLocationCoordinate2D(latitude: 0.01, longitude: 0)
         ]
         // Sample every 200m along a ~1.1km path should give ~5-6 points
         let sampled = PathSimplifier.sampleWaypoints(along: points, intervalMeters: 200)
@@ -49,7 +49,7 @@ struct PathSimplifierTests {
     func sampleIncludesEndpoints() {
         let points = [
             CLLocationCoordinate2D(latitude: 0, longitude: 0),
-            CLLocationCoordinate2D(latitude: 0.01, longitude: 0),
+            CLLocationCoordinate2D(latitude: 0.01, longitude: 0)
         ]
         let sampled = PathSimplifier.sampleWaypoints(along: points, intervalMeters: 200)
         #expect(sampled.first!.latitude == 0)

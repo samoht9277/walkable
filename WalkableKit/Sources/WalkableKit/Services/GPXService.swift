@@ -214,8 +214,7 @@ class GPXParser: NSObject, XMLParserDelegate {
         switch elementName {
         case "metadata": inMetadata = false
         case "name":
-            if inMetadata { name = text }
-            else if inRoute || !inTrack { currentName = text }
+            if inMetadata { name = text } else if inRoute || !inTrack { currentName = text }
         case "ele": currentElevation = Double(text)
         case "time":
             if !inMetadata { currentTime = isoFormatter.date(from: text) }

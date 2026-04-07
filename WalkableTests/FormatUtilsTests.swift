@@ -122,12 +122,12 @@ struct FormatUtilsTests {
     // MARK: - decodedCoordinates
 
     @Test("decodedCoordinates roundtrip encode/decode")
-    func decodedCoordinatesRoundtrip() {
+    func decodedCoordinatesRoundtrip() throws {
         let original = [
             CodableCoordinate(latitude: 40.7128, longitude: -74.0060),
             CodableCoordinate(latitude: 40.7138, longitude: -74.0070)
         ]
-        let data = try! JSONEncoder().encode(original)
+        let data = try #require(try? JSONEncoder().encode(original))
         let decoded = data.decodedCoordinates()
         #expect(decoded != nil)
         #expect(decoded!.count == 2)
@@ -138,14 +138,14 @@ struct FormatUtilsTests {
 
     @Test("decodedCoordinates with invalid data returns nil")
     func decodedCoordinatesInvalidData() {
-        let garbage = "not json at all".data(using: .utf8)!
+        let garbage = Data("not json at all".utf8)
         let decoded = garbage.decodedCoordinates()
         #expect(decoded == nil)
     }
 
     @Test("decodedCoordinates with empty array")
-    func decodedCoordinatesEmptyArray() {
-        let data = try! JSONEncoder().encode([CodableCoordinate]())
+    func decodedCoordinatesEmptyArray() throws {
+        let data = try #require(try? JSONEncoder().encode([CodableCoordinate]()))
         let decoded = data.decodedCoordinates()
         #expect(decoded != nil)
         #expect(decoded!.isEmpty)

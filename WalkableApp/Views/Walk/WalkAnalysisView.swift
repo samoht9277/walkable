@@ -218,7 +218,7 @@ struct AnalysisChart: View {
             .chartYScale(domain: .automatic(includesZero: false))
             .chartXScale(domain: (startTime ?? samples.first?.date ?? .now)...(endTime ?? samples.last?.date ?? .now))
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 4)) { value in
+                AxisMarks(values: .automatic(desiredCount: 4)) { _ in
                     AxisGridLine()
                     AxisValueLabel(format: .dateTime.hour().minute())
                 }
