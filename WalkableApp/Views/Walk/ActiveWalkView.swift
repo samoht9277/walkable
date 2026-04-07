@@ -40,29 +40,51 @@ struct ActiveWalkView: View {
                     )
                     .padding(.horizontal)
 
+                    // Loop complete banner
+                    if viewModel.loopCompleted {
+                        VStack(spacing: 8) {
+                            Image(systemName: "flag.checkered")
+                                .font(.title2)
+                            Text("Route Complete!")
+                                .font(.headline)
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(.green, in: RoundedRectangle(cornerRadius: 16))
+                        .padding(.horizontal, 16)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+
                     // Controls
                     HStack(spacing: 20) {
-                        GlassButtonLabel(
-                            title: viewModel.isPaused ? "Resume" : "Pause",
-                            systemImage: viewModel.isPaused ? "play.fill" : "pause.fill"
-                        ) {
-                            if viewModel.isPaused {
-                                viewModel.resumeWalk()
-                            } else {
-                                viewModel.pauseWalk()
+                        if !viewModel.loopCompleted {
+                            GlassButtonLabel(
+                                title: viewModel.isPaused ? "Resume" : "Pause",
+                                systemImage: viewModel.isPaused ? "play.fill" : "pause.fill"
+                            ) {
+                                if viewModel.isPaused {
+                                    viewModel.resumeWalk()
+                                } else {
+                                    viewModel.pauseWalk()
+                                }
                             }
                         }
 
-                        GlassButtonLabel(title: "End Walk", systemImage: "stop.fill", action: {
-                            Task { await viewModel.endWalk(modelContext: modelContext) }
-                        }, tint: .red)
+                        GlassButtonLabel(
+                            title: viewModel.loopCompleted ? "Finish" : "End Walk",
+                            systemImage: viewModel.loopCompleted ? "checkmark" : "stop.fill",
+                            action: {
+                                Task { await viewModel.endWalk(modelContext: modelContext) }
+                            },
+                            tint: viewModel.loopCompleted ? .green : .red
+                        )
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
                     .padding(.horizontal, 8)
                     .padding(.bottom, 24)
+                    .animation(.smooth, value: viewModel.loopCompleted)
                 }
             } else {
                 // No active walk

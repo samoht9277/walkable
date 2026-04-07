@@ -20,6 +20,7 @@ final class ActiveWalkViewModel {
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
     var currentPace: Double = 0
+    var loopCompleted = false
     var calories: Double = 0
 
     var currentWaypointIndex = 0
@@ -114,6 +115,7 @@ final class ActiveWalkViewModel {
         calories = 0
         gpsLocations.removeAll()
         waypointArrivalTimes.removeAll()
+        loopCompleted = false
         altitudeSamples.removeAll()
         paceSamples.removeAll()
         cumulativeElevationGain = 0
@@ -364,6 +366,12 @@ final class ActiveWalkViewModel {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
             self?.showArrivalCard = false
+        }
+
+        // Check if loop is complete (all waypoints visited)
+        if currentWaypointIndex >= route.waypoints.count {
+            loopCompleted = true
+            Haptics.success()
         }
     }
 }

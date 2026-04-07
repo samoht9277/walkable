@@ -16,6 +16,7 @@ final class WatchWalkViewModel {
     var elapsedTime: TimeInterval = 0
     var distanceWalked: Double = 0
     var currentWaypointIndex = 0
+    var loopCompleted = false
 
     var currentLocation: CLLocationCoordinate2D?
     var currentHeading: Double = 0
@@ -224,5 +225,10 @@ final class WatchWalkViewModel {
         currentWaypointIndex = index + 1
         waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
+
+        if currentWaypointIndex >= route.waypoints.count {
+            loopCompleted = true
+            WKInterfaceDevice.current().play(.notification)
+        }
     }
 }

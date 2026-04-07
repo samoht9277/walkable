@@ -31,6 +31,7 @@ struct WalkTabView: View {
                     distance: viewModel.distanceWalked,
                     pace: viewModel.currentPace,
                     isPaused: viewModel.isPaused,
+                    loopCompleted: viewModel.loopCompleted,
                     onPause: { viewModel.pauseWalk() },
                     onResume: { viewModel.resumeWalk() },
                     onEnd: { Task { await viewModel.endWalk() } }
