@@ -237,6 +237,19 @@ final class ActiveWalkViewModel {
             }
             .store(in: &walkCancellables)
 
+        // Background-safe Live Activity updates via NotificationCenter
+        // (Combine publishers and Timer stop in background, but CLLocationManager delegate keeps firing)
+        NotificationCenter.default.publisher(for: .locationDidUpdate)
+            .sink { [weak self] _ in
+                guard let self, !self.isPaused, let start = self.startTime else { return }
+                self.elapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
+                if self.distanceWalked > 20 {
+                    self.currentPace = self.elapsedTime / (self.distanceWalked / 1000)
+                }
+                self.updateLiveActivity()
+            }
+            .store(in: &walkCancellables)
+
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self, !self.isPaused, let start = self.startTime else { return }
@@ -244,8 +257,9 @@ final class ActiveWalkViewModel {
                 if self.distanceWalked > 20 {
                     self.currentPace = self.elapsedTime / (self.distanceWalked / 1000)
                 }
-                // Don't update Live Activity here — .timer style auto-ticks.
-                // Location callback handles distance/waypoint updates.
+                // Update Live Activity for distance/waypoint changes.
+                // Timer auto-ticks via .timer style, so this won't cause blink.
+                self.updateLiveActivity()
             }
         }
 

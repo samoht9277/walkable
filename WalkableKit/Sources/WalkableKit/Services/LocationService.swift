@@ -1,6 +1,10 @@
 @preconcurrency import CoreLocation
 import Combine
 
+public extension Notification.Name {
+    static let locationDidUpdate = Notification.Name("locationDidUpdate")
+}
+
 @MainActor
 public final class LocationService: NSObject, ObservableObject {
     public static let shared = LocationService()
@@ -24,13 +28,6 @@ public final class LocationService: NSObject, ObservableObject {
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.distanceFilter = 5
-        if let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String],
-           modes.contains("location") {
-            manager.allowsBackgroundLocationUpdates = true
-            #if os(iOS)
-            manager.showsBackgroundLocationIndicator = true
-            #endif
-        }
     }
 
     public func requestAuthorization() {
@@ -38,7 +35,17 @@ public final class LocationService: NSObject, ObservableObject {
     }
 
     public func startTracking() {
+        enableBackgroundLocationIfNeeded()
         manager.startUpdatingLocation()
+    }
+
+    private func enableBackgroundLocationIfNeeded() {
+        guard manager.authorizationStatus == .authorizedWhenInUse ||
+              manager.authorizationStatus == .authorizedAlways else { return }
+        manager.allowsBackgroundLocationUpdates = true
+        #if os(iOS)
+        manager.showsBackgroundLocationIndicator = true
+        #endif
     }
 
     public func stopTracking() {
@@ -136,6 +143,13 @@ extension LocationService: @preconcurrency CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         currentLocation = location
         checkWaypointProximity(location)
+        // Post notification for background Live Activity updates
+        // (Combine publishers stop delivering when app is suspended)
+        NotificationCenter.default.post(
+            name: .locationDidUpdate,
+            object: nil,
+            userInfo: ["location": location]
+        )
     }
 
     public func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {

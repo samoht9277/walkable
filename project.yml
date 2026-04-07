@@ -37,13 +37,17 @@ targets:
         embed: true
       - target: WalkableWatch
         embed: true
+    info:
+      path: WalkableApp/Info.plist
+      properties:
+        UIBackgroundModes:
+          - location
     settings:
       GENERATE_INFOPLIST_FILE: true
       CODE_SIGN_STYLE: Automatic
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_KEY_UILaunchScreen_Generation: true
       INFOPLIST_KEY_CFBundleDisplayName: Walkable
-      INFOPLIST_KEY_UIBackgroundModes: location
       CFBundleURLTypes:
         - CFBundleURLSchemes:
             - walkable
