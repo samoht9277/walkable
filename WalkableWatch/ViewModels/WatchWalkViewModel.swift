@@ -72,7 +72,8 @@ final class WatchWalkViewModel {
 
     func startWalk() async {
         startTime = Date()
-        let coords = route.sortedWaypoints.map { $0.coordinate }
+        var coords = route.sortedWaypoints.map { $0.coordinate }
+        if let first = coords.first { coords.append(first) }
         locationService.monitorWaypoints(coords)
         locationService.startTracking()
         locationService.startHeadingUpdates()
@@ -226,7 +227,7 @@ final class WatchWalkViewModel {
         waypointArrivalTimes[index] = Date()
         WKInterfaceDevice.current().play(.success)
 
-        if currentWaypointIndex >= route.waypoints.count {
+        if currentWaypointIndex > route.waypoints.count {
             loopCompleted = true
             WKInterfaceDevice.current().play(.notification)
         }

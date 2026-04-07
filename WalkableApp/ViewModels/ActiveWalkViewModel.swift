@@ -123,7 +123,11 @@ final class ActiveWalkViewModel {
         pauseStartTime = nil
         startTime = Date()
 
-        let coords = route.sortedWaypoints.map { $0.coordinate }
+        var coords = route.sortedWaypoints.map { $0.coordinate }
+        // Append start point as the closing waypoint for loop detection
+        if let first = coords.first {
+            coords.append(first)
+        }
         locationService.monitorWaypoints(coords)
         locationService.startTracking()
 
@@ -368,8 +372,8 @@ final class ActiveWalkViewModel {
             self?.showArrivalCard = false
         }
 
-        // Check if loop is complete (all waypoints visited)
-        if currentWaypointIndex >= route.waypoints.count {
+        // Check if loop is complete (returned to start — the appended closing waypoint)
+        if currentWaypointIndex > route.waypoints.count {
             loopCompleted = true
             Haptics.success()
         }
