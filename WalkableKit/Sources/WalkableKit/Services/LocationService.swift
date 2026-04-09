@@ -21,7 +21,7 @@ public final class LocationService: NSObject, ObservableObject {
 
     private var waypointCoordinates: [CLLocationCoordinate2D] = []
     private var arrivedWaypoints: Set<Int> = []
-    private let arrivalRadiusMeters: Double = 25
+    private let arrivalRadiusMeters: Double = 40
 
     private override init() {
         super.init()
