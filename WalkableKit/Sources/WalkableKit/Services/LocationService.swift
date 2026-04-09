@@ -42,9 +42,14 @@ public final class LocationService: NSObject, ObservableObject {
     private func enableBackgroundLocationIfNeeded() {
         guard manager.authorizationStatus == .authorizedWhenInUse ||
               manager.authorizationStatus == .authorizedAlways else { return }
-        manager.allowsBackgroundLocationUpdates = true
-        #if os(iOS)
-        manager.showsBackgroundLocationIndicator = true
+        #if os(watchOS)
+        // watchOS handles background location via HKWorkoutSession
+        #else
+        if let modes = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String],
+           modes.contains("location") {
+            manager.allowsBackgroundLocationUpdates = true
+            manager.showsBackgroundLocationIndicator = true
+        }
         #endif
     }
 
