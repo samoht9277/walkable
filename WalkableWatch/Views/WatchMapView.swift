@@ -14,6 +14,7 @@ struct WatchMapView: View {
     let elapsedTime: TimeInterval
     let distanceToNext: Double?
     @Binding var cameraPosition: MapCameraPosition
+    var onManualMapInteraction: () -> Void = {}
     @Environment(\.isLuminanceReduced) private var isAOD
 
     var body: some View {
@@ -56,6 +57,9 @@ struct WatchMapView: View {
                 }
             }
             .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+            .onMapCameraChange { _ in
+                onManualMapInteraction()
+            }
             .onChange(of: isAOD) {
                 // Re-center map when wrist comes back up or goes down
                 if let loc = currentLocation {

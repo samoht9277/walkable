@@ -59,7 +59,10 @@ struct WalkTabView: View {
                     cameraPosition: Binding(
                         get: { viewModel.mapCameraPosition },
                         set: { viewModel.mapCameraPosition = $0 }
-                    )
+                    ),
+                    onManualMapInteraction: {
+                        viewModel.lastManualMapInteraction = Date()
+                    }
                 )
                 .tag(1)
 

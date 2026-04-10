@@ -25,6 +25,7 @@ final class WatchWalkViewModel {
     var currentHeading: Double = 0
     var mapCameraPosition: MapCameraPosition = .automatic
     var hasZoomedIn = false
+    var lastManualMapInteraction: Date = .distantPast
 
     private var startTime = Date()
     private var pausedDuration: TimeInterval = 0
@@ -104,6 +105,14 @@ final class WatchWalkViewModel {
                 guard let self else { return }
                 self.currentLocation = location.coordinate
                 self.distanceWalked = self.healthService.distanceWalked ?? 0
+
+                // Auto-re-center map if user hasn't swiped in 10 seconds
+                if self.hasZoomedIn && Date().timeIntervalSince(self.lastManualMapInteraction) > 10 {
+                    self.mapCameraPosition = .camera(MapCamera(
+                        centerCoordinate: location.coordinate,
+                        distance: 800
+                    ))
+                }
                 self.gpsLocations.append(location)
                 self.healthService.addRouteLocation(location)
 

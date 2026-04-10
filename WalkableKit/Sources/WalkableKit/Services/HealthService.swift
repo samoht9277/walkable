@@ -147,6 +147,59 @@ public final class HealthService: NSObject, ObservableObject {
         routeBuilder?.insertRouteData([location]) { _, _ in }
     }
 
+    // MARK: - Query Walkable Workouts from HealthKit
+
+    /// Fetch walking workouts recorded by this app (source = Walkable bundle ID).
+    public func fetchWalkableWorkouts(since date: Date = .distantPast) async throws -> [HKWorkout] {
+        guard HKHealthStore.isHealthDataAvailable() else { return [] }
+
+        let walkPredicate = HKQuery.predicateForWorkouts(with: .walking)
+        let datePredicate = HKQuery.predicateForSamples(withStart: date, end: nil)
+        let sourcePredicate = HKQuery.predicateForObjects(from: .default())
+        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [walkPredicate, datePredicate, sourcePredicate])
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: .workoutType(),
+                predicate: compound,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
+            ) { _, results, error in
+                if let error { continuation.resume(throwing: error); return }
+                continuation.resume(returning: (results as? [HKWorkout]) ?? [])
+            }
+            store.execute(query)
+        }
+    }
+
+    /// Fetch the GPS route for a specific workout.
+    public func fetchWorkoutRoute(_ workout: HKWorkout) async throws -> [CLLocation] {
+        let routes = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKWorkoutRoute], Error>) in
+            let query = HKAnchoredObjectQuery(
+                type: HKSeriesType.workoutRoute(),
+                predicate: HKQuery.predicateForObjects(from: workout),
+                anchor: nil,
+                limit: HKObjectQueryNoLimit
+            ) { _, samples, _, _, error in
+                if let error { continuation.resume(throwing: error); return }
+                continuation.resume(returning: (samples as? [HKWorkoutRoute]) ?? [])
+            }
+            store.execute(query)
+        }
+
+        guard let route = routes.first else { return [] }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            var locations = [CLLocation]()
+            let routeQuery = HKWorkoutRouteQuery(route: route) { _, batch, done, error in
+                if let error { continuation.resume(throwing: error); return }
+                if let batch { locations.append(contentsOf: batch) }
+                if done { continuation.resume(returning: locations) }
+            }
+            store.execute(routeQuery)
+        }
+    }
+
     // MARK: - Delete Workout
 
     /// Delete a workout from HealthKit by its UUID.

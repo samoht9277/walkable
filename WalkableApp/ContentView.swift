@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var isReady = false
     @Environment(\.modelContext) private var modelContext
     @Query private var allRoutes: [Route]
+    @Query private var allSessions: [WalkSession]
 
     var body: some View {
         ZStack {
@@ -85,6 +86,8 @@ struct ContentView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 SyncService.shared.syncAllRoutes(allRoutes)
             }
+            // Import any Walkable workouts from HealthKit that aren't in our database
+            Task { await importMissingHealthKitWorkouts() }
         }
         .onReceive(SyncService.shared.watchBecameReachable) {
             SyncService.shared.syncAllRoutes(allRoutes)
@@ -144,6 +147,43 @@ struct ContentView: View {
         session.source = payload.source ?? "watch"
 
         modelContext.insert(session)
+        try? modelContext.save()
+    }
+
+    private func importMissingHealthKitWorkouts() async {
+        guard let workouts = try? await HealthService.shared.fetchWalkableWorkouts() else { return }
+
+        let existingDates = Set(allSessions.map { $0.startedAt.timeIntervalSinceReferenceDate })
+
+        for workout in workouts {
+            // Skip if we already have a session that started at the same time (within 5s tolerance)
+            let workoutStart = workout.startDate.timeIntervalSinceReferenceDate
+            let alreadyExists = existingDates.contains { abs($0 - workoutStart) < 5 }
+            guard !alreadyExists else { continue }
+
+            // Find the closest matching route by distance
+            let workoutDistance = workout.totalDistance?.doubleValue(for: .meter()) ?? 0
+            guard let matchingRoute = allRoutes.min(by: { a, b in
+                abs(a.distance - workoutDistance) < abs(b.distance - workoutDistance)
+            }) else { continue }
+
+            let session = WalkSession(route: matchingRoute)
+            session.startedAt = workout.startDate
+            session.completedAt = workout.endDate
+            session.totalDistance = workoutDistance
+            session.totalDuration = workout.duration
+            session.calories = workout.totalEnergyBurned?.doubleValue(for: .kilocalorie()) ?? 0
+            session.source = "healthkit"
+
+            // Try to fetch the GPS route
+            if let locations = try? await HealthService.shared.fetchWorkoutRoute(workout), !locations.isEmpty {
+                let coords = locations.map { CodableCoordinate($0.coordinate) }
+                session.gpsTrackData = try? JSONEncoder().encode(coords)
+            }
+
+            modelContext.insert(session)
+        }
+
         try? modelContext.save()
     }
 }
