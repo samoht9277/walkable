@@ -48,7 +48,6 @@ struct WalkTabView: View {
                 WatchMapView(
                     route: route,
                     currentLocation: viewModel.currentLocation,
-                    currentHeading: viewModel.currentHeading,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     visitedWaypointIndices: viewModel.visitedWaypointIndices,
                     polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
@@ -82,8 +81,24 @@ struct WalkTabView: View {
             .tabViewStyle(.page)
             .opacity(isAOD ? 0.6 : 1.0)
             .allowsHitTesting(!isAOD)
+            .onChange(of: selectedTab) {
+                // Re-center map when swiping to the map tab
+                if selectedTab == 1, let loc = viewModel.currentLocation {
+                    viewModel.mapCameraPosition = .camera(MapCamera(
+                        centerCoordinate: loc, distance: 800
+                    ))
+                }
+            }
             .onChange(of: isAOD) {
-                if isAOD { selectedTab = 0 }
+                if isAOD {
+                    selectedTab = 0
+                }
+                // Re-center map when waking from AOD or going to sleep
+                if let loc = viewModel.currentLocation {
+                    viewModel.mapCameraPosition = .camera(MapCamera(
+                        centerCoordinate: loc, distance: 800
+                    ))
+                }
             }
             .task {
                 await viewModel.startWalk()

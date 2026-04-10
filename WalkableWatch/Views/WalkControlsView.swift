@@ -22,8 +22,9 @@ struct WalkControlsView: View {
             if isPaused || isAOD {
                 // Static short format for paused and AOD
                 // (.timer style renders "60 minutes, 40 seconds" in AOD which truncates)
-                let mins = Int(elapsedTime) / 60
-                let secs = Int(elapsedTime) % 60
+                let elapsed = isPaused ? elapsedTime : Date().timeIntervalSince(timerStartDate)
+                let mins = Int(elapsed) / 60
+                let secs = Int(elapsed) % 60
                 Text(String(format: "%d:%02d", mins, secs))
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .monospacedDigit()
