@@ -89,8 +89,14 @@ struct WatchMapView: View {
                     .padding(.vertical, 6)
                     .glassEffect(.regular, in: .capsule)
                     .frame(maxWidth: .infinity)
-                    .padding(.bottom, 4)
-                    .contentShape(Rectangle())
+                    .offset(y: 18)
+                    .ignoresSafeArea()
+                    .overlay {
+                        // Invisible touch target at the pill's visual position
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .offset(y: 18)
+                    }
                     .contentTransition(.numericText())
                     .animation(.smooth, value: index)
                 }
