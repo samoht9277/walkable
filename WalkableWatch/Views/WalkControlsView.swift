@@ -1,10 +1,15 @@
 import SwiftUI
+import WatchKit
 import WalkableKit
 
 struct WalkControlsView: View {
+    let timerStartDate: Date
     let elapsedTime: TimeInterval
     let distance: Double
     let pace: Double
+    let heartRate: Double
+    let currentWaypointIndex: Int
+    let totalWaypoints: Int
     let isPaused: Bool
     let loopCompleted: Bool
     let onPause: () -> Void
@@ -13,9 +18,20 @@ struct WalkControlsView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text(elapsedTime.formattedDuration)
-                .font(.system(size: 40, weight: .bold, design: .rounded))
-                .monospacedDigit()
+            if isPaused {
+                let mins = Int(elapsedTime) / 60
+                let secs = Int(elapsedTime) % 60
+                Text(String(format: "%d:%02d", mins, secs))
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+            } else {
+                Text(timerStartDate, style: .timer)
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
+            }
 
             HStack(spacing: 16) {
                 VStack {
@@ -32,6 +48,27 @@ struct WalkControlsView: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
+                VStack {
+                    HStack(spacing: 2) {
+                        Image(systemName: "heart.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.red)
+                        Text(heartRate > 0 ? String(format: "%.0f", heartRate) : "--")
+                            .font(.headline.monospacedDigit())
+                    }
+                    Text("bpm")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            HStack(spacing: 4) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Text("\(currentWaypointIndex)/\(totalWaypoints)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
             }
 
             if loopCompleted {
@@ -42,7 +79,10 @@ struct WalkControlsView: View {
 
             HStack(spacing: 12) {
                 if !loopCompleted {
-                    Button(action: isPaused ? onResume : onPause) {
+                    Button {
+                        WKInterfaceDevice.current().play(isPaused ? .start : .stop)
+                        if isPaused { onResume() } else { onPause() }
+                    } label: {
                         Image(systemName: isPaused ? "play.fill" : "pause.fill")
                             .font(.title3)
                             .frame(width: 50, height: 50)
@@ -50,7 +90,10 @@ struct WalkControlsView: View {
                     .tint(isPaused ? .green : .yellow)
                 }
 
-                Button(action: onEnd) {
+                Button {
+                    WKInterfaceDevice.current().play(.notification)
+                    onEnd()
+                } label: {
                     Image(systemName: loopCompleted ? "checkmark" : "stop.fill")
                         .font(.title3)
                         .frame(width: 50, height: 50)

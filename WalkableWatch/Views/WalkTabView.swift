@@ -8,6 +8,7 @@ struct WalkTabView: View {
 
     @State private var viewModel: WatchWalkViewModel
     @State private var selectedTab = 1
+    @Environment(\.isLuminanceReduced) private var isAOD
 
     init(route: Route, onEnd: @escaping () -> Void) {
         self.route = route
@@ -27,9 +28,13 @@ struct WalkTabView: View {
             TabView(selection: $selectedTab) {
                 // View 1: Controls
                 WalkControlsView(
+                    timerStartDate: viewModel.timerStartDate,
                     elapsedTime: viewModel.elapsedTime,
                     distance: viewModel.distanceWalked,
                     pace: viewModel.currentPace,
+                    heartRate: viewModel.heartRate,
+                    currentWaypointIndex: viewModel.currentWaypointIndex,
+                    totalWaypoints: viewModel.route.waypoints.count,
                     isPaused: viewModel.isPaused,
                     loopCompleted: viewModel.loopCompleted,
                     onPause: { viewModel.pauseWalk() },
@@ -45,6 +50,7 @@ struct WalkTabView: View {
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     visitedWaypointIndices: viewModel.visitedWaypointIndices,
                     polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
+                    timerStartDate: viewModel.timerStartDate,
                     distanceWalked: viewModel.distanceWalked,
                     elapsedTime: viewModel.elapsedTime,
                     distanceToNext: viewModel.distanceToNextWaypoint,
@@ -69,6 +75,11 @@ struct WalkTabView: View {
                     .tag(3)
             }
             .tabViewStyle(.page)
+            .opacity(isAOD ? 0.6 : 1.0)
+            .allowsHitTesting(!isAOD)
+            .onChange(of: isAOD) {
+                if isAOD { selectedTab = 0 }
+            }
             .task {
                 await viewModel.startWalk()
             }

@@ -8,6 +8,7 @@ struct WatchMapView: View {
     let currentWaypointIndex: Int
     let visitedWaypointIndices: Set<Int>
     let polylineSearchFromIndex: Int
+    let timerStartDate: Date
     let distanceWalked: Double
     let elapsedTime: TimeInterval
     let distanceToNext: Double?
@@ -67,7 +68,7 @@ struct WatchMapView: View {
                     Text("TIME")
                         .font(.system(size: 8))
                         .foregroundStyle(.secondary)
-                    Text(elapsedTime.formattedDuration)
+                    Text(timerStartDate, style: .timer)
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
                 }
                 Spacer()

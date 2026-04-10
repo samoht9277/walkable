@@ -66,6 +66,14 @@ final class WatchWalkViewModel {
         return elapsedTime / (distanceWalked / 1000)
     }
 
+    var heartRate: Double {
+        healthService.heartRate
+    }
+
+    /// For Text(date, style: .timer) — system-rendered, AOD-compatible.
+    /// Stored, not computed, to avoid fighting with the .timer style's own ticking.
+    var timerStartDate: Date = .now
+
     /// Relative bearing: subtract device heading from absolute bearing to get arrow direction.
     var relativeArrowAngle: Double {
         guard let bearing = bearingToNextWaypoint else { return 0 }
@@ -74,6 +82,7 @@ final class WatchWalkViewModel {
 
     func startWalk() async {
         startTime = Date()
+        timerStartDate = startTime
         var coords = route.sortedWaypoints.map { $0.coordinate }
         if let first = coords.first { coords.append(first) }
         locationService.monitorWaypoints(coords)
@@ -151,7 +160,7 @@ final class WatchWalkViewModel {
         }
 
         let walkStart = startTime
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 guard let self, !self.isPaused else { return }
                 self.elapsedTime = Date().timeIntervalSince(walkStart) - self.pausedDuration
@@ -162,6 +171,8 @@ final class WatchWalkViewModel {
     func pauseWalk() {
         isPaused = true
         pauseStartTime = Date()
+        // Freeze timer display
+        timerStartDate = .distantFuture
         WKInterfaceDevice.current().play(.stop)
     }
 
@@ -171,6 +182,8 @@ final class WatchWalkViewModel {
             pauseStartTime = nil
         }
         isPaused = false
+        // Resume timer display: set start date accounting for paused duration
+        timerStartDate = startTime.addingTimeInterval(pausedDuration)
         WKInterfaceDevice.current().play(.start)
     }
 

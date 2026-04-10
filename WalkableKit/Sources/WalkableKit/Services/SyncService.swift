@@ -243,6 +243,8 @@ public final class SyncService: NSObject, ObservableObject {
         } else {
             WCSession.default.transferUserInfo(message)
         }
+        // Also store as applicationContext — always delivered when companion app opens
+        try? WCSession.default.updateApplicationContext(message)
     }
 
     // MARK: - Watch-Created Route Sync (Watch → Phone)
@@ -427,6 +429,15 @@ extension SyncService: @preconcurrency WCSessionDelegate {
             }
             Task { @MainActor in
                 allRoutesSyncReceived.send(payloads)
+            }
+        }
+
+        // Handle session sync via applicationContext fallback
+        if let sessionDict = applicationContext["sessionSync"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: sessionDict),
+           let payload = try? { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }().decode(SessionSyncPayload.self, from: data) {
+            Task { @MainActor in
+                sessionSyncReceived.send(payload)
             }
         }
     }
