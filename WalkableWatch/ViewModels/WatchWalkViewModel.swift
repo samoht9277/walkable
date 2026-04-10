@@ -24,7 +24,6 @@ final class WatchWalkViewModel {
     var mapCameraPosition: MapCameraPosition = .automatic
     var hasZoomedIn = false
 
-    private var timer: Timer?
     private var startTime = Date()
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
@@ -106,6 +105,11 @@ final class WatchWalkViewModel {
                 self.gpsLocations.append(location)
                 self.healthService.addRouteLocation(location)
 
+                // Update elapsed time from location callback (no Timer needed)
+                if !self.isPaused {
+                    self.elapsedTime = Date().timeIntervalSince(self.startTime) - self.pausedDuration
+                }
+
                 // Track polyline progress for correct split on shared streets.
                 // Cap advancement to 5 segments per update to avoid jumping ahead
                 // when outbound and return legs share a street.
@@ -159,13 +163,8 @@ final class WatchWalkViewModel {
             }
         }
 
-        let walkStart = startTime
-        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self, !self.isPaused else { return }
-                self.elapsedTime = Date().timeIntervalSince(walkStart) - self.pausedDuration
-            }
-        }
+        // No Timer — elapsedTime updates from location callbacks instead.
+        // Timers keep the run loop active and prevent AOD.
     }
 
     func pauseWalk() {
@@ -188,7 +187,6 @@ final class WatchWalkViewModel {
     }
 
     func endWalk() async {
-        timer?.invalidate()
         locationService.stopTracking()
         locationService.stopHeadingUpdates()
         locationService.clearWaypointMonitoring()

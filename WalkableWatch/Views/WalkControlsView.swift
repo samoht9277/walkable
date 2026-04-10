@@ -27,10 +27,8 @@ struct WalkControlsView: View {
                     .foregroundStyle(.secondary)
             } else {
                 Text(timerStartDate, style: .timer)
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
                     .monospacedDigit()
-                    .minimumScaleFactor(0.5)
-                    .lineLimit(1)
             }
 
             HStack(spacing: 16) {
