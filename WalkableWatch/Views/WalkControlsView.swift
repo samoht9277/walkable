@@ -20,14 +20,19 @@ struct WalkControlsView: View {
     var body: some View {
         VStack(spacing: 12) {
             if isPaused || isAOD {
-                // Static short format for paused and AOD
-                // (.timer style renders "60 minutes, 40 seconds" in AOD which truncates)
-                let mins = Int(elapsedTime) / 60
-                let secs = Int(elapsedTime) % 60
-                Text(String(format: "%d:%02d", mins, secs))
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(isPaused ? .secondary : .primary)
+                if isAOD && !isPaused {
+                    Text("-:--")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                } else {
+                    let mins = Int(elapsedTime) / 60
+                    let secs = Int(elapsedTime) % 60
+                    Text(String(format: "%d:%02d", mins, secs))
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
             } else {
                 Text(timerStartDate, style: .timer)
                     .font(.system(size: 32, weight: .bold, design: .rounded))

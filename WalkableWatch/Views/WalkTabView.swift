@@ -48,7 +48,6 @@ struct WalkTabView: View {
                 WatchMapView(
                     route: route,
                     currentLocation: viewModel.currentLocation,
-                    currentHeading: viewModel.currentHeading,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     visitedWaypointIndices: viewModel.visitedWaypointIndices,
                     polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
@@ -59,7 +58,10 @@ struct WalkTabView: View {
                     cameraPosition: Binding(
                         get: { viewModel.mapCameraPosition },
                         set: { viewModel.mapCameraPosition = $0 }
-                    )
+                    ),
+                    onManualMapInteraction: {
+                        viewModel.lastManualMapInteraction = Date()
+                    }
                 )
                 .tag(1)
 
@@ -79,32 +81,48 @@ struct WalkTabView: View {
             .tabViewStyle(.page)
             .opacity(isAOD ? 0.6 : 1.0)
             .allowsHitTesting(!isAOD)
+            .onChange(of: selectedTab) {
+                // Re-center map when swiping to the map tab
+                if selectedTab == 1, let loc = viewModel.currentLocation {
+                    viewModel.mapCameraPosition = .camera(MapCamera(
+                        centerCoordinate: loc, distance: 800
+                    ))
+                }
+            }
             .onChange(of: isAOD) {
-                if isAOD { selectedTab = 0 }
+                if isAOD {
+                    selectedTab = 0
+                }
+                // Re-center map when waking from AOD or going to sleep
+                if let loc = viewModel.currentLocation {
+                    viewModel.mapCameraPosition = .camera(MapCamera(
+                        centerCoordinate: loc, distance: 800
+                    ))
+                }
             }
             .task {
                 await viewModel.startWalk()
             }
 
             // Waypoint arrival banner overlay
-            if viewModel.showArrivalBanner, let name = viewModel.arrivedWaypointName {
-                VStack {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                        Text(name)
-                            .font(.headline)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.green.opacity(0.2), in: Capsule())
+            VStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    Text(viewModel.arrivedWaypointName ?? "")
+                        .font(.headline)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 8)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .animation(.spring(duration: 0.4), value: viewModel.showArrivalBanner)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .glassEffect(.regular, in: .capsule)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.top, 8)
+            .opacity(viewModel.showArrivalBanner && !isAOD ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.showArrivalBanner)
+            .allowsHitTesting(false)
             } // ZStack
+            .animation(.easeInOut(duration: 0.5), value: viewModel.showArrivalBanner)
         }
     }
 }

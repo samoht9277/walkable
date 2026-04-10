@@ -31,7 +31,7 @@ WAYPOINTS=$(python3 -c "
 import xml.etree.ElementTree as ET
 tree = ET.parse('$GPX_FILE')
 root = tree.getroot()
-tags = ['wpt', 'trkpt', 'rtept']
+tags = ['trkpt', 'wpt', 'rtept']
 ns_options = [{}, {'': 'http://www.topografix.com/GPX/1/1'}]
 pts = []
 for ns in ns_options:
