@@ -18,13 +18,14 @@ final class WatchWalkViewModel {
     var currentWaypointIndex = 0
     var visitedWaypointIndices: Set<Int> = []
     var loopCompleted = false
+    var showArrivalBanner = false
+    var arrivedWaypointName: String?
 
     var currentLocation: CLLocationCoordinate2D?
     var currentHeading: Double = 0
     var mapCameraPosition: MapCameraPosition = .automatic
     var hasZoomedIn = false
 
-    private var timer: Timer?
     private var startTime = Date()
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
@@ -66,6 +67,14 @@ final class WatchWalkViewModel {
         return elapsedTime / (distanceWalked / 1000)
     }
 
+    var heartRate: Double {
+        healthService.heartRate
+    }
+
+    /// For Text(date, style: .timer) — system-rendered, AOD-compatible.
+    /// Stored, not computed, to avoid fighting with the .timer style's own ticking.
+    var timerStartDate: Date = .now
+
     /// Relative bearing: subtract device heading from absolute bearing to get arrow direction.
     var relativeArrowAngle: Double {
         guard let bearing = bearingToNextWaypoint else { return 0 }
@@ -74,6 +83,7 @@ final class WatchWalkViewModel {
 
     func startWalk() async {
         startTime = Date()
+        timerStartDate = startTime
         var coords = route.sortedWaypoints.map { $0.coordinate }
         if let first = coords.first { coords.append(first) }
         locationService.monitorWaypoints(coords)
@@ -96,6 +106,11 @@ final class WatchWalkViewModel {
                 self.distanceWalked = self.healthService.distanceWalked ?? 0
                 self.gpsLocations.append(location)
                 self.healthService.addRouteLocation(location)
+
+                // Update elapsed time from location callback (no Timer needed)
+                if !self.isPaused {
+                    self.elapsedTime = Date().timeIntervalSince(self.startTime) - self.pausedDuration
+                }
 
                 // Track polyline progress for correct split on shared streets.
                 // Cap advancement to 5 segments per update to avoid jumping ahead
@@ -150,18 +165,15 @@ final class WatchWalkViewModel {
             }
         }
 
-        let walkStart = startTime
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self, !self.isPaused else { return }
-                self.elapsedTime = Date().timeIntervalSince(walkStart) - self.pausedDuration
-            }
-        }
+        // No Timer — elapsedTime updates from location callbacks instead.
+        // Timers keep the run loop active and prevent AOD.
     }
 
     func pauseWalk() {
         isPaused = true
         pauseStartTime = Date()
+        // Freeze timer display
+        timerStartDate = .distantFuture
         WKInterfaceDevice.current().play(.stop)
     }
 
@@ -171,11 +183,12 @@ final class WatchWalkViewModel {
             pauseStartTime = nil
         }
         isPaused = false
+        // Resume timer display: set start date accounting for paused duration
+        timerStartDate = startTime.addingTimeInterval(pausedDuration)
         WKInterfaceDevice.current().play(.start)
     }
 
     func endWalk() async {
-        timer?.invalidate()
         locationService.stopTracking()
         locationService.stopHeadingUpdates()
         locationService.clearWaypointMonitoring()
@@ -244,10 +257,28 @@ final class WatchWalkViewModel {
 
         if index >= route.waypoints.count {
             loopCompleted = true
+            // Triple haptic for loop complete
             WKInterfaceDevice.current().play(.notification)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                WKInterfaceDevice.current().play(.notification)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                WKInterfaceDevice.current().play(.notification)
+            }
             return
         }
 
+        // Show waypoint arrival banner
+        let wp = route.sortedWaypoints[index]
+        arrivedWaypointName = wp.label ?? "Waypoint \(index + 1)"
+        showArrivalBanner = true
+        // Double haptic for waypoint arrival
         WKInterfaceDevice.current().play(.success)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            WKInterfaceDevice.current().play(.success)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.showArrivalBanner = false
+        }
     }
 }

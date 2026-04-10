@@ -8,6 +8,7 @@ struct WalkTabView: View {
 
     @State private var viewModel: WatchWalkViewModel
     @State private var selectedTab = 1
+    @Environment(\.isLuminanceReduced) private var isAOD
 
     init(route: Route, onEnd: @escaping () -> Void) {
         self.route = route
@@ -24,12 +25,17 @@ struct WalkTabView: View {
                 onDismiss: onEnd
             )
         } else {
+            ZStack {
             TabView(selection: $selectedTab) {
                 // View 1: Controls
                 WalkControlsView(
+                    timerStartDate: viewModel.timerStartDate,
                     elapsedTime: viewModel.elapsedTime,
                     distance: viewModel.distanceWalked,
                     pace: viewModel.currentPace,
+                    heartRate: viewModel.heartRate,
+                    currentWaypointIndex: viewModel.currentWaypointIndex,
+                    totalWaypoints: viewModel.route.waypoints.count,
                     isPaused: viewModel.isPaused,
                     loopCompleted: viewModel.loopCompleted,
                     onPause: { viewModel.pauseWalk() },
@@ -42,9 +48,11 @@ struct WalkTabView: View {
                 WatchMapView(
                     route: route,
                     currentLocation: viewModel.currentLocation,
+                    currentHeading: viewModel.currentHeading,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     visitedWaypointIndices: viewModel.visitedWaypointIndices,
                     polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
+                    timerStartDate: viewModel.timerStartDate,
                     distanceWalked: viewModel.distanceWalked,
                     elapsedTime: viewModel.elapsedTime,
                     distanceToNext: viewModel.distanceToNextWaypoint,
@@ -69,9 +77,34 @@ struct WalkTabView: View {
                     .tag(3)
             }
             .tabViewStyle(.page)
+            .opacity(isAOD ? 0.6 : 1.0)
+            .allowsHitTesting(!isAOD)
+            .onChange(of: isAOD) {
+                if isAOD { selectedTab = 0 }
+            }
             .task {
                 await viewModel.startWalk()
             }
+
+            // Waypoint arrival banner overlay
+            if viewModel.showArrivalBanner, let name = viewModel.arrivedWaypointName {
+                VStack {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text(name)
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.green.opacity(0.2), in: Capsule())
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 8)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.spring(duration: 0.4), value: viewModel.showArrivalBanner)
+            }
+            } // ZStack
         }
     }
 }

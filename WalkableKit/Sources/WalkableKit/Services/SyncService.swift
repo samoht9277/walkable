@@ -229,10 +229,22 @@ public final class SyncService: NSObject, ObservableObject {
     // MARK: - Send Walk Session to Phone (from Watch)
 
     public func syncWalkSession(_ payload: SessionSyncPayload) {
-        guard let data = try? JSONEncoder().encode(payload),
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        guard let data = try? encoder.encode(payload),
               let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
 
-        WCSession.default.transferUserInfo(["sessionSync": dict])
+        let message = ["sessionSync": dict]
+        // Try immediate delivery first, fall back to queued transfer
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(message, replyHandler: nil) { _ in
+                WCSession.default.transferUserInfo(message)
+            }
+        } else {
+            WCSession.default.transferUserInfo(message)
+        }
+        // Also store as applicationContext — always delivered when companion app opens
+        try? WCSession.default.updateApplicationContext(message)
     }
 
     // MARK: - Watch-Created Route Sync (Watch → Phone)
@@ -345,7 +357,7 @@ extension SyncService: @preconcurrency WCSessionDelegate {
 
         if let sessionDict = userInfo["sessionSync"] as? [String: Any],
            let data = try? JSONSerialization.data(withJSONObject: sessionDict),
-           let payload = try? JSONDecoder().decode(SessionSyncPayload.self, from: data) {
+           let payload = try? { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }().decode(SessionSyncPayload.self, from: data) {
             Task { @MainActor in
                 sessionSyncReceived.send(payload)
             }
@@ -379,6 +391,15 @@ extension SyncService: @preconcurrency WCSessionDelegate {
     }
 
     public nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        // Handle session sync via sendMessage
+        if let sessionDict = message["sessionSync"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: sessionDict),
+           let payload = try? { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }().decode(SessionSyncPayload.self, from: data) {
+            Task { @MainActor in
+                sessionSyncReceived.send(payload)
+            }
+        }
+
         if let routeDict = message["startWalkOnWatch"] as? [String: Any],
            let data = try? JSONSerialization.data(withJSONObject: routeDict),
            let payload = try? JSONDecoder().decode(SyncPayload.self, from: data) {
@@ -408,6 +429,15 @@ extension SyncService: @preconcurrency WCSessionDelegate {
             }
             Task { @MainActor in
                 allRoutesSyncReceived.send(payloads)
+            }
+        }
+
+        // Handle session sync via applicationContext fallback
+        if let sessionDict = applicationContext["sessionSync"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: sessionDict),
+           let payload = try? { let d = JSONDecoder(); d.dateDecodingStrategy = .iso8601; return d }().decode(SessionSyncPayload.self, from: data) {
+            Task { @MainActor in
+                sessionSyncReceived.send(payload)
             }
         }
     }

@@ -92,8 +92,14 @@ struct ContentView: View {
         .onChange(of: allRoutes.count) {
             SyncService.shared.syncAllRoutes(allRoutes)
         }
-        .onChange(of: walkViewModel.pendingWatchSession?.routeId) {
+        .onReceive(SyncService.shared.sessionSyncReceived) { payload in
+            walkViewModel.pendingWatchSession = payload
             saveWatchSession()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .endWalkFromDI)) { _ in
+            Task {
+                await walkViewModel.endWalk(modelContext: modelContext)
+            }
         }
     }
 
