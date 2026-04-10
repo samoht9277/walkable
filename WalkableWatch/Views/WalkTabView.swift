@@ -105,24 +105,24 @@ struct WalkTabView: View {
             }
 
             // Waypoint arrival banner overlay
-            if viewModel.showArrivalBanner, let name = viewModel.arrivedWaypointName {
-                VStack {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                        Text(name)
-                            .font(.headline)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.green.opacity(0.2), in: Capsule())
+            VStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    Text(viewModel.arrivedWaypointName ?? "")
+                        .font(.headline)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding(.top, 8)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .animation(.spring(duration: 0.4), value: viewModel.showArrivalBanner)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .glassEffect(.regular, in: .capsule)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.top, 8)
+            .opacity(viewModel.showArrivalBanner && !isAOD ? 1 : 0)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.showArrivalBanner)
+            .allowsHitTesting(false)
             } // ZStack
+            .animation(.easeInOut(duration: 0.5), value: viewModel.showArrivalBanner)
         }
     }
 }
