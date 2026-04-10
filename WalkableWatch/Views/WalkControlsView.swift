@@ -15,16 +15,19 @@ struct WalkControlsView: View {
     let onPause: () -> Void
     let onResume: () -> Void
     let onEnd: () -> Void
+    @Environment(\.isLuminanceReduced) private var isAOD
 
     var body: some View {
         VStack(spacing: 12) {
-            if isPaused {
+            if isPaused || isAOD {
+                // Static short format for paused and AOD
+                // (.timer style renders "60 minutes, 40 seconds" in AOD which truncates)
                 let mins = Int(elapsedTime) / 60
                 let secs = Int(elapsedTime) % 60
                 Text(String(format: "%d:%02d", mins, secs))
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .monospacedDigit()
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isPaused ? .secondary : .primary)
             } else {
                 Text(timerStartDate, style: .timer)
                     .font(.system(size: 32, weight: .bold, design: .rounded))

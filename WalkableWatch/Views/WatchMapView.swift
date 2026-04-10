@@ -5,6 +5,7 @@ import WalkableKit
 struct WatchMapView: View {
     let route: Route
     let currentLocation: CLLocationCoordinate2D?
+    let currentHeading: Double
     let currentWaypointIndex: Int
     let visitedWaypointIndices: Set<Int>
     let polylineSearchFromIndex: Int
@@ -13,6 +14,7 @@ struct WatchMapView: View {
     let elapsedTime: TimeInterval
     let distanceToNext: Double?
     @Binding var cameraPosition: MapCameraPosition
+    @Environment(\.isLuminanceReduced) private var isAOD
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,14 +47,21 @@ struct WatchMapView: View {
 
                 if let loc = currentLocation {
                     Annotation("", coordinate: loc) {
-                        Circle()
-                            .fill(.green)
-                            .frame(width: 12)
-                            .overlay(Circle().stroke(.white, lineWidth: 2))
+                        Image(systemName: "location.north.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.blue)
+                            .rotationEffect(.degrees(currentHeading))
+                            .shadow(color: .black.opacity(0.3), radius: 2)
                     }
                 }
             }
             .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+            .onChange(of: isAOD) {
+                // Re-center map when wrist comes back up or goes down
+                if let loc = currentLocation {
+                    cameraPosition = .camera(MapCamera(centerCoordinate: loc, distance: 800))
+                }
+            }
 
             // Stats bar - outside the map so swiping here switches pages
             HStack {

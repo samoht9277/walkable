@@ -18,6 +18,8 @@ final class WatchWalkViewModel {
     var currentWaypointIndex = 0
     var visitedWaypointIndices: Set<Int> = []
     var loopCompleted = false
+    var showArrivalBanner = false
+    var arrivedWaypointName: String?
 
     var currentLocation: CLLocationCoordinate2D?
     var currentHeading: Double = 0
@@ -255,10 +257,28 @@ final class WatchWalkViewModel {
 
         if index >= route.waypoints.count {
             loopCompleted = true
+            // Triple haptic for loop complete
             WKInterfaceDevice.current().play(.notification)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                WKInterfaceDevice.current().play(.notification)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                WKInterfaceDevice.current().play(.notification)
+            }
             return
         }
 
+        // Show waypoint arrival banner
+        let wp = route.sortedWaypoints[index]
+        arrivedWaypointName = wp.label ?? "Waypoint \(index + 1)"
+        showArrivalBanner = true
+        // Double haptic for waypoint arrival
         WKInterfaceDevice.current().play(.success)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            WKInterfaceDevice.current().play(.success)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.showArrivalBanner = false
+        }
     }
 }

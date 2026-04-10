@@ -25,6 +25,7 @@ struct WalkTabView: View {
                 onDismiss: onEnd
             )
         } else {
+            ZStack {
             TabView(selection: $selectedTab) {
                 // View 1: Controls
                 WalkControlsView(
@@ -47,6 +48,7 @@ struct WalkTabView: View {
                 WatchMapView(
                     route: route,
                     currentLocation: viewModel.currentLocation,
+                    currentHeading: viewModel.currentHeading,
                     currentWaypointIndex: viewModel.currentWaypointIndex,
                     visitedWaypointIndices: viewModel.visitedWaypointIndices,
                     polylineSearchFromIndex: viewModel.lastPolylineSegmentIndex,
@@ -83,6 +85,26 @@ struct WalkTabView: View {
             .task {
                 await viewModel.startWalk()
             }
+
+            // Waypoint arrival banner overlay
+            if viewModel.showArrivalBanner, let name = viewModel.arrivedWaypointName {
+                VStack {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text(name)
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.green.opacity(0.2), in: Capsule())
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 8)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.spring(duration: 0.4), value: viewModel.showArrivalBanner)
+            }
+            } // ZStack
         }
     }
 }
