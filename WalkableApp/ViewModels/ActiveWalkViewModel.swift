@@ -105,17 +105,14 @@ final class ActiveWalkViewModel {
             }
             .store(in: &cancellables)
 
-        // Also listen for session sync (results from Watch)
+        // Listen for session sync to update Watch walk state
         SyncService.shared.sessionSyncReceived
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] payload in
-                guard let self else { return }
-                self.pendingWatchSession = payload
-                if self.isWalkingOnWatch {
-                    self.isWalkingOnWatch = false
-                    self.isWalking = false
-                    self.route = nil
-                }
+            .sink { [weak self] _ in
+                guard let self, self.isWalkingOnWatch else { return }
+                self.isWalkingOnWatch = false
+                self.isWalking = false
+                self.route = nil
             }
             .store(in: &cancellables)
     }
