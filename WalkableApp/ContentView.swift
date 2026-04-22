@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import HealthKit
 import WalkableKit
 
 struct ContentView: View {
@@ -162,7 +163,8 @@ struct ContentView: View {
             guard !alreadyExists else { continue }
 
             // Find the closest matching route by distance
-            let workoutDistance = workout.totalDistance?.doubleValue(for: .meter()) ?? 0
+            let distanceType = HKQuantityType(.distanceWalkingRunning)
+            let workoutDistance = workout.statistics(for: distanceType)?.sumQuantity()?.doubleValue(for: .meter()) ?? 0
             guard let matchingRoute = allRoutes.min(by: { a, b in
                 abs(a.distance - workoutDistance) < abs(b.distance - workoutDistance)
             }) else { continue }
@@ -172,7 +174,8 @@ struct ContentView: View {
             session.completedAt = workout.endDate
             session.totalDistance = workoutDistance
             session.totalDuration = workout.duration
-            session.calories = workout.totalEnergyBurned?.doubleValue(for: .kilocalorie()) ?? 0
+            let energyType = HKQuantityType(.activeEnergyBurned)
+            session.calories = workout.statistics(for: energyType)?.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0
             session.source = "healthkit"
 
             // Try to fetch the GPS route
