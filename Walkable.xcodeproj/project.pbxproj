@@ -154,8 +154,8 @@
 		44DBE628CD2816AF0CC6C0E3 /* RouteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteListView.swift; sourceTree = "<group>"; };
 		4555554BF8D7071BD426467B /* SaveRouteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRouteSheet.swift; sourceTree = "<group>"; };
 		4A200AD9B414882AC6C7C572 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5515782EF765667BB5836D12 /* WalkableWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = WalkableWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		51D80C129C05029BAD7DE958 /* WalkableApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5515782EF765667BB5836D12 /* WalkableWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WalkableWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57B9A25E290E6711909B627B /* WalkableKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WalkableKit; sourceTree = SOURCE_ROOT; };
 		57F061AAADC8839C2E49EE10 /* WalkTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkTabView.swift; sourceTree = "<group>"; };
 		59A20463D956D4332A76E146 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -170,7 +170,7 @@
 		81BC1E519A2654DE467F8FDE /* WatchRouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRouteDetailView.swift; sourceTree = "<group>"; };
 		856C3414EF05FE64556D6E09 /* WalkableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkableApp.swift; sourceTree = "<group>"; };
 		8855CF19B5A514FC074BB5F7 /* WalkableWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkableWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		91B4EB17D013CF933CC786A8 /* WalkableUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WalkableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		91B4EB17D013CF933CC786A8 /* WalkableUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalkableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95EBB6A4E8D743C84A1A3EE4 /* LibraryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryUITests.swift; sourceTree = "<group>"; };
 		97764333F6CF336841ABCC15 /* WalkableWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WalkableWatch.entitlements; sourceTree = "<group>"; };
 		9A2DD36DF427DED9A72E1EB5 /* WatchWalkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchWalkViewModel.swift; sourceTree = "<group>"; };
@@ -192,7 +192,7 @@
 		DCF6B8E22583E08984B290DD /* WatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSummaryView.swift; sourceTree = "<group>"; };
 		DD25E2B689A23CD64502A618 /* RouteDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteDetailSheet.swift; sourceTree = "<group>"; };
 		DE469E7A9616DEF652575683 /* WalkControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkControlsView.swift; sourceTree = "<group>"; };
-		E3F1F1C1001288B7384FF7C0 /* WalkableTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WalkableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3F1F1C1001288B7384FF7C0 /* WalkableTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalkableTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8EDD0A140E15FF36623E578 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		E901C4614536C17E35B73CB1 /* CreateRouteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateRouteViewModel.swift; sourceTree = "<group>"; };
 		E9D00E57C3DC5BC436ED09A3 /* WatchMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMapView.swift; sourceTree = "<group>"; };
@@ -560,7 +560,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					4C67977720271797BA338E2D = {
 						ProvisioningStyle = Automatic;
@@ -765,6 +765,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				INFOPLIST_FILE = WalkableWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -820,6 +821,7 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WalkableApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
@@ -847,6 +849,7 @@
 				CODE_SIGN_ENTITLEMENTS = WalkableApp/WalkableApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WalkableApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
@@ -870,6 +873,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HYM2LV4SPQ;
 				INFOPLIST_FILE = WalkableWidgets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Walkable;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -917,9 +921,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -932,6 +938,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -1028,9 +1035,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1050,6 +1059,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;

@@ -101,6 +101,14 @@ struct LibraryView: View {
                         Image(systemName: "square.and.arrow.down")
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        SyncService.shared.syncAllRoutes(routes)
+                        Haptics.success()
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    }
+                }
             }
             .fileImporter(
                 isPresented: $showImportPicker,

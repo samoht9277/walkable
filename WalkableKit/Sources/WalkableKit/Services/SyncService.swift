@@ -321,7 +321,7 @@ public enum WalkHandoffStatus: String, Codable, Sendable {
     case started, ended
 }
 
-extension SyncService: WCSessionDelegate {
+extension SyncService: @preconcurrency WCSessionDelegate {
     public nonisolated func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {
         Task { @MainActor in
             self.activationState = state
