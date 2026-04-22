@@ -189,12 +189,12 @@ public final class HealthService: NSObject, ObservableObject {
 
         guard let route = routes.first else { return [] }
 
+        let locationsBox = LocationsBox()
         return try await withCheckedThrowingContinuation { continuation in
-            var locations = [CLLocation]()
             let routeQuery = HKWorkoutRouteQuery(route: route) { _, batch, done, error in
                 if let error { continuation.resume(throwing: error); return }
-                if let batch { locations.append(contentsOf: batch) }
-                if done { continuation.resume(returning: locations) }
+                if let batch { locationsBox.append(batch) }
+                if done { continuation.resume(returning: locationsBox.all) }
             }
             store.execute(routeQuery)
         }
@@ -301,13 +301,13 @@ public final class HealthService: NSObject, ObservableObject {
 }
 
 #if os(watchOS)
-extension HealthService: @preconcurrency HKWorkoutSessionDelegate {
+extension HealthService: HKWorkoutSessionDelegate {
     public nonisolated func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {}
 
     public nonisolated func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {}
 }
 
-extension HealthService: @preconcurrency HKLiveWorkoutBuilderDelegate {
+extension HealthService: HKLiveWorkoutBuilderDelegate {
     public nonisolated func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {}
 
     public nonisolated func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
@@ -337,3 +337,19 @@ extension HealthService: @preconcurrency HKLiveWorkoutBuilderDelegate {
     }
 }
 #endif
+
+/// Thread-safe accumulator for concurrent HKWorkoutRouteQuery callbacks.
+private final class LocationsBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storage = [CLLocation]()
+
+    func append(_ batch: [CLLocation]) {
+        lock.lock(); defer { lock.unlock() }
+        storage.append(contentsOf: batch)
+    }
+
+    var all: [CLLocation] {
+        lock.lock(); defer { lock.unlock() }
+        return storage
+    }
+}

@@ -104,7 +104,7 @@ final class WatchWalkViewModel {
             .sink { [weak self] location in
                 guard let self else { return }
                 self.currentLocation = location.coordinate
-                self.distanceWalked = self.healthService.distanceWalked ?? 0
+                self.distanceWalked = self.healthService.distanceWalked
 
                 // Auto-re-center map if user hasn't swiped in 10 seconds
                 if self.hasZoomedIn && Date().timeIntervalSince(self.lastManualMapInteraction) > 10 {
