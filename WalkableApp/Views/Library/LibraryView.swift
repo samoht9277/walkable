@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 import CoreLocation
+import WatchConnectivity
 import WalkableKit
 
 struct LibraryView: View {
@@ -10,6 +11,8 @@ struct LibraryView: View {
     @State private var viewModel = LibraryViewModel()
     @ObservedObject private var locationService = LocationService.shared
     @State private var showImportPicker = false
+    @State private var showSyncAlert = false
+    @State private var syncStatus = ""
     @State private var importError: String?
     @State private var showImportError = false
 
@@ -101,6 +104,24 @@ struct LibraryView: View {
                         Image(systemName: "square.and.arrow.down")
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        let session = WCSession.default
+                        let status = """
+                        Paired: \(session.isPaired)
+                        Watch App Installed: \(session.isWatchAppInstalled)
+                        Reachable: \(session.isReachable)
+                        Activation: \(session.activationState.rawValue)
+                        Routes: \(routes.count)
+                        """
+                        syncStatus = status
+                        SyncService.shared.syncAllRoutes(routes)
+                        showSyncAlert = true
+                        Haptics.success()
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    }
+                }
             }
             .fileImporter(
                 isPresented: $showImportPicker,
@@ -112,6 +133,11 @@ struct LibraryView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(importError ?? "Could not read GPX file.")
+            }
+            .alert("Sync Status", isPresented: $showSyncAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(syncStatus)
             }
             .sheet(item: $viewModel.selectedRoute) { route in
                 RouteDetailSheet(route: route) {
